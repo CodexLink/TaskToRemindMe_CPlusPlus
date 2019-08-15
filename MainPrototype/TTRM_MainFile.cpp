@@ -4,10 +4,13 @@
     Represented as Data Struct Group 7
 */
 
-#include <TechProSpEssentialLib/TechProSpEssential.h> // TO BE CONTINUED. ALL CUSTOM MADE FUNCTIONS MUST GO HERE.
-
+#include "TechProSpEssentialLib/TechProSpEssential.h"
+using namespace TTRM;
 // THIS Main Function will only able to receive up to 5 maximum parameters.
-int main(unsigned short argv, std::string argc[])
+TTRM_ClassInitializer SysFunctionCall;
+int main(unsigned short argc, std::string argv[])
 {
-    (!argv) ? ParseParameter(agrv, argc) : RETURN_NULL;
+    //(!argc) ? SysFunctionCall.ParseGivenParam(argc, argv) : RETURN_NULL;
+    SysFunctionCall.ParseGivenParam(argc, argv);
+    return TERM_SUCCESS;
 }
