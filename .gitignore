@@ -81,4 +81,14 @@ dkms.conf
 *.suo
 
 #Visual Studio Solution File
-Debug/
+*Debug/
+*Release/
+
+# Personal Private Demo Files
+OtherLibraries_Demos/
+Experimentals/
+
+# Visual Studio Code Workspace Folder
+
+.vscode/
+.vs/
