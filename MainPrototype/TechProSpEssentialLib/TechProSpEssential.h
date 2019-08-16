@@ -23,22 +23,32 @@ enum TERM_RET_ERROR
     TERM_INVALID_PARAM = -2
 };
 
-// CODE_RET_PROCESS - An ENUM that contains Function Returning Values for Processing Functions
-enum CODE_RET_PROCESS
-{
-    RETURN_NULL = 0
-};
 
 // CODE_CONSTRAINT_DEFAULT - An ENUM that contains Constraint to any function.
 enum CODE_CONSTRAINT_DEFAULT
 {
     LIMIT_ARGV_COUNTER = 5,
-    MAX_TASK_EXISTING = 255, // Used for limiting possible task to enter.
-
+    MAX_TASK_EXISTING = 255 // Used for limiting possible task to enter.
 };
 
-namespace TTRM
-{
+/* CODE_RET_PROCESS
+	Contents: Function Returning Values for Processing Functions
+	Reason for ENUM to #define: 
+*/
+#ifndef CODE_RET_PROCESS
+	#define CODE_RET_PROCESS
+	#define RETURN_NULL  0
+#endif
+
+/* CODE_CONSTANTS is using Define not ENUM.
+	Technical Reason: Not Usable as an Incrementable Reference.
+*/
+#ifndef CODE_CONSTANTS
+    #define CODE_CONSTANTS
+    #define INIT_NULL 0
+    #define POS_OFFSET_BY_ONE 1
+#endif
+
 
 /*
  TTRM_SystemFunc is a derived class that utilizes System-Proposed Functions. THis means that all functions residing
@@ -47,17 +57,8 @@ namespace TTRM
 
 class TTRM_SystemFunc
 {
-protected:
-private:
 public:
-    // Constructors
-    TTRM_SystemFunc(unsigned short DEBUG_MODE);
-    TTRM_SystemFunc(void);
-
-    //Processing Functions
-
-    //Deconstructor
-    ~TTRM_SystemFunc(void);
+    TTRM_SystemFunc(void) {}
 };
 
 /*
@@ -69,79 +70,24 @@ public:
 class TTRM_TechFunc : public IWinToastHandler
 {
 public:
+    TTRM_TechFunc(void) {}
 
-    TTRM_TechFunc(void);
-
-    inline void ParseGivenParam(unsigned short argcount, std::string argcmd[]);
+    virtual void ParseGivenParam(unsigned short argcount, char* argcmd[]) = 0;
     virtual void toastActivated() const = 0;
     virtual void toastActivated(int actionIndex) const = 0;
     virtual void toastDismissed(WinToastDismissalReason state) const = 0;
     virtual void toastFailed() const = 0;
-
-
-private:
-protected:
-
 };
 
 class TTRM_ClassInitializer : public TTRM_SystemFunc, public TTRM_TechFunc
 {
-private:
 public:
-    TTRM_ClassInitializer(void);
+    TTRM_ClassInitializer(void) {}
 
+    virtual void ParseGivenParam(unsigned short argcount, char* argcmd[]);
     virtual void toastActivated() const;
     virtual void toastActivated(int actionIndex) const;
     virtual void toastDismissed(WinToastDismissalReason state) const;
     virtual void toastFailed() const;
-protected:
 };
-
-/*
-class WinToastHandler_TTRM : public IWinToastHandler    
-{
-public:
-    void toastActivated(void) const
-    {
-        std::wcout << L"The user clicked in this toast" << std::endl;
-        exit(0);
-    }
-
-    void toastActivated(int actionIndex) const
-    {
-        std::wcout << L"The user clicked on action #" << actionIndex << std::endl;
-        exit(16 + actionIndex);
-    }
-
-    void toastDismissed(WinToastDismissalReason state) const
-    {
-        switch (state)
-        {
-        case UserCanceled:
-            std::wcout << L"The user dismissed this toast" << std::endl;
-            exit(1);
-            break;
-        case TimedOut:
-            std::wcout << L"The toast has timed out" << std::endl;
-            exit(2);
-            break;
-        case ApplicationHidden:
-            std::wcout << L"The application hid the toast using ToastNotifier.hide()" << std::endl;
-            exit(3);
-            break;
-        default:
-            std::wcout << L"Toast not activated" << std::endl;
-            exit(4);
-            break;
-        }
-    }
-
-    void toastFailed() const
-    {
-        std::wcout << L"Error showing current toast" << std::endl;
-        exit(5);
-    }
-};
-*/
-} // namespace TTRM
 #endif

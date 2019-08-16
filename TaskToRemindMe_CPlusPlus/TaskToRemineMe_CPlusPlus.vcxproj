@@ -22,7 +22,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{CE79575B-1DD2-4D89-BDB6-040BB573BB23}</ProjectGuid>
     <RootNamespace>TaskToRemineMeCPlusPlus</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -69,13 +69,16 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>D:\A Development That No One Knows\Current Project Development\TaskToRemindMe_CPlusPlus;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>D:\A Development That No One Knows\Current Project Development\TaskToRemindMe_CPlusPlus\MainPrototype\TechProSpEssentialLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -123,7 +126,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\MainPrototype\TechProSpEssentialLib\TechProSpEssential.cpp" />
+    <ClCompile Include="..\MainPrototype\TechProSpEssentialLib\TTRM_TechFunctions.cpp" />
+    <ClCompile Include="..\MainPrototype\TechProSpEssentialLib\WinToastLib\wintoastlib.cpp" />
     <ClCompile Include="..\MainPrototype\TTRM_MainFile.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\MainPrototype\TechProSpEssentialLib\TechProSpEssential.h" />
+    <ClInclude Include="..\MainPrototype\TechProSpEssentialLib\WinToastLib\wintoastlib.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

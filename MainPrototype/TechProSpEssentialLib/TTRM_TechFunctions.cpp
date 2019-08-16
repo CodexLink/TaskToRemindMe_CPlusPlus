@@ -1,18 +1,18 @@
-#include "TechProSpEssentialLib/TechProSpEssential.h"
+#include "TechProSpEssential.h"
 
-void TTRM::TTRM_TechFunc::toastActivated() const
+void TTRM_ClassInitializer::toastActivated() const
 {
     std::wcout << L"The user clicked in this toast" << std::endl;
     exit(0);
 }
 
-void TTRM::TTRM_TechFunc::toastActivated(int actionIndex) const
+void TTRM_ClassInitializer::toastActivated(int actionIndex) const
 {
     std::wcout << L"The user clicked on action #" << actionIndex << std::endl;
     exit(16 + actionIndex);
 }
 
-void TTRM::TTRM_TechFunc::toastDismissed(WinToastDismissalReason state) const
+void TTRM_ClassInitializer::toastDismissed(WinToastDismissalReason state) const
 {
     switch (state)
     {
@@ -35,7 +35,7 @@ void TTRM::TTRM_TechFunc::toastDismissed(WinToastDismissalReason state) const
     }
 }
 
-void TTRM::TTRM_TechFunc::toastFailed() const
+void TTRM_ClassInitializer::toastFailed() const
 {
     std::wcout << L"Error showing current toast" << std::endl;
     exit(5);

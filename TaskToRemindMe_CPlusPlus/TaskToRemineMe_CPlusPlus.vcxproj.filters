@@ -18,5 +18,22 @@
     <ClCompile Include="..\MainPrototype\TTRM_MainFile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\MainPrototype\TechProSpEssentialLib\WinToastLib\wintoastlib.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MainPrototype\TechProSpEssentialLib\TechProSpEssential.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MainPrototype\TechProSpEssentialLib\TTRM_TechFunctions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\MainPrototype\TechProSpEssentialLib\TechProSpEssential.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainPrototype\TechProSpEssentialLib\WinToastLib\wintoastlib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
