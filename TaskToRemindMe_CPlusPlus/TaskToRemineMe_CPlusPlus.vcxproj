@@ -126,13 +126,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\MainPrototype\TechProSpEssentialLib\TechProSpEssential.cpp" />
-    <ClCompile Include="..\MainPrototype\TechProSpEssentialLib\TTRM_TechFunctions.cpp" />
+    <ClCompile Include="..\MainPrototype\TechProSpEssentialLib\TTRM_CoreFunc.cpp" />
+    <ClCompile Include="..\MainPrototype\TechProSpEssentialLib\TTRM_TechFunc.cpp" />
     <ClCompile Include="..\MainPrototype\TechProSpEssentialLib\WinToastLib\wintoastlib.cpp" />
-    <ClCompile Include="..\MainPrototype\TTRM_MainFile.cpp" />
+    <ClCompile Include="..\MainPrototype\TTRM.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\MainPrototype\TechProSpEssentialLib\TechProSpEssential.h" />
+    <ClInclude Include="..\MainPrototype\TechProSpEssentialLib\TTRM_Core.h" />
     <ClInclude Include="..\MainPrototype\TechProSpEssentialLib\WinToastLib\wintoastlib.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

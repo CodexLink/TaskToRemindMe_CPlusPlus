@@ -4,13 +4,21 @@
     Represented as Data Struct Group 7
 */
 
-#include "TechProSpEssential.h"
+#include "TTRM_Core.h"
 
-// THIS Main Function will only able to receive up to 5 maximum parameters.
-TTRM_ClassInitializer Sys;
+TTRM CoreFunction;
 
 int main(unsigned short argc, char *argv[])
 {
-    (!argc) ? Sys.ParseGivenParam(argc, argv) : (RETURN_NULL);
-    return TERM_SUCCESS;
+    if (argc > POS_OFFSET_BY_ONE)
+		  CoreFunction.ParseGivenParam(argc, argv);
+    
+    if (!CoreFunction.ComponentCheck(IGNORE_PROCESS))
+    {
+      return TERM_FAILED;
+    }
+
+	CoreFunction.DisplayMenu();
+
+	exit(TERM_SUCCESS);
 }

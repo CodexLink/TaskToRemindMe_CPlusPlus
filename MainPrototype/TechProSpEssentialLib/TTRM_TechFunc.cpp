@@ -1,18 +1,21 @@
-#include "TechProSpEssential.h"
+#include "TTRM_Core.h"
+/*
+    Technical Project Specific Essential Function CPP File by Janrey "CodexLink" Licas
+    File Category Type: Core Function Body Definition, "CoreFunc".
+	Note that this CPP file will only contain external library functions.
+*/
 
-void TTRM_ClassInitializer::toastActivated() const
+void TTRM::toastActivated(void) const
 {
     std::wcout << L"The user clicked in this toast" << std::endl;
-    exit(0);
 }
 
-void TTRM_ClassInitializer::toastActivated(int actionIndex) const
+void TTRM::toastActivated(int actionIndex) const
 {
     std::wcout << L"The user clicked on action #" << actionIndex << std::endl;
-    exit(16 + actionIndex);
 }
 
-void TTRM_ClassInitializer::toastDismissed(WinToastDismissalReason state) const
+void TTRM::toastDismissed(WinToastDismissalReason state) const
 {
     switch (state)
     {
@@ -35,7 +38,7 @@ void TTRM_ClassInitializer::toastDismissed(WinToastDismissalReason state) const
     }
 }
 
-void TTRM_ClassInitializer::toastFailed() const
+void TTRM::toastFailed(void) const
 {
     std::wcout << L"Error showing current toast" << std::endl;
     exit(5);
