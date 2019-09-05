@@ -28,8 +28,9 @@ Things To Know #2 - ENUMs,
 #include <conio.h> // For Character Standard Input (STDIN) Capture for Switch-Case Statement
 #include <chrono>
 #include <thread>
+#include <limits>
 
-
+#undef max
 // #define Function-Like Declaration
 #define delay_time(x) std::this_thread::sleep_for(std::chrono::milliseconds(x))
 #define WinAPI_CMDCall(x) system(x);
@@ -244,7 +245,14 @@ public:
     void Initialize_ScheduleList(void);
     void Display_ScheduleList(void);
 private:
+protected:
     const std::string DB_Path = ".db";       // Unconfirmed
-    std::queue<unsigned int> DB_DisplayList; // Used unsigned int just to reference a specific specific number id.
+	std::string TaskName;
+	std::string DateCreated;
+	std::string DateStartTime;
+	std::string DateEndTime;
+	std::string NotifierInterval;
+	std::string Time;
+    //std::queue<> DB_DisplayList; // Used unsigned int just to reference a specific specific number id.
 };
 #endif

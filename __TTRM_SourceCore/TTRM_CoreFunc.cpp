@@ -18,11 +18,33 @@ void TTRM::ParseGivenParam(unsigned short argcount, char *argv[])
 		// Create more features here. Use switch for Selection of Data here.
 		std::cout << " Parameter Index "<< ParamIter << " |> Parameter Value -> "<< argv[ParamIter] << std::endl;
 	}
-	std::cout << std::endl << "Function Execution Done...";
 }
 
 bool TTRM::ComponentCheck(bool isNeededToRun)
 {
+	std::cout << std::endl << "Function Execution Done...";
+	WinToast::instance()->setAppName(L"CodexLink SmplTLKit Console Version");
+	std::cout << "Application Name Loaded." << std::endl;
+	WinToast::instance()->setAppUserModelId(WinToast::configureAUMI(L"Janrey", L"Licas",L"CodexLink's SmpleTLKit Beta Version", L"20180103"));
+	std::cout << "Application Profile Loaded." << std::endl;
+	if (!WinToast::instance()->initialize()) {
+		std::wcout << L"Critical Error! Could not initialize the library!" << std::endl;
+		Sleep(1000);
+	}
+	else {
+		std::cout << "" << std::endl;
+		std::wcout << L"WinToast Initialized. Header and Settings Handler Loaded." << std::endl;
+	}
+	WinToastTemplate StartupInitialization = WinToastTemplate(WinToastTemplate::Text02);
+	StartupInitialization.setTextField(L"CodexLink SmplTLKit User Authentication", WinToastTemplate::FirstLine);
+	StartupInitialization.setTextField(L"CodexLink has logged on. Welcome My Man!", WinToastTemplate::SecondLine);
+
+	if (!WinToast::instance()->showToast(StartupInitialization, new TTRM_TechFunc)) {
+		std::wcout << L"Error: Could not launch your toast notification!" << std::endl;
+		Sleep(5000);
+	}
+	std::cout << "Demo WinToast Finished." << std::endl;
+	while(1);
 	if (isNeededToRun)
 	{
 		return TERM_SUCCESS;
@@ -59,8 +81,10 @@ signed short TTRM::runSystemMenu(void) const
 
 		std::cout << "[Input] Your Choice then PRESS ENTER |> ";
 		std::cin >> DisplayMenu_Input;
-		if (std::cin.fail)
-			
+		if (std::cin.fail())
+			std::cin.clear();
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+			std::cout << "[ERROR] CIN FAILED." << std::endl;
 			delay_time(SLEEP_ERROR_PROMPT);
 			continue;
 		// Stack the function.
@@ -106,6 +130,8 @@ signed short TTRM::runSystemMenu(void) const
 void TTRM::MenuSel_ATask(void) const
 {
 	WinAPI_CMDCall("CLS");
+	// Add Design here
+	std::cout << "Task Name |> ";
 	std::cout << "1" << std::endl;
 }
 void TTRM::MenuSel_DTask(void) const
