@@ -5,6 +5,9 @@
 	Note that this CPP file will only contain external library functions.
 */
 
+/*
+	WinToast Library Function Declaration - START
+*/
 void TTRM::toastActivated(void) const
 {
     std::wcout << L"The user clicked in this toast" << std::endl;
@@ -37,9 +40,34 @@ void TTRM::toastDismissed(WinToastDismissalReason state) const
         break;
     }
 }
-
 void TTRM::toastFailed(void) const
 {
     std::wcout << L"Error showing current toast" << std::endl;
     exit(5);
 }
+/*
+	WinToast Library Function Declaration - END
+*/
+
+/*
+	SQLite Library Function Declaration - START
+*/
+bool TTRM::SQLite_Initialize() const
+{
+    return RETURN_BACK_NOTHING;
+}
+bool TTRM::SQLite_CheckDatabase() const
+{
+    return RETURN_BACK_NOTHING;
+}
+bool TTRM::SQLite_CreateTable() const
+{
+    return RETURN_BACK_NOTHING;
+}
+bool TTRM::SQLite_ManipulateValues(SQLite_ExecutionType Execution) const
+{
+	return RETURN_BACK_NOTHING;
+}
+/*
+	SQLite Library Function Declaration - START
+*/

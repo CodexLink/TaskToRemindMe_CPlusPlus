@@ -185,7 +185,10 @@ public:
     virtual void ParseGivenParam(unsigned short argcount, char *argcmd[]);
     virtual bool ComponentCheck(bool isNeededToRun);
     virtual bool runSystemMenu(void) const;
-	virtual bool SQLite_ManipulateValues(SQLite_ExecutionType Execution) const = 0;
+	virtual bool SQLite_Initialize() const;
+	virtual bool SQLite_CheckDatabase() const;
+	virtual bool SQLite_CreateTable() const;
+	virtual bool SQLite_ManipulateValues(SQLite_ExecutionType Execution) const;
 	//Database
 
     // WinToast Library Functions
