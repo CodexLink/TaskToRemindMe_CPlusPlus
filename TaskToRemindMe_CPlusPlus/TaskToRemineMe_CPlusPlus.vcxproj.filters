@@ -15,25 +15,31 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\MainPrototype\TechProSpEssentialLib\WinToastLib\wintoastlib.cpp">
+    <ClInclude Include="..\MainPrototype\TTRM_Libs\TTRM_Core.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainPrototype\TTRM_Libs\WinToastLib\wintoastlib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainPrototype\TTRM_Libs\SQLite3\sqlite3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\MainPrototype\TTRM_Libs\TTRM_TechFunc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MainPrototype\TTRM_Libs\TTRM_CoreFunc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MainPrototype\TTRM_Libs\WinToastLib\wintoastlib.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MainPrototype\TTRM_Libs\SQLite3\sqlite3.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\MainPrototype\TTRM.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\MainPrototype\TechProSpEssentialLib\TTRM_CoreFunc.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\MainPrototype\TechProSpEssentialLib\TTRM_TechFunc.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\MainPrototype\TechProSpEssentialLib\WinToastLib\wintoastlib.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\MainPrototype\TechProSpEssentialLib\TTRM_Core.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

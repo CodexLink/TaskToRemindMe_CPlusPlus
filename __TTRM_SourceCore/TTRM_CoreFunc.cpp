@@ -33,18 +33,15 @@ bool TTRM::ComponentCheck(bool isNeededToRun)
 	}
 }
 
-bool TTRM::DisplayMenu(void) const
+bool TTRM::runSystemMenu(void) const
 {
 	char DisplayMenu_Input = INIT_CHAR_NULL;
 	while (NOT_REQ_TERM)
 	{
-
 		std::cout << std::endl << "Task To Remind Me C++ in CLI version. BETA" << std::endl << std::endl;
 		std::cout << "Time From Your Local System [Last Updated] |> " << std::endl;
 
 		std::cout << std::endl << "=== Incoming Task for Today ====================" << std::endl << std::endl;
-
-
 		std::cout << "=== Task Function Menu ====================" << std::endl
 			<< std::endl << "1 |> Add a Task"
 			<< std::endl << "2 |> Delete a Task"
@@ -52,9 +49,11 @@ bool TTRM::DisplayMenu(void) const
 			<< std::endl << "4 |> View All Tasks"
 			<< std::endl << "5 |> Sort All Tasks"
 			<< std::endl << std::endl << "=== Technical Function Menu ====================" << std::endl
-			<< std::endl << "6 |> Auto-Start Application : Current Status > [" << "Unknown Yet]"
-			<< std::endl << "7 |> WinToast Remind Integration: Current Status > [" << "Unknown Yet]"
-			<< std::endl << "7 |> Terminate Program"
+			<< std::endl << "6 |> Manually Refresh All Tasks from Database (Hard Reset)"
+			<< std::endl << "7 |> Requeue All Tasks from Database (Soft Reset)"
+			<< std::endl << "8 |> Auto-Start Application : Current Status > [" << "Unknown Yet]"
+			<< std::endl << "9 |> WinToast Remind Integration: Current Status > [" << "Unknown Yet]"
+			<< std::endl << "10 |> Terminate Program"
 			<< std::endl << std::endl;
 
 		std::cout << "[Input] Your Choice |> ";
@@ -68,7 +67,9 @@ bool TTRM::DisplayMenu(void) const
 			break;
 		case ViewTask:
 			break;
-		case SortTask:
+		case ManualDatabaseRefresh:
+			break;
+		case RequeueTasks:
 			break;
 		case AutoStartup:
 			break;

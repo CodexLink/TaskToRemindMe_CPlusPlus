@@ -4,7 +4,7 @@
     Represented as Data Struct Group 7
 */
 
-#include "TTRM_Core.h"
+#include "__TTRM_SourceCore/TTRM_Core.h"
 
 TTRM CoreFunction;
 
@@ -14,11 +14,10 @@ int main(unsigned short argc, char *argv[])
 		  CoreFunction.ParseGivenParam(argc, argv);
     
     if (!CoreFunction.ComponentCheck(IGNORE_PROCESS))
-    {
-      return TERM_FAILED;
-    }
+		return TERM_FAILED;
+    
 
-	CoreFunction.DisplayMenu();
+	CoreFunction.runSystemMenu();
 
 	exit(TERM_SUCCESS);
 }

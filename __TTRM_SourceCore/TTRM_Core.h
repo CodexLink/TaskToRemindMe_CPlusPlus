@@ -2,8 +2,21 @@
     Technical Project Specific Essential Function Header File by Janrey "CodexLink" Licas
     File Category Type: Core Function Definitions, "CoreDef".
 */
-#ifndef TechProSpEssential_H
-#define TechProSpEssential_H // We define this marker for indication of "already initialized"
+
+/*
+Things To Know #1 - Virtual Functions
+	is a function that can be overrided by another class by redeclaring this to a derived class.
+	HOW: First we declare the function in base class with equal to 0. Then redefine to a derived class that you want
+	a class to use for in the whole procedural.
+
+Things To Know #2 - ENUMs,
+	A Group or contains that specific values that classifies specialized for returning
+	reference values. For example, we need a group of reference values for returning error codes.
+	Hence, this example is refernced to our first ENUM called TERM_RET_ERROR
+*/
+
+#ifndef TechProSpEssential_TTRM_H
+#define TechProSpEssential_TTRM_H // We define this marker for indication of "already initialized"
 
 #include <iostream>
 #include <string>
@@ -18,14 +31,10 @@
 
 
 // #define Function-Like Declaration
-#define delay_time(x) std::this_thread::sleep_for(std::chrono::milliseconds(x));
+#define delay_time(x) std::this_thread::sleep_for(std::chrono::milliseconds(x))
 
 using namespace WinToastLib;
-/*
-    ENUMs, A Group or contains that specific values that classifies specialized for returning
-    reference values. For example, we need a group of reference values for returning error codes.
-    Hence, this example is refernced to our first ENUM called TERM_RET_ERROR
-*/
+
 // TERM_RET_ERROR - An ENUM that contains Termination Return Error. Useful for Deconstructor Error Display
 enum TERM_RET_ERROR
 {
@@ -47,6 +56,8 @@ enum DISPLAY_OPTIONS
 	DeleteTask,
 	EditTask,
 	ViewTask,
+	ManualDatabaseRefresh,
+	RequeueTasks,
 	SortTask,
 	AutoStartup,
 	WinToastIntegration,
@@ -77,6 +88,7 @@ enum SLEEP_TIMERS
 #define CODE_CONSTANTS
 #define INIT_NULL 0
 #define POS_OFFSET_BY_ONE 1
+
 // Superposition Method, Parameters used for when we want to run this function content or not. Used for Selected Technical  Functions only.
 #define IGNORE_PROCESS 0
 #define RUN_PROCESS 1
@@ -84,14 +96,12 @@ enum SLEEP_TIMERS
 #define INIT_STR_NULL ""
 #define INIT_CHAR_NULL '0'
 #endif
+
+
 /*
-    TTRM_TechFunc is a derived class that contains only technical functions that utilizes
-    debugging, non-related proposed system functions such as printing some data, readjustment 
-    of Console Window and more. This class contains Win32API User-Defined Functions, WinToast API for Windows 10
-    Notifications and lastly MySQL Library. Keep in mind that this is the place where external libraries added on this class.
+	TTRM_CoreFunc is a base class that contains only functions that is mainly focused on the system itself.
+	It doesn't include any external libraries function but only includes for display menus, etc.
 */
-
-
 class TTRM_CoreFunc
 {
 public:
@@ -99,13 +109,18 @@ public:
 	{
 		std::cout << "[OBJECT] TTRM Core Function has been successfully initialized." << std::endl;
 	}
+    virtual bool runSystemMenu(void) const = 0;
 
-    virtual bool DisplayMenu(void) const = 0;
 private:
 protected:
 };
 
-
+/*
+	TTRM_TechFunc is a base class that contains only technical functions that utilizes
+	debugging, non-related proposed system functions such as printing some data, readjustment
+	of Console Window and more. This class contains Win32API User-Defined Functions, WinToast API for Windows 10
+	Notifications and lastly MySQL Library. Keep in mind that this is the place where external libraries added on this class.
+*/
 class TTRM_TechFunc : public IWinToastHandler
 {
 public:
@@ -116,14 +131,25 @@ public:
 		<< "[OBJECT] TTRM Technical Function with WinToastHandler has been successfully initialized." << std::endl;
 	}
 
+	// Literal Technical Functions Declaration
     virtual void ParseGivenParam(unsigned short argcount, char *argcmd[]) = 0;
     virtual bool ComponentCheck(bool isNeededToRun) = 0;
 
-    /* Virtual Functions
-        is a function that can be overrided by another class by redeclaring this to a derived class.
-        HOW: First we declare the function in base class with equal to 0. Then redefine to a derived class that you want
-        a class to use for in the whole procedural.
-    */
+	// Database SQLite3 Functions and Declarations
+
+	enum SQLite_ExecutionType
+	{
+		SelectData,
+		AddData,
+		DeleteData,
+		EditData,
+	};
+	
+	virtual bool SQLite_Initialize() const = 0;
+	virtual bool SQLite_CheckDatabase() const = 0;
+	virtual bool SQLite_CreateTable() const = 0;
+	virtual bool SQLite_ManipulateValues(SQLite_ExecutionType Execution) const = 0;
+
     // Functions for WinToast Library
     virtual void toastActivated(void) const = 0;
     virtual void toastActivated(int actionIndex) const = 0;
@@ -132,11 +158,12 @@ public:
 private:
 protected:
 };
+
+
 /*
     TTRM is derived class that initializes multiple (two or more) (base / another derived) class
     that can be intialized in a single form factor. This means I want to use all of them by referencing only one class. 
 */
-
 class TTRM : public TTRM_TechFunc, public TTRM_CoreFunc
 {
 public:
@@ -148,7 +175,8 @@ public:
 	}
 	~TTRM(void)
 	{
-		std::cout << std::endl << "[OBJECT] Object Class is at the End of Scopee. Goodbye!" << std::endl;
+		std::cout << "[TERMINATION] Closing Objects and Database before closing the program. (~using Deconstructors)" << std::endl
+		<< std::endl << "[OBJECT] Object Class is at the End of Scope. Goodbye!" << std::endl;
 		delay_time(SLEEP_INIT_OBJECT);
 		exit(TERM_SUCCESS);
 	}
@@ -156,7 +184,10 @@ public:
     // TTRM's TechFunc and CoreFunc Functions
     virtual void ParseGivenParam(unsigned short argcount, char *argcmd[]);
     virtual bool ComponentCheck(bool isNeededToRun);
-    virtual bool DisplayMenu(void) const;
+    virtual bool runSystemMenu(void) const;
+	virtual bool SQLite_ManipulateValues(SQLite_ExecutionType Execution) const = 0;
+	//Database
+
     // WinToast Library Functions
     virtual void toastActivated(void) const;
     virtual void toastActivated(int actionIndex) const;
@@ -175,11 +206,11 @@ class TTRM_ScheduleList
 public:
 	TTRM_ScheduleList(void)
 	{
-		std::cout << "[TERMINATION] Closing Objects and Database before closing the program. (~using Deconstructors)" << std::endl
-		<< "[OBJECT] TTRM_Scheduler has been successfully initialized." << std::endl;
+		std::cout << "[OBJECT] TTRM_Scheduler has been successfully initialized." << std::endl;
 	}
 	~TTRM_ScheduleList(void)
 	{
+		
 	}
     void Initialize_ScheduleList(void);
     void Display_ScheduleList(void);

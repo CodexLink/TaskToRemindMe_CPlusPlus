@@ -18,6 +18,18 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\MainPrototype\TTRM_Libs\SQLite3\sqlite3.h" />
+    <ClInclude Include="..\MainPrototype\TTRM_Libs\TTRM_Core.h" />
+    <ClInclude Include="..\MainPrototype\TTRM_Libs\WinToastLib\wintoastlib.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\MainPrototype\TTRM.cpp" />
+    <ClCompile Include="..\MainPrototype\TTRM_Libs\SQLite3\sqlite3.c" />
+    <ClCompile Include="..\MainPrototype\TTRM_Libs\TTRM_CoreFunc.cpp" />
+    <ClCompile Include="..\MainPrototype\TTRM_Libs\TTRM_TechFunc.cpp" />
+    <ClCompile Include="..\MainPrototype\TTRM_Libs\WinToastLib\wintoastlib.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{CE79575B-1DD2-4D89-BDB6-040BB573BB23}</ProjectGuid>
@@ -125,16 +137,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="..\MainPrototype\TechProSpEssentialLib\TTRM_CoreFunc.cpp" />
-    <ClCompile Include="..\MainPrototype\TechProSpEssentialLib\TTRM_TechFunc.cpp" />
-    <ClCompile Include="..\MainPrototype\TechProSpEssentialLib\WinToastLib\wintoastlib.cpp" />
-    <ClCompile Include="..\MainPrototype\TTRM.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\MainPrototype\TechProSpEssentialLib\TTRM_Core.h" />
-    <ClInclude Include="..\MainPrototype\TechProSpEssentialLib\WinToastLib\wintoastlib.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
