@@ -32,7 +32,7 @@ Things To Know #2 - ENUMs,
 
 // #define Function-Like Declaration
 #define delay_time(x) std::this_thread::sleep_for(std::chrono::milliseconds(x))
-
+#define WinAPI_CMDCall(x) system(x);
 using namespace WinToastLib;
 
 // TERM_RET_ERROR - An ENUM that contains Termination Return Error. Useful for Deconstructor Error Display
@@ -43,6 +43,10 @@ enum TERM_RET_ERROR
     TERM_INVALID_PARAM = -2
 };
 
+enum TERM_CONSOLE_LOG_PRESET
+{
+	
+};
 // CODE_CONSTRAINT_DEFAULT - An ENUM that contains Constraint to any function.
 enum CODE_CONSTRAINT_DEFAULT
 {
@@ -50,8 +54,9 @@ enum CODE_CONSTRAINT_DEFAULT
     MAX_TASK_EXISTING = 255 // Used for limiting possible task to enter.
 };
 
-enum DISPLAY_OPTIONS 
+enum DISPLAY_OPTIONS
 {
+	Termination,
 	AddTask,
 	DeleteTask,
 	EditTask,
@@ -61,7 +66,6 @@ enum DISPLAY_OPTIONS
 	SortTask,
 	AutoStartup,
 	WinToastIntegration,
-	Termination
 };
 
 enum SLEEP_TIMERS
@@ -69,7 +73,8 @@ enum SLEEP_TIMERS
 	SLEEP_INIT_SETUP = 2000,
 	SLEEP_DISPLAY_WINDOW = 1500,
 	SLEEP_INIT_OBJECT = 2000,
-	SLEEP_TERM = 3000
+	SLEEP_TERM = 3000,
+	SLEEP_ERROR_PROMPT = 1700
 };
 /* CODE_RET_PROCESS
 	Contents: Function Returning Values for Processing Functions
@@ -79,6 +84,7 @@ enum SLEEP_TIMERS
 #define CODE_RET_PROCESS
 #define RETURN_NULL 0
 #define RETURN_BACK_NOTHING 0
+#define USER_OUTOFSCOPE_TERM_SUCCESS 0
 #endif
 
 /* CODE_CONSTANTS is using Define not ENUM.
@@ -109,7 +115,16 @@ public:
 	{
 		std::cout << "[OBJECT] TTRM Core Function has been successfully initialized." << std::endl;
 	}
-    virtual bool runSystemMenu(void) const = 0;
+    virtual signed short runSystemMenu(void) const = 0;
+	// runSystemMenu Sub Functions
+	virtual void MenuSel_ATask(void) const = 0;
+	virtual void MenuSel_DTask(void) const = 0;
+	virtual void MenuSel_ETask(void) const = 0;
+	virtual void MenuSel_VTask(void) const = 0;
+	virtual void MenuSel_DBRefresh(void) const = 0;
+	virtual void MenuSel_ReqTasks(void) const = 0;
+	virtual void MenuSel_AutoStart(void) const = 0;
+	virtual void MenuSel_WTI(void) const = 0;
 
 private:
 protected:
@@ -184,7 +199,18 @@ public:
     // TTRM's TechFunc and CoreFunc Functions
     virtual void ParseGivenParam(unsigned short argcount, char *argcmd[]);
     virtual bool ComponentCheck(bool isNeededToRun);
-    virtual bool runSystemMenu(void) const;
+
+	virtual signed short runSystemMenu(void) const;
+	// runSystemMenu Sub Functions
+	virtual void MenuSel_ATask(void) const;
+	virtual void MenuSel_DTask(void) const;
+	virtual void MenuSel_ETask(void) const;
+	virtual void MenuSel_VTask(void) const;
+	virtual void MenuSel_DBRefresh(void) const;
+	virtual void MenuSel_ReqTasks(void) const;
+	virtual void MenuSel_AutoStart(void) const;
+	virtual void MenuSel_WTI(void) const;
+
 	virtual bool SQLite_Initialize() const;
 	virtual bool SQLite_CheckDatabase() const;
 	virtual bool SQLite_CreateTable() const;

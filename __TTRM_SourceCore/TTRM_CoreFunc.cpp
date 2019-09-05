@@ -33,11 +33,12 @@ bool TTRM::ComponentCheck(bool isNeededToRun)
 	}
 }
 
-bool TTRM::runSystemMenu(void) const
+signed short TTRM::runSystemMenu(void) const
 {
-	char DisplayMenu_Input = INIT_CHAR_NULL;
+	signed int DisplayMenu_Input = INIT_NULL;
 	while (NOT_REQ_TERM)
 	{
+		WinAPI_CMDCall("CLS");
 		std::cout << std::endl << "Task To Remind Me C++ in CLI version. BETA" << std::endl << std::endl;
 		std::cout << "Time From Your Local System [Last Updated] |> " << std::endl;
 
@@ -53,32 +54,92 @@ bool TTRM::runSystemMenu(void) const
 			<< std::endl << "7 |> Requeue All Tasks from Database (Soft Reset)"
 			<< std::endl << "8 |> Auto-Start Application : Current Status > [" << "Unknown Yet]"
 			<< std::endl << "9 |> WinToast Remind Integration: Current Status > [" << "Unknown Yet]"
-			<< std::endl << "10 |> Terminate Program"
+			<< std::endl << "0 |> Terminate Program"
 			<< std::endl << std::endl;
 
-		std::cout << "[Input] Your Choice |> ";
-		switch (_getche())
+		std::cout << "[Input] Your Choice then PRESS ENTER |> ";
+		std::cin >> DisplayMenu_Input;
+		if (std::cin.fail)
+			
+			delay_time(SLEEP_ERROR_PROMPT);
+			continue;
+		// Stack the function.
+		// Return to 'this' function so that we can go back to this function easily.
+		switch (DisplayMenu_Input)
 		{
 		case AddTask:
+			MenuSel_ATask();
 			break;
 		case DeleteTask:
+			MenuSel_DTask();
 			break;
 		case EditTask:
+			MenuSel_ETask();
 			break;
 		case ViewTask:
+			MenuSel_VTask();
 			break;
 		case ManualDatabaseRefresh:
+			MenuSel_DBRefresh();
 			break;
 		case RequeueTasks:
+			MenuSel_ReqTasks();
 			break;
 		case AutoStartup:
+			MenuSel_AutoStart();
 			break;
 		case WinToastIntegration:
+			MenuSel_WTI();
 			break;
 		case Termination:
 			break;
+		default:
+			std::cout << std::endl << "[ERROR] User Inputted Not Included in the List!" << std::endl;
+			delay_time(SLEEP_ERROR_PROMPT);
+			break;
 		}
-		break;
+		if (!DisplayMenu_Input)	break;
 	}
-	return RETURN_BACK_NOTHING;
+	return USER_OUTOFSCOPE_TERM_SUCCESS;
+}
+
+void TTRM::MenuSel_ATask(void) const
+{
+	WinAPI_CMDCall("CLS");
+	std::cout << "1" << std::endl;
+}
+void TTRM::MenuSel_DTask(void) const
+{
+	WinAPI_CMDCall("CLS");
+	std::cout << "2" << std::endl;
+}
+void TTRM::MenuSel_ETask(void) const
+{
+	WinAPI_CMDCall("CLS");
+	std::cout << "3" << std::endl;
+}
+void TTRM::MenuSel_VTask(void) const
+{
+	WinAPI_CMDCall("CLS");
+	std::cout << "4" << std::endl;
+}
+void TTRM::MenuSel_DBRefresh(void) const
+{
+	WinAPI_CMDCall("CLS");
+	std::cout << "5" << std::endl;
+}
+void TTRM::MenuSel_ReqTasks(void) const
+{
+	WinAPI_CMDCall("CLS");
+	std::cout << "6" << std::endl;
+}
+void TTRM::MenuSel_AutoStart(void) const
+{
+	WinAPI_CMDCall("CLS");
+	std::cout << "7" << std::endl;
+}
+void TTRM::MenuSel_WTI(void) const
+{
+	WinAPI_CMDCall("CLS");
+	std::cout << "8" << std::endl;
 }

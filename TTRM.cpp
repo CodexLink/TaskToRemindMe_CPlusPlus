@@ -19,5 +19,6 @@ int main(unsigned short argc, char *argv[])
 
 	CoreFunction.runSystemMenu();
 
+	//std::cout << std::endl << MenuWindow_INT << std::endl;
 	exit(TERM_SUCCESS);
 }
