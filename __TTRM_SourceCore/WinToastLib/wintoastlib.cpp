@@ -27,6 +27,8 @@
 #pragma comment(lib,"shlwapi")
 #pragma comment(lib,"user32")
 
+#define NDEBUG
+
 #ifdef NDEBUG
     #define DEBUG_MSG(str) do { } while ( false )
 #else
