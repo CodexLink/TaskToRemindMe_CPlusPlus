@@ -23,9 +23,8 @@ void TTRM::ParseGivenParam(unsigned short argcount, char *argv[])
 
 bool TTRM::ComponentCheck(bool isNeededToRun)
 {
-	std::cout << std::endl
-			  << "Component Checking Point | Before Program Initialization" << std::endl
-			  << "WinToast Library |> Checking Integration Compatibility...";
+	std::cout << "Component Checking Point | Before Program Initialization" << std::endl
+			  << "WinToast Library |> Checking Compatibility...";
 	if (WinToast::isCompatible())
 	{
 		std::cout << std::endl
@@ -36,6 +35,7 @@ bool TTRM::ComponentCheck(bool isNeededToRun)
 		WinToastTemplate WinToastInit_Welcome(WinToastTemplate::Text02);
 		WinToastInit_Welcome.setTextField(L"Task To Remind Me | C++", WinToastTemplate::FirstLine);
 		WinToastInit_Welcome.setTextField(L"Welcome User! Please Create A Task!", WinToastTemplate::SecondLine);
+		WinToastInit_Welcome.setAudioPath(WinToastTemplate::Reminder);
 		std::cout << "WinToast Library |> Application Profile, Header and App Name Loaded." << std::endl;
 
 		if (WinToast::instance()->initialize())
@@ -66,10 +66,9 @@ bool TTRM::ComponentCheck(bool isNeededToRun)
 			return TERM_FAILED;
 		}
 	}
-	WinAPI_CMDCall("pause");
 }
 
-signed short TTRM::runSystemMenu(void) const
+void TTRM::runSystemMenu(void) const
 {
 	signed int DisplayMenu_Input = INIT_NULL;
 	while (NOT_REQ_TERM)
@@ -115,11 +114,13 @@ signed short TTRM::runSystemMenu(void) const
 		std::cout << "[Input] Your Choice then PRESS ENTER |> ";
 		std::cin >> DisplayMenu_Input;
 		if (std::cin.fail())
+		{
 			std::cin.clear();
-		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-		std::cout << "[ERROR] CIN FAILED." << std::endl;
-		delay_time(SLEEP_ERROR_PROMPT);
-		continue;
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+			std::cout << "[ERROR] User Input Error -> Input Is Non-Existing or Non-Integer." << std::endl;
+			delay_time(SLEEP_ERROR_PROMPT);
+			continue;
+		}
 		// Stack the function.
 		// Return to 'this' function so that we can go back to this function easily.
 		switch (DisplayMenu_Input)
@@ -159,7 +160,7 @@ signed short TTRM::runSystemMenu(void) const
 		if (!DisplayMenu_Input)
 			break;
 	}
-	return USER_OUTOFSCOPE_TERM_SUCCESS;
+	return;
 }
 
 void TTRM::MenuSel_ATask(void) const

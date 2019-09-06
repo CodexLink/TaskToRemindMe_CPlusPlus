@@ -32,12 +32,13 @@ Things To Know #2 - ENUMs,
 
 #undef max // Visual Studio Overriding Function To Be Undefined.
 // #define Function-Like Declaration
+#define NDEBUG
 #define delay_time(x) std::this_thread::sleep_for(std::chrono::milliseconds(x))
 #define WinAPI_CMDCall(x) system(x);
 using namespace WinToastLib;
 
 // TERM_RET_ERROR - An ENUM that contains Termination Return Error. Useful for Deconstructor Error Display
-enum TERM_RET_ERROR
+enum TERM_RET_ERROR : signed int
 {
 	TERM_SUCCESS = 0,
 	TERM_FAILED = -1,
@@ -116,7 +117,7 @@ public:
 	{
 		std::cout << "[OBJECT] TTRM Core Function has been successfully initialized." << std::endl;
 	}
-	virtual signed short runSystemMenu(void) const = 0;
+	virtual void runSystemMenu(void) const = 0;
 	// runSystemMenu Sub Functions
 	virtual void MenuSel_ATask(void) const = 0;
 	virtual void MenuSel_DTask(void) const = 0;
@@ -168,9 +169,6 @@ public:
 	virtual bool SQLite_CreateTable() const = 0;
 	virtual bool SQLite_ManipulateValues(SQLite_ExecutionType Execution) const = 0;
 
-
-private:
-protected:
 };
 
 /*
@@ -185,7 +183,6 @@ public:
 		std::cout << "[OBJECT] TTRM Derived Main Class has been successfully initialized." << std::endl
 				  << std::endl;
 		delay_time(SLEEP_INIT_OBJECT);
-		system("CLS");
 	}
 	~TTRM(void)
 	{
@@ -193,14 +190,14 @@ public:
 				  << std::endl
 				  << "[OBJECT] Object Class is at the End of Scope. Goodbye!" << std::endl;
 		delay_time(SLEEP_INIT_OBJECT);
-		exit(TERM_SUCCESS);
+		exit(USER_OUTOFSCOPE_TERM_SUCCESS);
 	}
 
-	// TTRM's TechFunc and CoreFunc Functions
+	// TTRM's CoreFunc Functions
 	virtual void ParseGivenParam(unsigned short argcount, char *argcmd[]);
 	virtual bool ComponentCheck(bool isNeededToRun);
 
-	virtual signed short runSystemMenu(void) const;
+	virtual void runSystemMenu(void) const;
 	// runSystemMenu Sub Functions
 	virtual void MenuSel_ATask(void) const;
 	virtual void MenuSel_DTask(void) const;
@@ -210,15 +207,11 @@ public:
 	virtual void MenuSel_ReqTasks(void) const;
 	virtual void MenuSel_AutoStart(void) const;
 	virtual void MenuSel_WTI(void) const;
-
+	// TTRM's TechFunc Functions
 	virtual bool SQLite_Initialize() const;
 	virtual bool SQLite_CheckDatabase() const;
 	virtual bool SQLite_CreateTable() const;
 	virtual bool SQLite_ManipulateValues(SQLite_ExecutionType Execution) const;
-	//Database
-
-private:
-protected:
 };
 
 /*
@@ -230,43 +223,52 @@ protected:
 class TTRM_WinToast : public IWinToastHandler
 {
 public:
+	TTRM_WinToast(void) {}
+	~TTRM_WinToast(void)
+	{
+		WinToast::instance()->clear();
+	}
 	void toastActivated() const
 	{
-		std::wcout << L"The user clicked in this toast" << std::endl;
-		exit(0);
+		;
+	//	std::wcout << L"The user clicked in this toast" << std::endl;
+	//	exit(0);
 	}
 	void toastActivated(int actionIndex) const
 	{
-		std::wcout << L"The user clicked on action #" << actionIndex << std::endl;
-		exit(16 + actionIndex);
+		;
+	//	std::wcout << L"The user clicked on action #" << actionIndex << //std::endl;
+	//	exit(16 + actionIndex);
 	}
 	void toastDismissed(WinToastDismissalReason state) const
 	{
 		switch (state)
 		{
 		case UserCanceled:
-			std::wcout << L"The user dismissed this toast" << std::endl;
-			exit(1);
+	//		std::wcout << L"The user dismissed this toast" << std::endl;
+	//		exit(1);
 			break;
-		case TimedOut:
-			std::wcout << L"The toast has timed out" << std::endl;
-			exit(2);
-			break;
+	//	case TimedOut:
+	//		std::wcout << L"The toast has timed out" << std::endl;
+	//		exit(2);
+	//		break;
 		case ApplicationHidden:
-			std::wcout << L"The application hid the toast using ToastNotifier.hide()" << std::endl;
-			exit(3);
+	//		std::wcout << L"The application hid the toast using //ToastNotifier.hide()" << std::endl;
+	//		exit(3);
 			break;
 		default:
-			std::wcout << L"Toast not activated" << std::endl;
-			exit(4);
+	//		std::wcout << L"Toast not activated" << std::endl;
+	//		exit(4);
 			break;
 		}
 	}
 	void toastFailed() const
 	{
-		std::wcout << L"Error showing current toast" << std::endl;
-		exit(5);
+		;
+	//	std::wcout << L"Error showing current toast" << std::endl;
+	//	exit(5);
 	}
+
 };
 
 /*

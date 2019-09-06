@@ -16,9 +16,7 @@ int main(unsigned short argc, char *argv[])
     if (!CoreFunction.ComponentCheck(IGNORE_PROCESS))
 		return TERM_FAILED;
     
-
 	CoreFunction.runSystemMenu();
 
-	//std::cout << std::endl << MenuWindow_INT << std::endl;
-	exit(TERM_SUCCESS);
+	//End Scope. TTRM Should Call Destructors.
 }
