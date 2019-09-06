@@ -30,7 +30,7 @@ Things To Know #2 - ENUMs,
 #include <thread>
 #include <limits>
 
-#undef max
+#undef max // Visual Studio Overriding Function To Be Undefined.
 // #define Function-Like Declaration
 #define delay_time(x) std::this_thread::sleep_for(std::chrono::milliseconds(x))
 #define WinAPI_CMDCall(x) system(x);
@@ -39,20 +39,20 @@ using namespace WinToastLib;
 // TERM_RET_ERROR - An ENUM that contains Termination Return Error. Useful for Deconstructor Error Display
 enum TERM_RET_ERROR
 {
-    TERM_SUCCESS = 0,
-    TERM_FAILED = -1,
-    TERM_INVALID_PARAM = -2
+	TERM_SUCCESS = 0,
+	TERM_FAILED = -1,
+	TERM_INVALID_PARAM = -2
 };
 
 enum TERM_CONSOLE_LOG_PRESET
 {
-	
+
 };
 // CODE_CONSTRAINT_DEFAULT - An ENUM that contains Constraint to any function.
 enum CODE_CONSTRAINT_DEFAULT
 {
-    LIMIT_ARGC_COUNTER = 5,
-    MAX_TASK_EXISTING = 255 // Used for limiting possible task to enter.
+	LIMIT_ARGC_COUNTER = 5,
+	MAX_TASK_EXISTING = 255 // Used for limiting possible task to enter.
 };
 
 enum DISPLAY_OPTIONS
@@ -75,7 +75,9 @@ enum SLEEP_TIMERS
 	SLEEP_DISPLAY_WINDOW = 1500,
 	SLEEP_INIT_OBJECT = 2000,
 	SLEEP_TERM = 3000,
-	SLEEP_ERROR_PROMPT = 1700
+	SLEEP_ERROR_PROMPT = 1700,
+	SLEEP_SIGNIFICANT_ERR = 3000,
+	SLEEP_OPRT_FINISHED = 3500
 };
 /* CODE_RET_PROCESS
 	Contents: Function Returning Values for Processing Functions
@@ -103,8 +105,6 @@ enum SLEEP_TIMERS
 #define INIT_STR_NULL ""
 #define INIT_CHAR_NULL '0'
 #endif
-
-
 /*
 	TTRM_CoreFunc is a base class that contains only functions that is mainly focused on the system itself.
 	It doesn't include any external libraries function but only includes for display menus, etc.
@@ -112,11 +112,11 @@ enum SLEEP_TIMERS
 class TTRM_CoreFunc
 {
 public:
-    TTRM_CoreFunc(void) 
+	TTRM_CoreFunc(void)
 	{
 		std::cout << "[OBJECT] TTRM Core Function has been successfully initialized." << std::endl;
 	}
-    virtual signed short runSystemMenu(void) const = 0;
+	virtual signed short runSystemMenu(void) const = 0;
 	// runSystemMenu Sub Functions
 	virtual void MenuSel_ATask(void) const = 0;
 	virtual void MenuSel_DTask(void) const = 0;
@@ -137,19 +137,21 @@ protected:
 	of Console Window and more. This class contains Win32API User-Defined Functions, WinToast API for Windows 10
 	Notifications and lastly MySQL Library. Keep in mind that this is the place where external libraries added on this class.
 */
-class TTRM_TechFunc : public IWinToastHandler
+class TTRM_TechFunc
 {
 public:
-	TTRM_TechFunc(void) 
+	TTRM_TechFunc(void)
 	{
-		std::cout << "Task To Remind Me C++ in CLI version. BETA" << std::endl << std::endl 
-		<< "Created by Data Structure Group 5, Group Members {\n Header Core Developer: 'Janrey Licas',\n AppFlow Director: 'Rejay Mar'\n};" << std::endl << std::endl
-		<< "[OBJECT] TTRM Technical Function with WinToastHandler has been successfully initialized." << std::endl;
+		std::cout << "Task To Remind Me C++ in CLI version. BETA" << std::endl
+				  << std::endl
+				  << "Created by Data Structure Group 5, Group Members {\n Header Core Developer: 'Janrey Licas',\n AppFlow Director: 'Rejay Mar'\n};" << std::endl
+				  << std::endl
+				  << "[OBJECT] TTRM Technical Function with WinToastHandler has been successfully initialized." << std::endl;
 	}
 
 	// Literal Technical Functions Declaration
-    virtual void ParseGivenParam(unsigned short argcount, char *argcmd[]) = 0;
-    virtual bool ComponentCheck(bool isNeededToRun) = 0;
+	virtual void ParseGivenParam(unsigned short argcount, char *argcmd[]) = 0;
+	virtual bool ComponentCheck(bool isNeededToRun) = 0;
 
 	// Database SQLite3 Functions and Declarations
 
@@ -160,21 +162,16 @@ public:
 		DeleteData,
 		EditData,
 	};
-	
+
 	virtual bool SQLite_Initialize() const = 0;
 	virtual bool SQLite_CheckDatabase() const = 0;
 	virtual bool SQLite_CreateTable() const = 0;
 	virtual bool SQLite_ManipulateValues(SQLite_ExecutionType Execution) const = 0;
 
-    // Functions for WinToast Library
-    virtual void toastActivated(void) const = 0;
-    virtual void toastActivated(int actionIndex) const = 0;
-    virtual void toastDismissed(WinToastDismissalReason state) const = 0;
-    virtual void toastFailed(void) const = 0;
+
 private:
 protected:
 };
-
 
 /*
     TTRM is derived class that initializes multiple (two or more) (base / another derived) class
@@ -185,21 +182,23 @@ class TTRM : public TTRM_TechFunc, public TTRM_CoreFunc
 public:
 	TTRM(void)
 	{
-		std::cout << "[OBJECT] TTRM Derived Main Class has been successfully initialized." << std::endl << std::endl;
+		std::cout << "[OBJECT] TTRM Derived Main Class has been successfully initialized." << std::endl
+				  << std::endl;
 		delay_time(SLEEP_INIT_OBJECT);
 		system("CLS");
 	}
 	~TTRM(void)
 	{
 		std::cout << "[TERMINATION] Closing Objects and Database before closing the program. (~using Deconstructors)" << std::endl
-		<< std::endl << "[OBJECT] Object Class is at the End of Scope. Goodbye!" << std::endl;
+				  << std::endl
+				  << "[OBJECT] Object Class is at the End of Scope. Goodbye!" << std::endl;
 		delay_time(SLEEP_INIT_OBJECT);
 		exit(TERM_SUCCESS);
 	}
 
-    // TTRM's TechFunc and CoreFunc Functions
-    virtual void ParseGivenParam(unsigned short argcount, char *argcmd[]);
-    virtual bool ComponentCheck(bool isNeededToRun);
+	// TTRM's TechFunc and CoreFunc Functions
+	virtual void ParseGivenParam(unsigned short argcount, char *argcmd[]);
+	virtual bool ComponentCheck(bool isNeededToRun);
 
 	virtual signed short runSystemMenu(void) const;
 	// runSystemMenu Sub Functions
@@ -218,13 +217,56 @@ public:
 	virtual bool SQLite_ManipulateValues(SQLite_ExecutionType Execution) const;
 	//Database
 
-    // WinToast Library Functions
-    virtual void toastActivated(void) const;
-    virtual void toastActivated(int actionIndex) const;
-    virtual void toastDismissed(WinToastDismissalReason state) const;
-    virtual void toastFailed(void) const;
 private:
 protected:
+};
+
+/*
+	TTRM_WinToast is a base class specifically seperated to use WinToast Class 'IWinToastHandler'
+	We seperated this for a reason. The reason why is because according to the template or the 
+	same code, we have to call 'this' (TTRM_WinToast) class everytime we are gonna display some toast.
+	IF we didn't seperate this class from one another, we cannot initiate it.
+*/
+class TTRM_WinToast : public IWinToastHandler
+{
+public:
+	void toastActivated() const
+	{
+		std::wcout << L"The user clicked in this toast" << std::endl;
+		exit(0);
+	}
+	void toastActivated(int actionIndex) const
+	{
+		std::wcout << L"The user clicked on action #" << actionIndex << std::endl;
+		exit(16 + actionIndex);
+	}
+	void toastDismissed(WinToastDismissalReason state) const
+	{
+		switch (state)
+		{
+		case UserCanceled:
+			std::wcout << L"The user dismissed this toast" << std::endl;
+			exit(1);
+			break;
+		case TimedOut:
+			std::wcout << L"The toast has timed out" << std::endl;
+			exit(2);
+			break;
+		case ApplicationHidden:
+			std::wcout << L"The application hid the toast using ToastNotifier.hide()" << std::endl;
+			exit(3);
+			break;
+		default:
+			std::wcout << L"Toast not activated" << std::endl;
+			exit(4);
+			break;
+		}
+	}
+	void toastFailed() const
+	{
+		std::wcout << L"Error showing current toast" << std::endl;
+		exit(5);
+	}
 };
 
 /*
@@ -240,19 +282,19 @@ public:
 	}
 	~TTRM_ScheduleList(void)
 	{
-		
 	}
-    void Initialize_ScheduleList(void);
-    void Display_ScheduleList(void);
+	void Initialize_ScheduleList(void);
+	void Display_ScheduleList(void);
+
 private:
 protected:
-    const std::string DB_Path = ".db";       // Unconfirmed
+	const std::string DB_Path = ".db"; // Unconfirmed
 	std::string TaskName;
 	std::string DateCreated;
 	std::string DateStartTime;
 	std::string DateEndTime;
 	std::string NotifierInterval;
 	std::string Time;
-    //std::queue<> DB_DisplayList; // Used unsigned int just to reference a specific specific number id.
+	//std::queue<> DB_DisplayList; // Used unsigned int just to reference a specific specific number id.
 };
 #endif

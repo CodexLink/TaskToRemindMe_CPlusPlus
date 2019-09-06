@@ -6,53 +6,67 @@
 
 #include "TTRM_Core.h"
 
-
 void TTRM::ParseGivenParam(unsigned short argcount, char *argv[])
 {
 	unsigned int ParamIter = INIT_NULL;
-    std::cout << "Task To Remind Me C++ in CLI version. BETA" << std::endl << std::endl;
-	std::cout << "Created by Data Structure Group 5, Group Members {\n Header Core Developer: 'Janrey Licas',\n AppFlow Director: 'Rejay Mar'\n};" << std::endl << std::endl;
+	std::cout << "Task To Remind Me C++ in CLI version. BETA" << std::endl
+			  << std::endl;
+	std::cout << "Created by Data Structure Group 5, Group Members {\n Header Core Developer: 'Janrey Licas',\n AppFlow Director: 'Rejay Mar'\n};" << std::endl
+			  << std::endl;
 	std::cout << "[Perform Parameter Given] |> Counted Parameter: " << argcount << std::endl;
 	while (!strcmp(argv[ParamIter], "") && ParamIter != LIMIT_ARGC_COUNTER)
 	{
 		// Create more features here. Use switch for Selection of Data here.
-		std::cout << " Parameter Index "<< ParamIter << " |> Parameter Value -> "<< argv[ParamIter] << std::endl;
+		std::cout << " Parameter Index " << ParamIter << " |> Parameter Value -> " << argv[ParamIter] << std::endl;
 	}
 }
 
 bool TTRM::ComponentCheck(bool isNeededToRun)
 {
-	std::cout << std::endl << "Function Execution Done...";
-	WinToast::instance()->setAppName(L"CodexLink SmplTLKit Console Version");
-	std::cout << "Application Name Loaded." << std::endl;
-	WinToast::instance()->setAppUserModelId(WinToast::configureAUMI(L"Janrey", L"Licas",L"CodexLink's SmpleTLKit Beta Version", L"20180103"));
-	std::cout << "Application Profile Loaded." << std::endl;
-	if (!WinToast::instance()->initialize()) {
-		std::wcout << L"Critical Error! Could not initialize the library!" << std::endl;
-		Sleep(1000);
-	}
-	else {
-		std::cout << "" << std::endl;
-		std::wcout << L"WinToast Initialized. Header and Settings Handler Loaded." << std::endl;
-	}
-	WinToastTemplate StartupInitialization = WinToastTemplate(WinToastTemplate::Text02);
-	StartupInitialization.setTextField(L"CodexLink SmplTLKit User Authentication", WinToastTemplate::FirstLine);
-	StartupInitialization.setTextField(L"CodexLink has logged on. Welcome My Man!", WinToastTemplate::SecondLine);
+	std::cout << std::endl
+			  << "Component Checking Point | Before Program Initialization" << std::endl
+			  << "WinToast Library |> Checking Integration Compatibility...";
+	if (WinToast::isCompatible())
+	{
+		std::cout << std::endl
+				  << "WinToast Library |> Compatible. Setting Up Parameters..." << std::endl;
+		WinToast::instance()->setAppName(L"Task To Remind Me C++ CLI");
+		WinToast::instance()->setAppUserModelId(WinToast::configureAUMI(L"Data Struct Group 5", L"Task To Remind Me", L"TTRM C++", L"Early Beta Stage"));
+		std::cout << "WinToast Library |> Application Name Loaded." << std::endl;
+		WinToastTemplate WinToastInit_Welcome(WinToastTemplate::Text02);
+		WinToastInit_Welcome.setTextField(L"Task To Remind Me | C++", WinToastTemplate::FirstLine);
+		WinToastInit_Welcome.setTextField(L"Welcome User! Please Create A Task!", WinToastTemplate::SecondLine);
+		std::cout << "WinToast Library |> Application Profile, Header and App Name Loaded." << std::endl;
 
-	if (!WinToast::instance()->showToast(StartupInitialization, new TTRM_TechFunc)) {
-		std::wcout << L"Error: Could not launch your toast notification!" << std::endl;
-		Sleep(5000);
+		if (WinToast::instance()->initialize())
+		{
+			std::cout << "WinToast Library |> Initialized." << std::endl;
+			if (!WinToast::instance()->showToast(WinToastInit_Welcome, new TTRM_WinToast))
+			{
+				std::cerr << "WinToast Library |> Error. Could Not Launch Toast Notification!" << std::endl;
+				Sleep(SLEEP_SIGNIFICANT_ERR);
+			}
+			else
+			{
+				delay_time(SLEEP_OPRT_FINISHED);
+			}
+		}
+		else
+		{
+			std::cerr << "WinToast Library |> Error. Cannot Initialize WinToast, Notification Disabled." << std::endl;
+			delay_time(SLEEP_ERROR_PROMPT);
+		}
+
+		if (isNeededToRun)
+		{
+			return TERM_SUCCESS;
+		}
+		else
+		{
+			return TERM_FAILED;
+		}
 	}
-	std::cout << "Demo WinToast Finished." << std::endl;
-	while(1);
-	if (isNeededToRun)
-	{
-		return TERM_SUCCESS;
-	}
-	else
-	{
-		return TERM_FAILED;
-	}
+	WinAPI_CMDCall("pause");
 }
 
 signed short TTRM::runSystemMenu(void) const
@@ -61,32 +75,51 @@ signed short TTRM::runSystemMenu(void) const
 	while (NOT_REQ_TERM)
 	{
 		WinAPI_CMDCall("CLS");
-		std::cout << std::endl << "Task To Remind Me C++ in CLI version. BETA" << std::endl << std::endl;
+		std::cout << std::endl
+				  << "Task To Remind Me C++ in CLI version. BETA" << std::endl
+				  << std::endl;
 		std::cout << "Time From Your Local System [Last Updated] |> " << std::endl;
 
-		std::cout << std::endl << "=== Incoming Task for Today ====================" << std::endl << std::endl;
+		std::cout << std::endl
+				  << "=== Incoming Task for Today ====================" << std::endl
+				  << std::endl;
 		std::cout << "=== Task Function Menu ====================" << std::endl
-			<< std::endl << "1 |> Add a Task"
-			<< std::endl << "2 |> Delete a Task"
-			<< std::endl << "3 |> Edit a Task"
-			<< std::endl << "4 |> View All Tasks"
-			<< std::endl << "5 |> Sort All Tasks"
-			<< std::endl << std::endl << "=== Technical Function Menu ====================" << std::endl
-			<< std::endl << "6 |> Manually Refresh All Tasks from Database (Hard Reset)"
-			<< std::endl << "7 |> Requeue All Tasks from Database (Soft Reset)"
-			<< std::endl << "8 |> Auto-Start Application : Current Status > [" << "Unknown Yet]"
-			<< std::endl << "9 |> WinToast Remind Integration: Current Status > [" << "Unknown Yet]"
-			<< std::endl << "0 |> Terminate Program"
-			<< std::endl << std::endl;
+				  << std::endl
+				  << "1 |> Add a Task"
+				  << std::endl
+				  << "2 |> Delete a Task"
+				  << std::endl
+				  << "3 |> Edit a Task"
+				  << std::endl
+				  << "4 |> View All Tasks"
+				  << std::endl
+				  << "5 |> Sort All Tasks"
+				  << std::endl
+				  << std::endl
+				  << "=== Technical Function Menu ====================" << std::endl
+				  << std::endl
+				  << "6 |> Manually Refresh All Tasks from Database (Hard Reset)"
+				  << std::endl
+				  << "7 |> Requeue All Tasks from Database (Soft Reset)"
+				  << std::endl
+				  << "8 |> Auto-Start Application : Current Status > ["
+				  << "Unknown Yet]"
+				  << std::endl
+				  << "9 |> WinToast Remind Integration: Current Status > ["
+				  << "Unknown Yet]"
+				  << std::endl
+				  << "0 |> Terminate Program"
+				  << std::endl
+				  << std::endl;
 
 		std::cout << "[Input] Your Choice then PRESS ENTER |> ";
 		std::cin >> DisplayMenu_Input;
 		if (std::cin.fail())
 			std::cin.clear();
-			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-			std::cout << "[ERROR] CIN FAILED." << std::endl;
-			delay_time(SLEEP_ERROR_PROMPT);
-			continue;
+		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+		std::cout << "[ERROR] CIN FAILED." << std::endl;
+		delay_time(SLEEP_ERROR_PROMPT);
+		continue;
 		// Stack the function.
 		// Return to 'this' function so that we can go back to this function easily.
 		switch (DisplayMenu_Input)
@@ -118,11 +151,13 @@ signed short TTRM::runSystemMenu(void) const
 		case Termination:
 			break;
 		default:
-			std::cout << std::endl << "[ERROR] User Inputted Not Included in the List!" << std::endl;
+			std::cout << std::endl
+					  << "[ERROR] User Inputted Not Included in the List!" << std::endl;
 			delay_time(SLEEP_ERROR_PROMPT);
 			break;
 		}
-		if (!DisplayMenu_Input)	break;
+		if (!DisplayMenu_Input)
+			break;
 	}
 	return USER_OUTOFSCOPE_TERM_SUCCESS;
 }
