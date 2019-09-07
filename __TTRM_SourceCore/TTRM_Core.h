@@ -180,15 +180,13 @@ class TTRM : public TTRM_TechFunc, public TTRM_CoreFunc
 public:
 	TTRM(void)
 	{
-		std::cout << "[OBJECT] TTRM Derived Main Class has been successfully initialized." << std::endl
-				  << std::endl;
+		std::cout << "[OBJECT] TTRM Derived Main Class has been successfully initialized." << std::endl;
 		delay_time(SLEEP_INIT_OBJECT);
 	}
 	~TTRM(void)
 	{
-		std::cout << "[TERMINATION] Closing Objects and Database before closing the program. (~using Deconstructors)" << std::endl
-				  << std::endl
-				  << "[OBJECT] Object Class is at the End of Scope. Goodbye!" << std::endl;
+		std::cout << "Termination |> Closing Objects and Database before closing the program." << std::endl;
+		std::cout << "Termination |> All Modules Is Closed. Program Terminates!" << std::endl;
 		delay_time(SLEEP_INIT_OBJECT);
 		exit(USER_OUTOFSCOPE_TERM_SUCCESS);
 	}
