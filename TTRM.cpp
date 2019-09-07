@@ -8,6 +8,11 @@
 
 TTRM CoreFunction;
 
+// We insist to use std::vector. But for the sake of accomplishing only said goals. We'll be go to std::queue;
+	
+
+std::queue<TTRM_TaskData> TaskList;
+
 int main(unsigned short argc, char *argv[])
 {
     if (argc > POS_OFFSET_BY_ONE)

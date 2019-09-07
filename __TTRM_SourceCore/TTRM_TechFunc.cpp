@@ -4,29 +4,24 @@
     File Category Type: Core Function Body Definition, "CoreFunc".
 	Note that this CPP file will only contain external library functions.
 */
-
 /*
-	WinToast Library Function Declaration - END
+    SQLite Library Function Declaration - START
 */
-// Unknown Yet
-/*
-	SQLite Library Function Declaration - START
-*/
-bool TTRM::SQLite_Initialize() const
+void TTRM::SQLite_Initialize() const noexcept(false)
 {
-    return RETURN_BACK_NOTHING;
+    return;
 }
-bool TTRM::SQLite_CheckDatabase() const
+void TTRM::SQLite_CheckDatabase() const noexcept(false)
 {
-    return RETURN_BACK_NOTHING;
+    return;
 }
-bool TTRM::SQLite_CreateTable() const
+void TTRM::SQLite_ReloadQueue() const noexcept(false)
 {
-    return RETURN_BACK_NOTHING;
+    return;
 }
-bool TTRM::SQLite_ManipulateValues(SQLite_ExecutionType Execution) const
+void TTRM::SQLite_CRUD_Data(SQLite_QueryType ExecutionQueryType) const noexcept(false)
 {
-	return RETURN_BACK_NOTHING;
+	return;
 }
 /*
 	SQLite Library Function Declaration - END

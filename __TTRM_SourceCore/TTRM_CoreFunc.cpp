@@ -21,23 +21,22 @@ void TTRM::ParseGivenParam(unsigned short argcount, char *argv[])
 	}
 }
 
-bool TTRM::ComponentCheck(bool isNeededToRun)
+bool TTRM::ComponentCheck(bool isNeededToRun) const
 {
-	int posx, posy;
+	long posx = INIT_NULL, posy = INIT_NULL;
 	try
 	{
-		HWND console =  GetConsoleWindow();//, hwnd = GetConsoleWindow();
+		HWND console = GetConsoleWindow(); //, hwnd = GetConsoleWindow();
 		RECT ConsoleWindow, ClietnScrWindow;
 		HMENU hmenu = GetSystemMenu(console, FALSE);
 		GetClientRect(console, &ConsoleWindow);
 		GetWindowRect(console, &ClietnScrWindow);
 		posx = GetSystemMetrics(SM_CXSCREEN) / 2 - (ClietnScrWindow.right - ClietnScrWindow.left) / 2,
 		posy = GetSystemMetrics(SM_CYSCREEN) / 2 - (ClietnScrWindow.bottom - ClietnScrWindow.top) / 2,
-	    MoveWindow(console, posx, posy, ClietnScrWindow.right - ClietnScrWindow.left, ClietnScrWindow.bottom - ClietnScrWindow.top, TRUE);
+		MoveWindow(console, posx, posy, ClietnScrWindow.right - ClietnScrWindow.left, ClietnScrWindow.bottom - ClietnScrWindow.top, TRUE);
 		//MoveWindow(console, ConsoleMainApp.left, ConsoleMainApp.top, 1000, 500, TRUE);
 
-
-		EnableMenuItem(hmenu, SC_CLOSE, MF_GRAYED);	
+		EnableMenuItem(hmenu, SC_CLOSE, MF_GRAYED);
 		std::cout << "Component Checking Point | Before Program Initialization" << std::endl
 				  << "WinToast Library |> Checking Compatibility...";
 		if (WinToast::isCompatible())
@@ -47,6 +46,7 @@ bool TTRM::ComponentCheck(bool isNeededToRun)
 			WinToast::instance()->setAppName(L"Task To Remind Me C++ CLI");
 			WinToast::instance()->setAppUserModelId(WinToast::configureAUMI(L"Data Struct Group 5", L"Task To Remind Me", L"TTRM C++", L"Early Beta Stage"));
 			std::cout << "WinToast Library |> Application Name Loaded." << std::endl;
+
 			WinToastTemplate WinToastInit_Welcome(WinToastTemplate::Text02);
 			WinToastInit_Welcome.setTextField(L"Task To Remind Me | C++", WinToastTemplate::FirstLine);
 			WinToastInit_Welcome.setTextField(L"Welcome User! Please Create A Task!", WinToastTemplate::SecondLine);
@@ -85,9 +85,13 @@ bool TTRM::ComponentCheck(bool isNeededToRun)
 	{
 		std::cerr << "Runtime Error |> " << ErrMsg.what() << std::endl;
 	}
+	catch (const std::exception &ErrMsg)
+	{
+		std::cerr << "Exception |> " << ErrMsg.what() << std::endl;
+	}
 }
 
-void TTRM::runSystemMenu(void) const
+void TTRM::runSystemMenu(void) const noexcept
 {
 	signed int DisplayMenu_Input = INIT_NULL;
 	while (NOT_REQ_TERM)
@@ -182,44 +186,79 @@ void TTRM::runSystemMenu(void) const
 	return;
 }
 
-void TTRM::MenuSel_ATask(void) const
+void TTRM::MenuSel_ATask(void) const noexcept(false)
 {
-	WinAPI_CMDCall("CLS");
-	// Add Design here
-	std::cout << "Task Name |> ";
-	std::cout << "1" << std::endl;
+	TTRM_TaskData *NewTask = new TTRM_TaskData;
+	while (PROCESS_AWAIT_CMPLT)
+	{
+
+		WinAPI_CMDCall("CLS");
+		// Add Design here
+
+		std::cout << "[Required] Task Name |> ", std::cin >> NewTask->TaskName;
+		std::cout << NewTask->TaskName << std::endl;
+		std::cout << "[Required, Format | YYYY-MM-DD] Date Starting Point |> ", std::cin >> NewTask->DateStartTime;
+		std::cout << NewTask->DateStartTime << std::endl;
+		std::cout << "[Required, Date Ending Point] Format > YYYY-MM-DD |> ", std::cin >> NewTask->DateEndTime;
+		std::cout << NewTask->DateEndTime << std::endl;
+		std::cout << "[Optional] NotifierInterval, By Minutes |> ", std::cin >> NewTask->NotifierInterval;
+		std::cout << NewTask->NotifierInterval << std::endl;
+		WinAPI_CMDCall("PAUSE");
+
+		if (std::cin.fail())
+		{
+			std::cin.clear();
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+			std::cerr << "[Input Error] -> One of parameters has its input invalid. Please try again." << std::endl;
+			delay_time(SLEEP_ERROR_PROMPT);
+			continue;
+		}
+		//Pushing Area
+		try
+		{
+			break;
+		}
+		catch (std::exception &ErrMessage)
+		{
+			std::cerr << ErrMessage.what() << std::endl;
+			delay_time(SLEEP_SIGNIFICANT_ERR);
+			break;
+		}
+	}
+	delete NewTask;
+	return;
 }
-void TTRM::MenuSel_DTask(void) const
+void TTRM::MenuSel_DTask(void) const noexcept(false)
 {
 	WinAPI_CMDCall("CLS");
 	std::cout << "2" << std::endl;
 }
-void TTRM::MenuSel_ETask(void) const
+void TTRM::MenuSel_ETask(void) const noexcept(false)
 {
 	WinAPI_CMDCall("CLS");
 	std::cout << "3" << std::endl;
 }
-void TTRM::MenuSel_VTask(void) const
+void TTRM::MenuSel_VTask(void) const noexcept(false)
 {
 	WinAPI_CMDCall("CLS");
 	std::cout << "4" << std::endl;
 }
-void TTRM::MenuSel_DBRefresh(void) const
+void TTRM::MenuSel_DBRefresh(void) const noexcept
 {
 	WinAPI_CMDCall("CLS");
 	std::cout << "5" << std::endl;
 }
-void TTRM::MenuSel_ReqTasks(void) const
+void TTRM::MenuSel_ReqTasks(void) const noexcept
 {
 	WinAPI_CMDCall("CLS");
 	std::cout << "6" << std::endl;
 }
-void TTRM::MenuSel_AutoStart(void) const
+void TTRM::MenuSel_AutoStart(void) const noexcept
 {
 	WinAPI_CMDCall("CLS");
 	std::cout << "7" << std::endl;
 }
-void TTRM::MenuSel_WTI(void) const
+void TTRM::MenuSel_WTI(void) const noexcept
 {
 	WinAPI_CMDCall("CLS");
 	std::cout << "8" << std::endl;

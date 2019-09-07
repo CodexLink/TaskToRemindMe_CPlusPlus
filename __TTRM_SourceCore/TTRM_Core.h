@@ -38,7 +38,7 @@ Things To Know #2 - ENUMs,
 using namespace WinToastLib;
 
 // TERM_RET_ERROR - An ENUM that contains Termination Return Error. Useful for Deconstructor Error Display
-enum TERM_RET_ERROR : signed int
+enum TERM_RET_ERROR : signed short
 {
 	TERM_SUCCESS = 0,
 	TERM_FAILED = -1,
@@ -76,7 +76,7 @@ enum SLEEP_TIMERS
 	SLEEP_DISPLAY_WINDOW = 1500,
 	SLEEP_INIT_OBJECT = 2000,
 	SLEEP_TERM = 3000,
-	SLEEP_ERROR_PROMPT = 1700,
+	SLEEP_ERROR_PROMPT = 1850,
 	SLEEP_SIGNIFICANT_ERR = 3000,
 	SLEEP_OPRT_FINISHED = 3500
 };
@@ -87,7 +87,6 @@ enum SLEEP_TIMERS
 #ifndef CODE_RET_PROCESS
 #define CODE_RET_PROCESS
 #define RETURN_NULL 0
-#define RETURN_BACK_NOTHING 0
 #define USER_OUTOFSCOPE_TERM_SUCCESS 0
 #endif
 
@@ -103,6 +102,7 @@ enum SLEEP_TIMERS
 #define IGNORE_PROCESS 0
 #define RUN_PROCESS 1
 #define NOT_REQ_TERM 1
+#define PROCESS_AWAIT_CMPLT 1 // Awaiting Completion
 #define INIT_STR_NULL ""
 #define INIT_CHAR_NULL '0'
 #endif
@@ -115,21 +115,18 @@ class TTRM_CoreFunc
 public:
 	TTRM_CoreFunc(void)
 	{
-		std::cout << "[OBJECT] TTRM Core Function has been successfully initialized." << std::endl;
+		std::cout << "[OBJECT] TTRM Core Function Initialized." << std::endl;
 	}
-	virtual void runSystemMenu(void) const = 0;
+	virtual void runSystemMenu(void) const noexcept = 0;
 	// runSystemMenu Sub Functions
-	virtual void MenuSel_ATask(void) const = 0;
-	virtual void MenuSel_DTask(void) const = 0;
-	virtual void MenuSel_ETask(void) const = 0;
-	virtual void MenuSel_VTask(void) const = 0;
-	virtual void MenuSel_DBRefresh(void) const = 0;
-	virtual void MenuSel_ReqTasks(void) const = 0;
-	virtual void MenuSel_AutoStart(void) const = 0;
-	virtual void MenuSel_WTI(void) const = 0;
-
-private:
-protected:
+	virtual void MenuSel_ATask(void) const noexcept(false) = 0;
+	virtual void MenuSel_DTask(void) const noexcept(false) = 0;
+	virtual void MenuSel_ETask(void) const noexcept(false) = 0;
+	virtual void MenuSel_VTask(void) const noexcept(false) = 0;
+	virtual void MenuSel_DBRefresh(void) const noexcept = 0;
+	virtual void MenuSel_ReqTasks(void) const noexcept = 0;
+	virtual void MenuSel_AutoStart(void) const noexcept = 0;
+	virtual void MenuSel_WTI(void) const noexcept = 0;
 };
 
 /*
@@ -141,33 +138,32 @@ protected:
 class TTRM_TechFunc
 {
 public:
-	TTRM_TechFunc(void)
+
+	enum SQLite_QueryType
 	{
-		std::cout << "Task To Remind Me C++ in CLI version. BETA" << std::endl
-				  << std::endl
-				  << "Created by Data Structure Group 5, Group Members {\n Header Core Developer: 'Janrey Licas',\n AppFlow Director: 'Rejay Mar'\n};" << std::endl
-				  << std::endl
-				  << "[OBJECT] TTRM Technical Function with WinToastHandler has been successfully initialized." << std::endl;
-	}
-
-	// Literal Technical Functions Declaration
-	virtual void ParseGivenParam(unsigned short argcount, char *argcmd[]) = 0;
-	virtual bool ComponentCheck(bool isNeededToRun) = 0;
-
-	// Database SQLite3 Functions and Declarations
-
-	enum SQLite_ExecutionType
-	{
-		SelectData,
 		AddData,
-		DeleteData,
-		EditData,
+		EditData, // Equivalent to Update
+		DeleteData
 	};
 
-	virtual bool SQLite_Initialize() const = 0;
-	virtual bool SQLite_CheckDatabase() const = 0;
-	virtual bool SQLite_CreateTable() const = 0;
-	virtual bool SQLite_ManipulateValues(SQLite_ExecutionType Execution) const = 0;
+	TTRM_TechFunc(void)
+	{
+				std::cout << "Task To Remind Me C++ in CLI version. BETA" << std::endl
+						  << std::endl
+						  << "Created by Data Structure Group 5, Group Members {Header Core Developer: 'Janrey Licas',\n AppFlow Director: 'Rejay Mar'};" << std::endl
+						  << std::endl;
+	}
+	// Literal Technical Functions Declaration
+	virtual void ParseGivenParam(unsigned short argcount, char *argcmd[]) = 0;
+	virtual bool ComponentCheck(bool isNeededToRun) const = 0;
+
+	// Database SQLite3 Functions and Declarations
+	virtual void SQLite_Initialize() const noexcept(false) = 0; // CreateTable Must Be Here
+	virtual void SQLite_CheckDatabase() const noexcept(false) = 0;
+	virtual void SQLite_ReloadQueue() const noexcept(false) = 0;
+	virtual void SQLite_CRUD_Data(SQLite_QueryType ExecutionQueryType) const noexcept(false) = 0;
+protected:
+	const std::string DB_Path = "SQL_DataTest.db"; // Unconfirmed
 
 };
 
@@ -190,26 +186,25 @@ public:
 		delay_time(SLEEP_INIT_OBJECT);
 		exit(USER_OUTOFSCOPE_TERM_SUCCESS);
 	}
-
-	// TTRM's CoreFunc Functions
+		// TTRM's CoreFunc Functions
 	virtual void ParseGivenParam(unsigned short argcount, char *argcmd[]);
-	virtual bool ComponentCheck(bool isNeededToRun);
+	virtual bool ComponentCheck(bool isNeededToRun) const;
 
-	virtual void runSystemMenu(void) const;
+	virtual void runSystemMenu(void) const noexcept;
 	// runSystemMenu Sub Functions
-	virtual void MenuSel_ATask(void) const;
-	virtual void MenuSel_DTask(void) const;
-	virtual void MenuSel_ETask(void) const;
-	virtual void MenuSel_VTask(void) const;
-	virtual void MenuSel_DBRefresh(void) const;
-	virtual void MenuSel_ReqTasks(void) const;
-	virtual void MenuSel_AutoStart(void) const;
-	virtual void MenuSel_WTI(void) const;
+	virtual void MenuSel_ATask(void) const noexcept(false);
+	virtual void MenuSel_DTask(void) const noexcept(false);
+	virtual void MenuSel_ETask(void) const noexcept(false);
+	virtual void MenuSel_VTask(void) const noexcept(false);
+	virtual void MenuSel_DBRefresh(void) const noexcept;
+	virtual void MenuSel_ReqTasks(void) const noexcept;
+	virtual void MenuSel_AutoStart(void) const noexcept;
+	virtual void MenuSel_WTI(void) const noexcept;
 	// TTRM's TechFunc Functions
-	virtual bool SQLite_Initialize() const;
-	virtual bool SQLite_CheckDatabase() const;
-	virtual bool SQLite_CreateTable() const;
-	virtual bool SQLite_ManipulateValues(SQLite_ExecutionType Execution) const;
+	virtual void SQLite_Initialize() const noexcept(false); // CreateTable Must Be Here
+	virtual void SQLite_CheckDatabase() const noexcept(false);
+	virtual void SQLite_ReloadQueue() const noexcept(false);
+	virtual void SQLite_CRUD_Data(SQLite_QueryType ExecutionQueryType) const noexcept(false);
 };
 
 /*
@@ -229,72 +224,60 @@ public:
 	void toastActivated() const
 	{
 		;
-	//	std::wcout << L"The user clicked in this toast" << std::endl;
-	//	exit(0);
+		//	std::wcout << L"The user clicked in this toast" << std::endl;
+		//	exit(0);
 	}
 	void toastActivated(int actionIndex) const
 	{
 		;
-	//	std::wcout << L"The user clicked on action #" << actionIndex << //std::endl;
-	//	exit(16 + actionIndex);
+		//	std::wcout << L"The user clicked on action #" << actionIndex << //std::endl;
+		//	exit(16 + actionIndex);
 	}
 	void toastDismissed(WinToastDismissalReason state) const
 	{
 		switch (state)
 		{
 		case UserCanceled:
-	//		std::wcout << L"The user dismissed this toast" << std::endl;
-	//		exit(1);
+			//		std::wcout << L"The user dismissed this toast" << std::endl;
+			//		exit(1);
 			break;
-	//	case TimedOut:
-	//		std::wcout << L"The toast has timed out" << std::endl;
-	//		exit(2);
-	//		break;
+			//	case TimedOut:
+			//		std::wcout << L"The toast has timed out" << std::endl;
+			//		exit(2);
+			//		break;
 		case ApplicationHidden:
-	//		std::wcout << L"The application hid the toast using //ToastNotifier.hide()" << std::endl;
-	//		exit(3);
+			//		std::wcout << L"The application hid the toast using //ToastNotifier.hide()" << std::endl;
+			//		exit(3);
 			break;
 		default:
-	//		std::wcout << L"Toast not activated" << std::endl;
-	//		exit(4);
+			//		std::wcout << L"Toast not activated" << std::endl;
+			//		exit(4);
 			break;
 		}
 	}
 	void toastFailed() const
 	{
 		;
-	//	std::wcout << L"Error showing current toast" << std::endl;
-	//	exit(5);
+		//	std::wcout << L"Error showing current toast" << std::endl;
+		//	exit(5);
 	}
-
 };
 
 /*
  TTRM_ScheduleList is an important base class that utilizes System-Proposed Functions specificially used for scheduler. This means that all functions residing
  in this class is basically related to the Proposed System that we wanted to make. This base class was not on a confirmed status. Please be advised.
 */
-class TTRM_ScheduleList
+class TTRM_TaskData
 {
-public:
-	TTRM_ScheduleList(void)
-	{
-		std::cout << "[OBJECT] TTRM_Scheduler has been successfully initialized." << std::endl;
-	}
-	~TTRM_ScheduleList(void)
-	{
-	}
-	void Initialize_ScheduleList(void);
-	void Display_ScheduleList(void);
 
-private:
-protected:
-	const std::string DB_Path = ".db"; // Unconfirmed
-	std::string TaskName;
-	std::string DateCreated;
-	std::string DateStartTime;
-	std::string DateEndTime;
-	std::string NotifierInterval;
-	std::string Time;
+public:
+	unsigned short TaskID = INIT_NULL;
+	std::string TaskName = "";
+	std::string DateCreated = ""; // Reserved
+	std::string DateStartTime = ""; // Use YYYY-MM-DD
+	std::string DateEndTime = ""; // Use YYYY-MM-DD
+	unsigned short NotifierInterval = INIT_NULL;
+	std::string Time = "";
 	//std::queue<> DB_DisplayList; // Used unsigned int just to reference a specific specific number id.
 };
 #endif
