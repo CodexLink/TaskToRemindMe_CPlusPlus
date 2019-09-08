@@ -18,28 +18,33 @@
     <ClInclude Include="..\__TTRM_SourceCore\SQLite3\sqlite3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\__TTRM_SourceCore\TTRM_Core.h">
+    <ClInclude Include="..\__TTRM_SourceCore\WinToastLib\wintoastlib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\__TTRM_SourceCore\WinToastLib\wintoastlib.h">
+    <ClInclude Include="..\__TTRM_SourceCore\TTRM_CoreDeclares.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\__TTRM_SourceCore\TTRM_CoreFunc.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\__TTRM_SourceCore\TTRM_TechFunc.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\__TTRM_SourceCore\WinToastLib\wintoastlib.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\__TTRM_SourceCore\SQLite3\sqlite3.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\TTRM.cpp">
+    <ClCompile Include="..\__TTRM_SourceCore\TTRM_CoreContents.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\TTRM_CoreStarter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>
