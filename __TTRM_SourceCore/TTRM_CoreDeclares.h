@@ -130,13 +130,6 @@ public:
 		SQLiteID = 12
 	} ComponentID; // This enum is only used for identifying Components To Check.
 
-	typedef struct ComponentStatsIndicates
-	{
-		bool WinToast_Stats;
-		bool AutoStart_Stats;
-		bool SQLite_Stats;
-	} ComponentStatsIndicates; // This Struct stores Component Status According to ComponentID.
-
 	virtual void runSystemMenu() noexcept = 0;
 	virtual void runDisplayTasks_AtHome() noexcept = 0;
 	// TTRM_WinToast Relative Functions. Not Decalred to TTRM_WinToast due to Function Structure of the whole class.

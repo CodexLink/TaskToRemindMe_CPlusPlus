@@ -217,6 +217,7 @@ void TTRM::WinToast_RemindTask() noexcept
 	TaskListSize << TaskList.size();
 	//std::wcout << TaskListSize.str();
 }
+
 void TTRM::WinToast_ShowTaskCForToday() noexcept
 {
 	WinToast::instance()->clear(); // Clears First Toast. Overwritten by 'this' template.
@@ -250,9 +251,9 @@ std::string TTRM::ComponentStats_Indicator(ComponentID CompToCheck) noexcept
 			return "Not Working At This Point.";
 		}
 	case AutoStartID:
-		return "Currently Unknown";
+		return "Currently !Implemented";
 	case SQLiteID:
-		return "Currently Unknown";
+		return "Currently !Implemented";
 	default:
 		return "Unknown";
 	}
