@@ -2,46 +2,30 @@
 <h5 align="center">Task To Remind Me in C++ CLI with WinToast and SQLite Integration, Specialized in C++ OOP</h5>
 
 <div align="center" markdown="10">
-  <a href="https://travis-ci.com/CodexLink/TaskToRemindMe_CPlusPlus
-">
-    <img src="https://badgen.net/travis/CodexLink/TaskToRemindMe_CPlusPlus
-" alt="Build Status">
+  <a href="https://travis-ci.com/CodexLink/TaskToRemindMe_CPlusPlus">
+    <img src="https://badgen.net/travis/CodexLink/TaskToRemindMe_CPlusPlus" alt="Build Status">
   </a>
 <a href="https://www.codefactor.io/repository/github/codexlink/TaskToRemindMe_CPlusPlus">
     <img src="https://www.codefactor.io/repository/github/codexlink/TaskToRemindMe_CPlusPlus/badge" alt="CodeFactor" />
 </a>
-<a href="https://www.codacy.com/app/CodexLink/TaskToRemindMe_CPlusPlus
-?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=CodexLink/TaskToRemindMe_CPlusPlus
-&amp;utm_campaign=Badge_Grade"><img src="https://api.codacy.com/project/badge/Grade/78fb2db215e1473e9bc4f4c0dfaa896f"/></a>
-  <a href="https://github.com/CodexLink/TaskToRemindMe_CPlusPlus
-">
-    <img src="https://badgen.net/github/status/CodexLink/TaskToRemindMe_CPlusPlus
-" alt="Repository Status">
+<a href="https://www.codacy.com/app/CodexLink/TaskToRemindMe_CPlusPlus?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=CodexLink/TaskToRemindMe_CPlusPlus&amp;utm_campaign=Badge_Grade"><img src="https://api.codacy.com/project/badge/Grade/78fb2db215e1473e9bc4f4c0dfaa896f"/></a>
+  <a href="https://github.com/CodexLink/TaskToRemindMe_CPlusPlus">
+    <img src="https://badgen.net/github/status/CodexLink/TaskToRemindMe_CPlusPlus" alt="Repository Status">
   </a>
-  <a href="https://github.com/CodexLink/TaskToRemindMe_CPlusPlus
-">
-    <img src="https://badgen.net/github/open-issues/CodexLink/TaskToRemindMe_CPlusPlus
-" alt="Current Opened Issues">
+  <a href="https://github.com/CodexLink/TaskToRemindMe_CPlusPlus">
+    <img src="https://badgen.net/github/open-issues/CodexLink/TaskToRemindMe_CPlusPlus" alt="Current Opened Issues">
   </a>
-  <a href="https://github.com/CodexLink/TaskToRemindMe_CPlusPlus
-">
-    <img src="https://badgen.net/github/closed-issues/CodexLink/TaskToRemindMe_CPlusPlus
-" alt="Closed Issues">
+  <a href="https://github.com/CodexLink/TaskToRemindMe_CPlusPlus">
+    <img src="https://badgen.net/github/closed-issues/CodexLink/TaskToRemindMe_CPlusPlus" alt="Closed Issues">
   </a>
-  <a href="https://github.com/CodexLink/TaskToRemindMe_CPlusPlus
-">
-    <img src="https://badgen.net/github/last-commit/CodexLink/TaskToRemindMe_CPlusPlus
-" alt="Repository Last Commit">
+  <a href="https://github.com/CodexLink/TaskToRemindMe_CPlusPlus">
+    <img src="https://badgen.net/github/last-commit/CodexLink/TaskToRemindMe_CPlusPlus" alt="Repository Last Commit">
   </a>
-  <a href="https://github.com/CodexLink/TaskToRemindMe_CPlusPlus
-">
-    <img src="https://badgen.net/github/assets-dl/CodexLink/TaskToRemindMe_CPlusPlus
-" alt="Repository Downloads">
+  <a href="https://github.com/CodexLink/TaskToRemindMe_CPlusPlus">
+    <img src="https://badgen.net/github/assets-dl/CodexLink/TaskToRemindMe_CPlusPlus" alt="Repository Downloads">
   </a>
-  <a href="https://github.com/CodexLink/TaskToRemindMe_CPlusPlus
-">
-    <img src="https://badgen.net/github/license/CodexLink/TaskToRemindMe_CPlusPlus
-" alt="Repository License">
+  <a href="https://github.com/CodexLink/TaskToRemindMe_CPlusPlus">
+    <img src="https://badgen.net/github/license/CodexLink/TaskToRemindMe_CPlusPlus" alt="Repository License">
   </a>
 </div>
 
