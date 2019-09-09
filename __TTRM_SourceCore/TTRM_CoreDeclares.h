@@ -70,7 +70,8 @@ enum DISPLAY_OPTIONS
 	ManualDatabaseRefresh,
 	AutoStartup,
 	WinToastIntegration,
-	SQLDb_CheckState
+	SQLDb_CheckState,
+	AtHome
 };
 
 enum SLEEP_TIMERS
@@ -81,7 +82,7 @@ enum SLEEP_TIMERS
 	SLEEP_TERM = 3000,
 	SLEEP_ERROR_PROMPT = 1850,
 	SLEEP_SIGNIFICANT_ERR = 3000,
-	SLEEP_OPRT_FINISHED = 3500
+	SLEEP_OPRT_FINISHED = 2000
 };
 /* CODE_RET_PROCESS
 	Contents: Function Returning Values for Processing Functions
@@ -130,8 +131,8 @@ public:
 		SQLiteID = 12
 	} ComponentID; // This enum is only used for identifying Components To Check.
 
-	virtual void runSystemMenu() noexcept = 0;
-	virtual void runDisplayTasks_AtHome() noexcept = 0;
+	virtual void runSystemMenu() noexcept(false) = 0;
+	virtual void DisplayTasks_AtWindow(DISPLAY_OPTIONS WindowID_INT) noexcept = 0;
 	// TTRM_WinToast Relative Functions. Not Decalred to TTRM_WinToast due to Function Structure of the whole class.
 	virtual void WinToast_RemindTask() noexcept = 0;
 	virtual void WinToast_ShowTaskCForToday() noexcept = 0;
@@ -140,7 +141,7 @@ public:
 	virtual std::string ComponentStats_Indicator(ComponentID CompToCheck) noexcept = 0;
 	// runSystemMenu Sub Functions
 	virtual void MenuSel_ATask() noexcept(false) = 0;
-	virtual void MenuSel_DTask() noexcept(false) = 0;
+	virtual void MenuSel_DTask() noexcept = 0;
 	virtual void MenuSel_ETask() noexcept(false) = 0;
 	virtual void MenuSel_VTask() noexcept(false) = 0;
 	virtual void MenuSel_DBRefresh() noexcept = 0;
@@ -221,8 +222,8 @@ public:
 	virtual void ParseGivenParam(unsigned short argcount, char *argcmd[]);
 	virtual bool ComponentCheck(bool isNeededToRun) noexcept(false);
 
-	virtual void runSystemMenu() noexcept;
-	virtual void runDisplayTasks_AtHome() noexcept;
+	virtual void runSystemMenu() noexcept(false);
+	virtual void DisplayTasks_AtWindow(DISPLAY_OPTIONS WindowID_INT) noexcept;
 
 	// TTRM_WinToast Relative Functions. Not Decalred to TTRM_WinToast due to Function Structure of the whole class.
 
@@ -233,7 +234,7 @@ public:
 	virtual std::string ComponentStats_Indicator(ComponentID CompToCheck) noexcept;
 	// runSystemMenu Sub Functions
 	virtual void MenuSel_ATask() noexcept(false);
-	virtual void MenuSel_DTask() noexcept(false);
+	virtual void MenuSel_DTask() noexcept;
 	virtual void MenuSel_ETask() noexcept(false);
 	virtual void MenuSel_VTask() noexcept(false);
 	virtual void MenuSel_DBRefresh() noexcept;

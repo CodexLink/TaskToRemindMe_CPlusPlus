@@ -99,7 +99,7 @@ bool TTRM::ComponentCheck(bool isNeededToRun) noexcept(false)
 	}
 }
 
-void TTRM::runSystemMenu() noexcept
+void TTRM::runSystemMenu() noexcept(false)
 {
 	signed int DisplayMenu_Input = INIT_NULL;
 	WinToast_ShowTaskCForToday();
@@ -113,7 +113,7 @@ void TTRM::runSystemMenu() noexcept
 
 		std::cout << std::endl
 				  << "=== Incoming Task/s for Today =========================" << std::endl;
-		runDisplayTasks_AtHome();
+		DisplayTasks_AtWindow(AtHome);
 		std::cout << std::endl
 				  << "=== Task Function Menu ================================" << std::endl
 				  << std::endl
@@ -184,7 +184,7 @@ void TTRM::runSystemMenu() noexcept
 	return;
 }
 
-void TTRM::runDisplayTasks_AtHome() noexcept
+void TTRM::DisplayTasks_AtWindow(DISPLAY_OPTIONS WindowID_INT) noexcept
 {
 	unsigned short TaskNum = INIT_BY_LITERAL_ONE;
 	if (!TaskList.size())
@@ -197,7 +197,33 @@ void TTRM::runDisplayTasks_AtHome() noexcept
 	{
 		std::deque<unsigned short>::iterator IterTasks;
 		std::cout << std::endl
-				  << "There are " << TaskList.size() << (TaskList.size() <= INDIVIDUAL_OR_LESS ? " task" : " tasks") << " for today~!" << std::endl << std::endl;
+				  << "There are " << TaskList.size() << (TaskList.size() <= INDIVIDUAL_OR_LESS ? " task" : " tasks");
+		switch (WindowID_INT)
+		{
+		case DeleteTask:
+			std::cout << " available to delete!" << std::endl
+					  << std::endl;
+			break;
+		case EditTask:
+			std::cout << " available to edit!" << std::endl
+					  << std::endl;
+			break;
+		case ViewTask:
+			std::cout << " in total based from database and queued from the system!" << std::endl
+					  << std::endl;
+			break;
+		case ManualDatabaseRefresh:
+			std::cout << " to be loaded in the database queue!" << std::endl
+					  << std::endl;
+			break;
+		case AtHome:
+			std::cout << " for today~!" << std::endl
+					  << std::endl;
+			break;
+		default:
+			std::cerr << "... ???" << std::endl;
+		}
+
 		for (auto IterTasks : TaskList)
 		{
 			std::cout << TaskNum << "|> " << IterTasks->TaskName << "\t" << IterTasks->DateStartTime << "\t" << std::endl;
@@ -224,10 +250,10 @@ void TTRM::WinToast_ShowTaskCForToday() noexcept
 	WinToastTemplate TaskCountShow(WinToastTemplate::Text02);
 	std::wstring TaskCount = std::to_wstring(TaskList.size());
 	std::wstring WelcomeFirstPT = L"Hello User, You have ";
-	std::wstring WelcomeSecondPT = (TaskList.size() <= INDIVIDUAL_OR_LESS) ? L" task" :  L"tasks";
+	std::wstring WelcomeSecondPT = (TaskList.size() <= INDIVIDUAL_OR_LESS) ? L" task" : L"tasks";
 	std::wstring WelcomeThirdPT = L" for today.";
 	TaskCountShow.setTextField(PROJECT_NAME, WinToastTemplate::FirstLine);
-	TaskCountShow.setTextField(WelcomeFirstPT + TaskCount + WelcomeSecondPT + WelcomeThirdPT,WinToastTemplate::SecondLine);
+	TaskCountShow.setTextField(WelcomeFirstPT + TaskCount + WelcomeSecondPT + WelcomeThirdPT, WinToastTemplate::SecondLine);
 	// We dont check anything, since we have done it in the first place.
 	WinToast::instance()->showToast(TaskCountShow, new TTRM_WinToast);
 	return;
@@ -267,10 +293,11 @@ void TTRM::MenuSel_ATask() noexcept(false)
 
 		// Add Design here
 		WinAPI_CMDCall("CLS");
-		std::cout << "[Required] Task Name |> ", std::getline(std::cin, NewTask->TaskName);
-		std::cout << "[Required, Format | YYYY-MM-DD] Date Starting Point |> ", std::getline(std::cin, NewTask->DateStartTime);
-		std::cout << "[Required, Date Ending Point] Format > YYYY-MM-DD |> ", std::getline(std::cin, NewTask->DateEndTime);
-		std::cout << "[Optional] NotifierInterval, By Minutes |> ", std::cin >> NewTask->NotifierInterval;
+		std::cout << "[Req] Name of the Task |> ", std::getline(std::cin, NewTask->TaskName);
+		std::cout << "[Req, YYYY-MM-DD or 'Today' or 'Tomo'] Task Start Point |> ", std::getline(std::cin, NewTask->DateStartTime);
+		std::cout << "[Req, YYYY-MM-DD or 'Today' or 'Tomo'] Task End Point |> ", std::getline(std::cin, NewTask->DateEndTime);
+		std::cout << "[Opt] Notify EarlyTime, By Minutes |> ", std::cin >> NewTask->NotifierInterval;
+		std::cout << "[Opt] Notify Interval, # of Times To Remind (0-n) |> ", std::cin >> NewTask->NotifierInterval;
 		if (std::cin.fail())
 		{
 			std::cin.clear();
@@ -289,18 +316,65 @@ void TTRM::MenuSel_ATask() noexcept(false)
 			}
 			catch (std::exception &ErrMessage)
 			{
-				std::cerr << ErrMessage.what() << std::endl;
+				std::cerr << std::endl
+						  << ErrMessage.what() << std::endl;
 				delay_time(SLEEP_SIGNIFICANT_ERR);
-				break;
+				continue;
 			}
 		}
 	}
 	return;
 }
-void TTRM::MenuSel_DTask() noexcept(false)
+void TTRM::MenuSel_DTask() noexcept
 {
-	WinAPI_CMDCall("CLS");
-	std::cout << "2" << std::endl;
+	unsigned short TaskNumTarget = INIT_NULL;
+	while (PROCESS_AWAIT_CMPLT)
+	{
+		unsigned short TaskSize = TaskList.size();
+		WinAPI_CMDCall("CLS");
+		if (TaskSize)
+		{
+			DisplayTasks_AtWindow(DeleteTask);
+			std::cout << "Please Select A Task To Delete..." << std::endl;
+			std::cout << "[Input] Task # or '0' To Go Back |> ", std::cin >> TaskNumTarget;
+			if (std::cin.fail())
+			{
+				std::cin.clear();
+				CinBuffer_ClearOptpt('\n');
+				std::cerr << "[Input Error] -> One of the parameters has invalid input. Please try again." << std::endl;
+				delay_time(SLEEP_ERROR_PROMPT);
+				continue;
+			}
+			else
+			{
+				if (TaskNumTarget)
+				{
+					if (TaskNumTarget <= TaskSize)
+					{
+						TaskList.erase(TaskList.begin() + (TaskNumTarget - POS_OFFSET_BY_ONE));
+						continue;
+					}
+					else
+					{
+						std::cerr << "[Input Error] -> User Requested Out of Range..." << std::endl;
+						delay_time(SLEEP_ERROR_PROMPT);
+						continue;
+					}
+				}
+				else
+				{
+					break;
+				}
+			}
+		}
+		else
+		{
+			std::cerr << "[View Info] > There are no other task to delete!" << std::endl;
+			delay_time(SLEEP_OPRT_FINISHED);
+			break;
+		}
+	}
+	return;
 }
 void TTRM::MenuSel_ETask() noexcept(false)
 {
@@ -309,8 +383,17 @@ void TTRM::MenuSel_ETask() noexcept(false)
 }
 void TTRM::MenuSel_VTask() noexcept(false)
 {
-	WinAPI_CMDCall("CLS");
-	std::cout << "4" << std::endl;
+	while (PROCESS_AWAIT_CMPLT)
+	{
+		WinAPI_CMDCall("CLS");
+		DisplayTasks_AtWindow(ViewTask);
+		std::cout << std::endl
+				  << "What are you going to do? Select an option." << std::endl;
+		// TO BE CONTINUED...
+		delay_time(SLEEP_INIT_SETUP);
+		break;
+	}
+	return;
 }
 void TTRM::MenuSel_DBRefresh() noexcept
 {
@@ -366,10 +449,8 @@ void TTRM::SQLite_CRUD_Data(SQLite_QueryType ExecutionQueryType) const noexcept(
 
 // TECHNICAL FUNCTION CONTENT DECLARATION - END POINT
 
-
 //----------------------------------------------------------------------------
 
 // WinToast FUNCTION CONTENT DECLARATION - STARTING POINT
-
 
 // WinToast FUNCTION CONTENT DECLARATION - END POINT
