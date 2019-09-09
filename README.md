@@ -36,61 +36,50 @@ Hello!
 ## Introduction / What is this?
 
 ## Table of Contents
-
 > This README will be having Table of Contents due to possibly documenting a lot of components in this repository.
 
-
 ## Getting Started
-
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. 
 
 ## Prerequisites
-
-> Here are the things that you need to install the software. Each software has labelled it's difficulty on how to use it.
-
+> ...
 
 ### IDE Recommended
  > 1. Visual Studio Code (Dependent IDE) - For Coding w/o Compiling - Easy, w/ Compiling + Dependencies
- >2. IDE Options: Any IDE that involves that use of Python Library
-
+ > 2. Visual Studio 2019 (REQUIRED IDE) - For Compiling...
+ 
 ### TOOLS / Components Used in Visual Studio Code and Visual Studio 2019 Dependencies
 > 1. Beautify (Optional) for Code Beautification
 > 2. Code Runner - Alternative Compiler for Visual Studio Code
 
 ### Collaboration
-> 1. Github Desktop, Git GUI and Git Bash - Primary Collaboration Tool, Used by Current Project Leader
-> 2. GitKraken, Git GUI and Git Bash, Advanced - Secondary Collaboration Tool
-
+> 1. GitKraken, Git GUI and Git Bash, Advanced - Primary Collaboration Tool
+> 2. Github Desktop, Git GUI and Git Bash - Secondary Collaboration Tool
 
 ## Deployment
-
-Just...
+Just... I won't explain it at the moment.
 
 ## Built With
-
 * [Visual Studio Code](https://code.visualstudio.com/) - A Scalable IDE with
 Multiple Supported Essential Extension and Components for Easy Development and Integration.
+* [Visual Studio 2019](https://visualstudio.microsoft.com/vs/) - All-In-One IDE Packed with Essential Development Tools (Exclusive-Windows Only Headers Also Included.)
 
 ## Contributing
-
 This will be written soon.
 
 ## Versioning
-
-We use don't use any APIs regarding software version. But instead we usually do based on time and date in 24H format. For example:
+I don't use any software versioning yet. But instead I usually do using time and date in 24H format, in short, datestamp. For example:
 ```
 When Build is done: at 4:51 PM at 08/21/2018
 Result Versioning is: 1651-082118.BETA
 ```
 
 ## Authors
-
-Here are the list of authors who is taking part of the project.
+> Here are the list of authors who is taking part of the project.
 
 1. **Janrey Licas** - *Initial Work / Project Lead* - [CodexLink](https://github.com/CodexLink)
 
 ## License
-
 This project is licensed under the GNU v3 License - see the [LICENSE.md](https://github.com/CodexLink/TaskToRemindMe_CPlusPlus
 /blob/master/LICENSE) file for details
 
