@@ -36,7 +36,7 @@ Things To Know #2 - ENUMs,
 #define PROJECT_VER L"Early Testing Case"
 #define NDEBUG
 #define delay_time(x) std::this_thread::sleep_for(std::chrono::milliseconds(x))
-#define WinAPI_CMDCall(x) system(x);
+#define WinCall_CMD(x) system(x);
 #define CinBuffer_ClearOptpt(__CharIgnore_Start) std::cin.ignore(std::numeric_limits<std::streamsize>::max(), __CharIgnore_Start);
 using namespace WinToastLib;
 
@@ -49,6 +49,14 @@ enum TERM_RET_ERROR : signed short
 	TERM_INVALID_PARAM = -2
 };
 
+enum SET_CHOICE_PROCESS : char
+{
+	CONFIRMED_TRUE_LOWER = 'y',
+	CONFIRMED_TRUE_UPPER = 'Y',
+	CONFIRMED_FALSE_LOWER = 'n',
+	CONFIRMED_FALSE_UPPER = 'N'
+
+};
 enum TERM_CONSOLE_LOG_PRESET
 {
 
@@ -82,6 +90,7 @@ enum SLEEP_TIMERS
 	SLEEP_TERM = 3000,
 	SLEEP_ERROR_PROMPT = 1850,
 	SLEEP_SIGNIFICANT_ERR = 3000,
+	SLEEP_OPRT_FAILED = 2500,
 	SLEEP_OPRT_FINISHED = 2000
 };
 /* CODE_RET_PROCESS
@@ -148,8 +157,6 @@ public:
 	virtual void MenuSel_ReqTasks() noexcept = 0;
 	virtual void MenuSel_AutoStart(void) const noexcept = 0;
 	virtual void MenuSel_WTI(void) const noexcept = 0;
-
-
 };
 
 /*

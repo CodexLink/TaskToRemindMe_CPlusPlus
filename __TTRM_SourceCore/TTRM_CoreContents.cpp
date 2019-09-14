@@ -105,7 +105,7 @@ void TTRM::runSystemMenu() noexcept(false)
 	WinToast_ShowTaskCForToday();
 	while (NOT_REQ_TERM)
 	{
-		WinAPI_CMDCall("CLS");
+		WinCall_CMD("CLS");
 		std::cout << std::endl
 				  << "Task To Remind Me C++ in CLI version. BETA" << std::endl
 				  << std::endl;
@@ -190,7 +190,7 @@ void TTRM::DisplayTasks_AtWindow(DISPLAY_OPTIONS WindowID_INT) noexcept
 	if (!TaskList.size())
 	{
 		std::cerr << std::endl
-				  << "There are not tasks for today~! Add one." << std::endl;
+				  << "There are no task/s in queue! Please add one." << std::endl;
 		return;
 	}
 	else
@@ -292,7 +292,7 @@ void TTRM::MenuSel_ATask() noexcept(false)
 	{
 
 		// Add Design here
-		WinAPI_CMDCall("CLS");
+		WinCall_CMD("CLS");
 		std::cout << "[Req] Name of the Task |> ", std::getline(std::cin, NewTask->TaskName);
 		std::cout << "[Req, YYYY-MM-DD or 'Today' or 'Tomo'] Task Start Point |> ", std::getline(std::cin, NewTask->DateStartTime);
 		std::cout << "[Req, YYYY-MM-DD or 'Today' or 'Tomo'] Task End Point |> ", std::getline(std::cin, NewTask->DateEndTime);
@@ -328,20 +328,22 @@ void TTRM::MenuSel_ATask() noexcept(false)
 void TTRM::MenuSel_DTask() noexcept
 {
 	unsigned short TaskNumTarget = INIT_NULL;
+	char char_ConfirmHandler = INIT_CHAR_NULL;
 	while (PROCESS_AWAIT_CMPLT)
 	{
 		unsigned short TaskSize = TaskList.size();
-		WinAPI_CMDCall("CLS");
+		WinCall_CMD("CLS");
 		if (TaskSize)
 		{
+			std::cout << std::endl << "=== Task List Available ===============================" << std::endl;
 			DisplayTasks_AtWindow(DeleteTask);
-			std::cout << "Please Select A Task To Delete..." << std::endl;
-			std::cout << "[Input] Task # or '0' To Go Back |> ", std::cin >> TaskNumTarget;
+			std::cout << std::endl << "Please Select A Task To Delete..." << std::endl;
+			std::cout << "[Input] Task # or '0' To Go Back Menu |> ", std::cin >> TaskNumTarget;
 			if (std::cin.fail())
 			{
 				std::cin.clear();
 				CinBuffer_ClearOptpt('\n');
-				std::cerr << "[Input Error] -> One of the parameters has invalid input. Please try again." << std::endl;
+				std::cerr << "[Input Error] -> Value Received is Invalid. Please try again." << std::endl;
 				delay_time(SLEEP_ERROR_PROMPT);
 				continue;
 			}
@@ -351,12 +353,38 @@ void TTRM::MenuSel_DTask() noexcept
 				{
 					if (TaskNumTarget <= TaskSize)
 					{
-						TaskList.erase(TaskList.begin() + (TaskNumTarget - POS_OFFSET_BY_ONE));
-						continue;
+						std::cout << "Are you sure you want to delete this task: '" << TaskList.at(TaskNumTarget - POS_OFFSET_BY_ONE)->TaskName << "'?" << std::endl << std::endl << "[Input, Y or N] |> ", std::cin >> char_ConfirmHandler;
+						if (std::cin.fail())
+						{
+							std::cerr << "[Input Error] -> Value Received is Invalid. Please try again." << std::endl;				
+						}
+						else
+						{
+							switch(char_ConfirmHandler)
+							{
+								case CONFIRMED_TRUE_LOWER:
+								case CONFIRMED_TRUE_UPPER:
+									std::cout << "[Confirmation, Success] |> Task '" << TaskList.at(TaskNumTarget - POS_OFFSET_BY_ONE)->TaskName << "' deleted." << std::endl;
+									TaskList.erase(TaskList.begin() + (TaskNumTarget - POS_OFFSET_BY_ONE));
+									delay_time(SLEEP_OPRT_FINISHED);
+									continue;
+
+								case CONFIRMED_FALSE_LOWER:
+								case CONFIRMED_FALSE_UPPER:
+									std::cout << "[Confirmation, Success] |> Task Deletion Cancelled." << std::endl;
+									delay_time(SLEEP_OPRT_FINISHED);
+									continue;
+
+								default:
+									std::cout << "[Confirmation, Error] |> User Input Invalid." << std::endl;
+									delay_time(SLEEP_OPRT_FAILED);
+									continue;
+							}
+						}
 					}
 					else
 					{
-						std::cerr << "[Input Error] -> User Requested Out of Range..." << std::endl;
+						std::cerr << "[Input Error] -> User Requested To Delete Tasks Non-Existent or Out of Range..." << std::endl;
 						delay_time(SLEEP_ERROR_PROMPT);
 						continue;
 					}
@@ -369,7 +397,7 @@ void TTRM::MenuSel_DTask() noexcept
 		}
 		else
 		{
-			std::cerr << "[View Info] > There are no other task to delete!" << std::endl;
+			std::cerr << "[View Info] > Task Queue is currently empty! Please add some task/s." << std::endl;
 			delay_time(SLEEP_OPRT_FINISHED);
 			break;
 		}
@@ -378,17 +406,17 @@ void TTRM::MenuSel_DTask() noexcept
 }
 void TTRM::MenuSel_ETask() noexcept(false)
 {
-	WinAPI_CMDCall("CLS");
+	WinCall_CMD("CLS");
 	std::cout << "3" << std::endl;
 }
 void TTRM::MenuSel_VTask() noexcept(false)
 {
 	while (PROCESS_AWAIT_CMPLT)
 	{
-		WinAPI_CMDCall("CLS");
+		WinCall_CMD("CLS");
 		DisplayTasks_AtWindow(ViewTask);
 		std::cout << std::endl
-				  << "What are you going to do? Select an option." << std::endl;
+				  << "Here are the tasks currently in line with the system..." << std::endl;
 		// TO BE CONTINUED...
 		delay_time(SLEEP_INIT_SETUP);
 		break;
@@ -397,22 +425,22 @@ void TTRM::MenuSel_VTask() noexcept(false)
 }
 void TTRM::MenuSel_DBRefresh() noexcept
 {
-	WinAPI_CMDCall("CLS");
+	WinCall_CMD("CLS");
 	std::cout << "5" << std::endl;
 }
 void TTRM::MenuSel_ReqTasks() noexcept
 {
-	WinAPI_CMDCall("CLS");
+	WinCall_CMD("CLS");
 	std::cout << "6" << std::endl;
 }
 void TTRM::MenuSel_AutoStart(void) const noexcept
 {
-	WinAPI_CMDCall("CLS");
+	WinCall_CMD("CLS");
 	std::cout << "7" << std::endl;
 }
 void TTRM::MenuSel_WTI(void) const noexcept
 {
-	WinAPI_CMDCall("CLS");
+	WinCall_CMD("CLS");
 	std::cout << "8" << std::endl;
 }
 
