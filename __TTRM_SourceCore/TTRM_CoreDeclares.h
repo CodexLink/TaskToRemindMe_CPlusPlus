@@ -19,6 +19,7 @@ Things To Know #2 - ENUMs,
 #define TechProSpEssential_TTRM_H // We define this marker for indication of "already initialized"
 
 #include <iostream>
+#include <conio.h>
 #include <string>
 #include <deque>
 #include <stack>
@@ -30,6 +31,7 @@ Things To Know #2 - ENUMs,
 #include <thread>
 #include <limits>
 #include <sstream>
+#include <ctime>
 
 // #define Function-Like Declaration and Constant Uncategorized Definitions
 #define PROJECT_NAME L"Task To Remind Me | C++"
@@ -75,10 +77,13 @@ enum DISPLAY_OPTIONS
 	DeleteTask,
 	EditTask,
 	ViewTask,
-	ManualDatabaseRefresh,
-	AutoStartup,
-	WinToastIntegration,
-	SQLDb_CheckState,
+	SortQueuedTask,
+	RemoveQueuedTask,
+	SortDatabaseTask,
+	RemoveDatabaseTask,
+	RefreshContainerTask,
+	ComponentStatus,
+	MinimizeRunningInst,
 	AtHome
 };
 
@@ -91,7 +96,7 @@ enum SLEEP_TIMERS
 	SLEEP_ERROR_PROMPT = 1850,
 	SLEEP_SIGNIFICANT_ERR = 3000,
 	SLEEP_OPRT_FAILED = 2500,
-	SLEEP_OPRT_FINISHED = 2000
+	SLEEP_OPRT_FINISHED = 1500
 };
 /* CODE_RET_PROCESS
 	Contents: Function Returning Values for Processing Functions
@@ -121,6 +126,15 @@ enum SLEEP_TIMERS
 #define INIT_STR_NULL ""
 #define INIT_CHAR_NULL '0'
 #endif
+
+#ifndef SYS_CONSTRAINTS
+#define SYS_CONSTRAINTS
+#define TASK_DISPLAY_LIMIT 5
+#define TASK_DISPLAY_CRUD 10
+#define MAX_TASK_ATTACH 255
+#define MAX_TASK_DATABASE 255
+#define MAX_SIZE ...
+#endif
 /*
 	TTRM_CoreFunc is a base class that contains only functions that is mainly focused on the system itself.
 	It doesn't include any external libraries function but only includes for display menus, etc.
@@ -130,7 +144,7 @@ class TTRM_CoreFunc
 public:
 	TTRM_CoreFunc(void)
 	{
-		std::cout << "[OBJECT] TTRM Core Function Initialized." << std::endl;
+		std::cout << "[OBJECT] TTRM Core Function Initialized." << std::endl << std::endl;
 	}
 	// Variable for Storing Status Indicators of an Components
 	typedef enum
@@ -143,20 +157,26 @@ public:
 	virtual void runSystemMenu() noexcept(false) = 0;
 	virtual void DisplayTasks_AtWindow(DISPLAY_OPTIONS WindowID_INT) noexcept = 0;
 	// TTRM_WinToast Relative Functions. Not Decalred to TTRM_WinToast due to Function Structure of the whole class.
+	virtual void runSystem_GetTimeLocal() const noexcept = 0;
 	virtual void WinToast_RemindTask() noexcept = 0;
 	virtual void WinToast_ShowTaskCForToday() noexcept = 0;
 	virtual void WinToast_ShowReminder() noexcept = 0;
 	// Status Indicators
 	virtual std::string ComponentStats_Indicator(ComponentID CompToCheck) noexcept = 0;
 	// runSystemMenu Sub Functions
+	// Basic Task Functions
 	virtual void MenuSel_ATask() noexcept(false) = 0;
 	virtual void MenuSel_DTask() noexcept = 0;
 	virtual void MenuSel_ETask() noexcept(false) = 0;
 	virtual void MenuSel_VTask() noexcept(false) = 0;
-	virtual void MenuSel_DBRefresh() noexcept = 0;
-	virtual void MenuSel_ReqTasks() noexcept = 0;
-	virtual void MenuSel_AutoStart(void) const noexcept = 0;
-	virtual void MenuSel_WTI(void) const noexcept = 0;
+	// Advanced Task Functions
+	virtual void MenuSel_SQT() noexcept(false) = 0; // SortQueuedTask
+	virtual void MenuSel_RQT() noexcept(false) = 0; // RemoveQueuedTask
+	virtual void MenuSel_SDT() noexcept(false) = 0; // SortDatabaseTask
+	virtual void MenuSel_RDT() noexcept(false) = 0; // RemoveDatabaseTask
+	virtual void MenuSel_RCT() noexcept(false) = 0; // RefreshContainerTask
+	virtual void MenuSel_CS() const noexcept(false) = 0; // ComponentStatus
+	virtual void MenuSel_MRI() const noexcept(false) = 0; // MinimizeRunningInst
 };
 
 /*
@@ -237,22 +257,28 @@ public:
 	virtual void WinToast_RemindTask() noexcept;
 	virtual void WinToast_ShowTaskCForToday() noexcept;
 	virtual void WinToast_ShowReminder() noexcept;
+	virtual void runSystem_GetTimeLocal() const noexcept;
 	// Status Indicator Checkers
 	virtual std::string ComponentStats_Indicator(ComponentID CompToCheck) noexcept;
-	// runSystemMenu Sub Functions
 	virtual void MenuSel_ATask() noexcept(false);
 	virtual void MenuSel_DTask() noexcept;
 	virtual void MenuSel_ETask() noexcept(false);
 	virtual void MenuSel_VTask() noexcept(false);
-	virtual void MenuSel_DBRefresh() noexcept;
-	virtual void MenuSel_ReqTasks() noexcept;
-	virtual void MenuSel_AutoStart(void) const noexcept;
-	virtual void MenuSel_WTI(void) const noexcept;
+	virtual void MenuSel_SQT() noexcept(false); // SortQueuedTask
+	virtual void MenuSel_RQT() noexcept(false); // RemoveQueuedTask
+	virtual void MenuSel_SDT() noexcept(false); // SortDatabaseTask
+	virtual void MenuSel_RDT() noexcept(false); // RemoveDatabaseTask
+	virtual void MenuSel_RCT() noexcept(false); // RefreshContainerTask
+	virtual void MenuSel_CS() const noexcept(false); // ComponentStatus
+	virtual void MenuSel_MRI() const noexcept(false); // MinimizeRunningInst
 	// TTRM's TechFunc Functions
 	virtual void SQLite_Initialize() const noexcept(false); // CreateTable Must Be Here
 	virtual void SQLite_CheckDatabase() const noexcept(false);
 	virtual void SQLite_ReloadQueue() const noexcept(false);
 	virtual void SQLite_CRUD_Data(SQLite_QueryType ExecutionQueryType) const noexcept(false);
+
+private:
+	unsigned short TASK_LIMIT_SIZE = TASK_DISPLAY_LIMIT; // By Default, 5. 
 };
 
 /*
@@ -312,20 +338,27 @@ public:
 };
 
 /*
- TTRM_ScheduleList is an important base class that utilizes System-Proposed Functions specificially used for scheduler. This means that all functions residing
+ TTRM_TaskData is an important base class that utilizes System-Proposed Functions specificially used for scheduler. This means that all functions residing
  in this class is basically related to the Proposed System that we wanted to make. This base class was not on a confirmed status. Please be advised.
 */
 class TTRM_TaskData
 {
 
 public:
+	TTRM_TaskData(void)
+	{
+		tm TimeInfo;
+		time_t theTime = time(NULL);
+    	localtime_s(&TimeInfo,&theTime);
+	}
 	unsigned short TaskID = INIT_NULL;
-	std::string TaskName;
-	std::string DateCreated;   // Reserved
-	std::string DateStartTime; // Use YYYY-MM-DD
-	std::string DateEndTime;   // Use YYYY-MM-DD
 	unsigned short NotifierInterval = INIT_NULL;
-	std::string Time = "";
+	std::string TaskName;
+	unsigned short ReminderType;
+	tm* DateCreated;   // Reserved
+	tm* DateStartTime; // Use YYYY-MM-DD, Does Not Use Time
+	tm* DateEndTime;   // Use YYYY-MM-DD, Does Not Use Time
+	tm* Time;
 	//std::queue<> DB_DisplayList; // Used unsigned int just to reference a specific specific number id.
 };
 #endif
