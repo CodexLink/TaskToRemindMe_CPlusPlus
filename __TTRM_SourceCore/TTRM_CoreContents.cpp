@@ -2,7 +2,7 @@
     Technical Project Specific Essential Function CPP File by Janrey "CodexLink" Licas
     File Category Type: Technical and Core Function Body Definition, "CoreFunc".
 	
-	Overview
+	Overview	 
 
 	- Core Functions
 
@@ -15,7 +15,7 @@ std::deque<TTRM_TaskData *> TaskList;
 
 void TTRM::ParseGivenParam(unsigned short argcount, char *argv[])
 {
-	unsigned int ParamIter = INIT_NULL;
+	unsigned int ParamIter = INIT_NULL_INT;
 	std::cout << "Task To Remind Me C++ in CLI version. BETA" << std::endl
 			  << std::endl;
 	std::cout << "Created by Data Structure Group 5, Group Members {\n Header Core Developer: 'Janrey Licas',\n AppFlow Director: 'Rejay Mar'\n};" << std::endl
@@ -30,7 +30,7 @@ void TTRM::ParseGivenParam(unsigned short argcount, char *argv[])
 
 bool TTRM::ComponentCheck(bool isNeededToRun) noexcept(false)
 {
-	long posx = INIT_NULL, posy = INIT_NULL;
+	long posx = INIT_NULL_INT, posy = INIT_NULL_INT;
 	try
 	{
 		HWND console = GetConsoleWindow(); //, hwnd = GetConsoleWindow();
@@ -101,7 +101,7 @@ bool TTRM::ComponentCheck(bool isNeededToRun) noexcept(false)
 
 void TTRM::runSystemMenu() noexcept(false)
 {
-	unsigned int DisplayMenu_Input = INIT_NULL;
+	unsigned int DisplayMenu_Input = INIT_NULL_INT;
 	WinToast_ShowTaskCForToday();
 	while (NOT_REQ_TERM)
 	{
@@ -112,7 +112,7 @@ void TTRM::runSystemMenu() noexcept(false)
 				  << std::endl;
 		// Create function for String To Time here.
 
-		std::cout << "Time From Your Local System |> "<< INIT_NULL << std::endl;
+		std::cout << "Time From Your Local System |> "<< INIT_NULL_INT << std::endl;
 		std::cout << std::endl
 				  << "=== Incoming Task/s for Today =========================" << std::endl;
 		DisplayTasks_AtWindow(AtHome);
@@ -208,7 +208,7 @@ void TTRM::runSystemMenu() noexcept(false)
 
 void TTRM::DisplayTasks_AtWindow(DISPLAY_OPTIONS WindowID_INT) noexcept
 {
-	unsigned short TaskNum = INIT_BY_LITERAL_ONE, TASK_LIMIT_ITER = INIT_NULL;
+	unsigned short TaskNum = INIT_BY_LITERAL_ONE, TASK_LIMIT_ITER = INIT_NULL_INT;
 	bool isAtHome = false;
 	if (!TaskList.size())
 	{
@@ -220,7 +220,7 @@ void TTRM::DisplayTasks_AtWindow(DISPLAY_OPTIONS WindowID_INT) noexcept
 	{
 		std::deque<unsigned short>::iterator IterTasks;
 		std::cout << std::endl
-				  << "There are " << TaskList.size() << (TaskList.size() <= INDIVIDUAL_OR_LESS ? " task" : " tasks");
+				  << "There are " << TaskList.size() << (TaskList.size() <= BY_ONE_OR_LESS ? " task" : " tasks");
 		switch (WindowID_INT)
 		{
 		case DeleteTask:
@@ -269,7 +269,7 @@ void TTRM::DisplayTasks_AtWindow(DISPLAY_OPTIONS WindowID_INT) noexcept
 			if (isAtHome && TaskNum > TASK_LIMIT_SIZE)
 			{
 				std::cout << std::endl
-						  << "And there are other " << (TaskList.size() + POS_OFFSET_BY_ONE) - TaskNum << (((TaskList.size() + POS_OFFSET_BY_ONE) - TaskNum) == INDIVIDUAL_OR_LESS ? " task" : " tasks") << " available!" << std::endl;
+						  << "And there are other " << (TaskList.size() + POS_OFFSET_BY_ONE) - TaskNum << (((TaskList.size() + POS_OFFSET_BY_ONE) - TaskNum) == BY_ONE_OR_LESS ? " task" : " tasks") << " available!" << std::endl;
 				break;
 			}
 			else
@@ -291,7 +291,7 @@ void TTRM::WinToast_RemindTask() noexcept
 {
 	//std::string TemplateToReturn;
 	std::stringstream TaskListSize;
-	//TaskListSize << "Hello There! There are" << TaskList.size() << ((TaskList.size() <= //INDIVIDUAL_OR_LESS) ? "task" : "tasks") << " for today.";
+	//TaskListSize << "Hello There! There are" << TaskList.size() << ((TaskList.size() <= //BY_ONE_OR_LESS) ? "task" : "tasks") << " for today.";
 	//TemplateToReturn.append(TaskListSize.str());
 	//return TemplateToReturn;
 	TaskListSize << TaskList.size();
@@ -304,7 +304,7 @@ void TTRM::WinToast_ShowTaskCForToday() noexcept
 	WinToastTemplate TaskCountShow(WinToastTemplate::Text02);
 	std::wstring TaskCount = std::to_wstring(TaskList.size());
 	std::wstring WelcomeFirstPT = L"Hello User, You have ";
-	std::wstring WelcomeSecondPT = (TaskList.size() <= INDIVIDUAL_OR_LESS) ? L" task" : L"tasks";
+	std::wstring WelcomeSecondPT = (TaskList.size() <= BY_ONE_OR_LESS) ? L" task" : L"tasks";
 	std::wstring WelcomeThirdPT = L" for today.";
 	TaskCountShow.setTextField(PROJECT_NAME, WinToastTemplate::FirstLine);
 	TaskCountShow.setTextField(WelcomeFirstPT + TaskCount + WelcomeSecondPT + WelcomeThirdPT, WinToastTemplate::SecondLine);
@@ -382,8 +382,6 @@ void TTRM::MenuSel_ATask() noexcept(false)
 }
 void TTRM::MenuSel_DTask() noexcept
 {
-	unsigned short TaskNumTarget = INIT_NULL;
-	char char_ConfirmHandler = INIT_CHAR_NULL;
 	while (PROCESS_AWAIT_CMPLT)
 	{
 		size_t TaskSize = TaskList.size();
@@ -395,7 +393,7 @@ void TTRM::MenuSel_DTask() noexcept
 			DisplayTasks_AtWindow(DeleteTask);
 			std::cout << std::endl
 					  << "Please Select A Task To Delete..." << std::endl;
-			std::cout << "[Input] Task # or '0' To Go Back Menu |> ", std::cin >> TaskNumTarget;
+			std::cout << "[Input] Task # or '0' To Go Back Menu |> ", std::cin >> handleInputInt;
 			if (std::cin.fail())
 			{
 				std::cin.clear();
@@ -406,26 +404,26 @@ void TTRM::MenuSel_DTask() noexcept
 			}
 			else
 			{
-				if (TaskNumTarget)
+				if (handleInputInt)
 				{
-					if (TaskNumTarget <= TaskSize)
+					if (handleInputInt <= TaskSize)
 					{
-						std::cout << "Are you sure you want to delete this task: '" << TaskList.at(TaskNumTarget - POS_OFFSET_BY_ONE)->TaskName << "'?" << std::endl
+						std::cout << "Are you sure you want to delete this task: '" << TaskList.at(handleInputInt - POS_OFFSET_BY_ONE)->TaskName << "'?" << std::endl
 								  << std::endl
 								  << "[Input, Y or N] |> ",
-							std::cin >> char_ConfirmHandler;
+							std::cin >> handleInputChar;
 						if (std::cin.fail())
 						{
 							std::cerr << "[Input Error] -> Value Received is Invalid. Please try again." << std::endl;
 						}
 						else
 						{
-							switch (char_ConfirmHandler)
+							switch (handleInputChar)
 							{
 							case CONFIRMED_TRUE_LOWER:
 							case CONFIRMED_TRUE_UPPER:
-								std::cout << "[Confirmation, Success] |> Task '" << TaskList.at(TaskNumTarget - POS_OFFSET_BY_ONE)->TaskName << "' deleted." << std::endl;
-								TaskList.erase(TaskList.begin() + (TaskNumTarget - POS_OFFSET_BY_ONE));
+								std::cout << "[Confirmation, Success] |> Task '" << TaskList.at(handleInputInt - POS_OFFSET_BY_ONE)->TaskName << "' deleted." << std::endl;
+								TaskList.erase(TaskList.begin() + (handleInputInt - POS_OFFSET_BY_ONE));
 								delay_time(SLEEP_OPRT_FINISHED);
 								continue;
 
@@ -466,8 +464,8 @@ void TTRM::MenuSel_DTask() noexcept
 }
 void TTRM::MenuSel_ETask() noexcept(false)
 {
-	unsigned short TaskTarget = INIT_NULL;
-	char char_ConfirmHandler = INIT_CHAR_NULL;
+	unsigned short TaskTarget = INIT_NULL_INT;
+	char handleInputChar = INIT_NULL_CHAR;
 	while (PROCESS_AWAIT_CMPLT)
 	{
 		size_t TaskSize = TaskList.size();
@@ -497,14 +495,14 @@ void TTRM::MenuSel_ETask() noexcept(false)
 						std::cout << "Are you sure you want to delete this task: '" << TaskList.at(TaskTarget - POS_OFFSET_BY_ONE)->TaskName << "'?" << std::endl
 								  << std::endl
 								  << "[Input, Y or N] |> ",
-							std::cin >> char_ConfirmHandler;
+							std::cin >> handleInputChar;
 						if (std::cin.fail())
 						{
 							std::cerr << "[Input Error] -> Value Received is Invalid. Please try again." << std::endl;
 						}
 						else
 						{
-							switch (char_ConfirmHandler)
+							switch (handleInputChar)
 							{
 							case CONFIRMED_TRUE_LOWER:
 							case CONFIRMED_TRUE_UPPER:
@@ -553,8 +551,8 @@ void TTRM::MenuSel_VTask() noexcept(false)
 	while (PROCESS_AWAIT_CMPLT)
 	{
 		WinCall_CMD("CLS");
-		std::cout << std::endl
-				  << "Here are the tasks currently in line with the system..." << std::endl;
+		//std::cout << std::endl
+		//		  << "Here are the tasks currently in line with the system..." << std::endl;
 		DisplayTasks_AtWindow(ViewTask);
 		std::cout << "Press any key to go back." << std::endl;
 		_getche();
@@ -571,13 +569,12 @@ void TTRM::MenuSel_RQT() noexcept(false)
 {
 	if (TaskList.size())
 	{
-		char ch_Confirm = INIT_CHAR_NULL;
 		std::cout << std::endl
 				  << "[WARNING] |> Are you sure you want delete tasks in queue?" << std::endl
 				  << "[WARNING] |> All task can be restored if the database still contains all data." << std::endl
 				  << "[INPUT  ] | ['Y'es or 'N'o] |> ",
-			std::cin >> ch_Confirm;
-		switch (ch_Confirm)
+			std::cin >> handleInputChar;
+		switch (handleInputChar)
 		{
 		case CONFIRMED_TRUE_LOWER:
 		case CONFIRMED_TRUE_UPPER:

@@ -87,6 +87,8 @@ dkms.conf
 # Personal Private Demo Files
 OtherLibraries_Demos/
 Experimentals/
+TaskToRemindMe_CPP_Check-cppcheck-build-dir/
+*.cppcheck
 
 # Visual Studio Code Workspace Folder
 

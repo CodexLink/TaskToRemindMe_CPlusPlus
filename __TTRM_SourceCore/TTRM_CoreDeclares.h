@@ -113,18 +113,18 @@ enum SLEEP_TIMERS
 */
 #ifndef CODE_CONSTANTS
 #define CODE_CONSTANTS
-#define INIT_NULL 0
+#define INIT_NULL_INT 0
 #define INIT_BY_LITERAL_ONE 1
+#define INIT_NULL_STR ""
+#define INIT_NULL_CHAR '0'
 #define POS_OFFSET_BY_ONE 1
-#define INDIVIDUAL_OR_LESS 1
+#define BY_ONE_OR_LESS 1
 
 // Superposition Method, Parameters used for when we want to run this function content or not. Used for Selected Technical  Functions only.
 #define IGNORE_PROCESS 0
 #define RUN_PROCESS 1
 #define NOT_REQ_TERM 1
 #define PROCESS_AWAIT_CMPLT 1 // Awaiting Completion
-#define INIT_STR_NULL ""
-#define INIT_CHAR_NULL '0'
 #endif
 
 #ifndef SYS_CONSTRAINTS
@@ -246,39 +246,40 @@ public:
 	}
 
 	// TTRM's CoreFunc Functions
-	virtual void ParseGivenParam(unsigned short argcount, char *argcmd[]);
-	virtual bool ComponentCheck(bool isNeededToRun) noexcept(false);
+	virtual void ParseGivenParam(unsigned short argcount, char *argcmd[]) override;
+	virtual bool ComponentCheck(bool isNeededToRun) noexcept(false) override;
 
-	virtual void runSystemMenu() noexcept(false);
-	virtual void DisplayTasks_AtWindow(DISPLAY_OPTIONS WindowID_INT) noexcept;
+	virtual void runSystemMenu() noexcept(false) override;
+	virtual void DisplayTasks_AtWindow(DISPLAY_OPTIONS WindowID_INT) noexcept override;
 
 	// TTRM_WinToast Relative Functions. Not Decalred to TTRM_WinToast due to Function Structure of the whole class.
 
-	virtual void WinToast_RemindTask() noexcept;
-	virtual void WinToast_ShowTaskCForToday() noexcept;
-	virtual void WinToast_ShowReminder() noexcept;
-	virtual void runSystem_GetTimeLocal() const noexcept;
+	virtual void WinToast_RemindTask() noexcept override;
+	virtual void WinToast_ShowTaskCForToday() noexcept override;
+	virtual void WinToast_ShowReminder() noexcept override;
+	virtual void runSystem_GetTimeLocal() const noexcept override;
 	// Status Indicator Checkers
-	virtual std::string ComponentStats_Indicator(ComponentID CompToCheck) noexcept;
-	virtual void MenuSel_ATask() noexcept(false);
-	virtual void MenuSel_DTask() noexcept;
-	virtual void MenuSel_ETask() noexcept(false);
-	virtual void MenuSel_VTask() noexcept(false);
-	virtual void MenuSel_SQT() noexcept(false); // SortQueuedTask
-	virtual void MenuSel_RQT() noexcept(false); // RemoveQueuedTask
-	virtual void MenuSel_SDT() noexcept(false); // SortDatabaseTask
-	virtual void MenuSel_RDT() noexcept(false); // RemoveDatabaseTask
-	virtual void MenuSel_RCT() noexcept(false); // RefreshContainerTask
-	virtual void MenuSel_CS() const noexcept(false); // ComponentStatus
-	virtual void MenuSel_MRI() const noexcept(false); // MinimizeRunningInst
+	virtual std::string ComponentStats_Indicator(ComponentID CompToCheck) noexcept override;
+	virtual void MenuSel_ATask() noexcept(false) override;
+	virtual void MenuSel_DTask() noexcept override;
+	virtual void MenuSel_ETask() noexcept(false) override;
+	virtual void MenuSel_VTask() noexcept(false) override;
+	virtual void MenuSel_SQT() noexcept(false) override; // SortQueuedTask
+	virtual void MenuSel_RQT() noexcept(false) override; // RemoveQueuedTask
+	virtual void MenuSel_SDT() noexcept(false) override; // SortDatabaseTask
+	virtual void MenuSel_RDT() noexcept(false) override; // RemoveDatabaseTask
+	virtual void MenuSel_RCT() noexcept(false) override; // RefreshContainerTask
+	virtual void MenuSel_CS() const noexcept(false) override; // ComponentStatus
+	virtual void MenuSel_MRI() const noexcept(false) override; // MinimizeRunningInst
 	// TTRM's TechFunc Functions
-	virtual void SQLite_Initialize() const noexcept(false); // CreateTable Must Be Here
-	virtual void SQLite_CheckDatabase() const noexcept(false);
-	virtual void SQLite_ReloadQueue() const noexcept(false);
-	virtual void SQLite_CRUD_Data(SQLite_QueryType ExecutionQueryType) const noexcept(false);
-
-private:
+	virtual void SQLite_Initialize() const noexcept(false) override; // CreateTable Must Be Here
+	virtual void SQLite_CheckDatabase() const noexcept(false) override;
+	virtual void SQLite_ReloadQueue() const noexcept(false) override;
+	virtual void SQLite_CRUD_Data(SQLite_QueryType ExecutionQueryType) const noexcept(false) override;
+	// These variables will be globally use by functions to reduce variable initialization by candidating only few ones from the class state.
 	unsigned short TASK_LIMIT_SIZE = TASK_DISPLAY_LIMIT; // By Default, 5. 
+	char handleInputChar = INIT_NULL_CHAR;
+	unsigned short handleInputInt = INIT_NULL_INT;
 };
 
 /*
@@ -295,19 +296,19 @@ public:
 	{
 		WinToast::instance()->clear();
 	}
-	void toastActivated() const
+	void toastActivated() const override
 	{
 		;
 		//	std::wcout << L"The user clicked in this toast" << std::endl;
 		//	exit(0);
 	}
-	void toastActivated(int actionIndex) const
+	void toastActivated(int actionIndex) const override
 	{
 		;
 		//	std::wcout << L"The user clicked on action #" << actionIndex << //std::endl;
 		//	exit(16 + actionIndex);
 	}
-	void toastDismissed(WinToastDismissalReason state) const
+	void toastDismissed(WinToastDismissalReason state) const override
 	{
 		switch (state)
 		{
@@ -329,7 +330,7 @@ public:
 			break;
 		}
 	}
-	void toastFailed() const
+	void toastFailed() const override
 	{
 		;
 		//	std::wcout << L"Error showing current toast" << std::endl;
@@ -351,14 +352,16 @@ public:
 		time_t theTime = time(NULL);
     	localtime_s(&TimeInfo,&theTime);
 	}
-	unsigned short TaskID = INIT_NULL;
-	unsigned short NotifierInterval = INIT_NULL;
-	std::string TaskName;
-	unsigned short ReminderType;
-	tm* DateCreated;   // Reserved
-	tm* DateStartTime; // Use YYYY-MM-DD, Does Not Use Time
-	tm* DateEndTime;   // Use YYYY-MM-DD, Does Not Use Time
-	tm* Time;
+	unsigned short TaskID = INIT_NULL_INT;
+	unsigned short NotifierInterval = INIT_NULL_INT;
+	std::string TaskName = INIT_NULL_STR;
+	std::string TaskInCharge = INIT_NULL_STR;
+	unsigned short ReminderType = INIT_NULL_INT;
+	tm* DateCreated = INIT_NULL_INT;   // Reserved
+	tm* DateStartTime = INIT_NULL_INT; // Use YYYY-MM-DD, Does Not Use Time
+	tm* DateEndTime = INIT_NULL_INT;   // Use YYYY-MM-DD, Does Not Use Time
+	tm* TimeTrigger = INIT_NULL_INT;
+
 	//std::queue<> DB_DisplayList; // Used unsigned int just to reference a specific specific number id.
 };
 #endif
