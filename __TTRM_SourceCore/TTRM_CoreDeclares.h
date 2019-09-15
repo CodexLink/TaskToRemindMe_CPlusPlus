@@ -44,13 +44,18 @@ using namespace WinToastLib;
 
 #undef max // Visual Studio Overriding Function To Be Undefined.
 // TERM_RET_ERROR - An ENUM that contains Termination Return Error. Useful for Deconstructor Error Display
-enum TERM_RET_ERROR : signed short
+enum TERM_RET_ERROR : unsigned short
 {
-	TERM_SUCCESS = 0,
-	TERM_FAILED = -1,
-	TERM_INVALID_PARAM = -2
+	TERM_INVALID_PARAM = 2,
+	TERM_FAILED = 1,
+	TERM_SUCCESS = 0
 };
 
+enum REMINDER_TYPES
+{
+	RemindContinous = 0,
+	RemindTimeBased = 1
+};
 enum SET_CHOICE_PROCESS : char
 {
 	CONFIRMED_TRUE_LOWER = 'y',
@@ -127,12 +132,27 @@ enum SLEEP_TIMERS
 #define PROCESS_AWAIT_CMPLT 1 // Awaiting Completion
 #endif
 
+// SYS_CONSTRAINTS is a set of definition for parameter constraints designed for stopping operation when user execeeded to one of the range definitions declared below.
 #ifndef SYS_CONSTRAINTS
 #define SYS_CONSTRAINTS
+#define MIN_CHAR_TASKNAME 2
+#define MIN_CHAR_INCHARGE 2
+#define MIN_TIME_DAY 1
+#define MAX_TIME_DAY 31
+#define MIN_TIME_MONTH 1
+#define MAX_TIME_MONTH 12
+#define MIN_TIME_HOUR 00
+#define MAX_TIME_HOUR 23
+#define MIN_TIME_MIN 0
+#define MAX_TIME_MIN 59
+#define MIN_EARLYTIME 0
+#define MAX_EARLYTIME 180
+
 #define TASK_DISPLAY_LIMIT 5
 #define TASK_DISPLAY_CRUD 10
 #define MAX_TASK_ATTACH 255
 #define MAX_TASK_DATABASE 255
+#define START_CTIME 1900
 #define MAX_SIZE ...
 #endif
 /*
@@ -153,11 +173,10 @@ public:
 		AutoStartID = 11,
 		SQLiteID = 12
 	} ComponentID; // This enum is only used for identifying Components To Check.
-
 	virtual void runSystemMenu() noexcept(false) = 0;
 	virtual void DisplayTasks_AtWindow(DISPLAY_OPTIONS WindowID_INT) noexcept = 0;
 	// TTRM_WinToast Relative Functions. Not Decalred to TTRM_WinToast due to Function Structure of the whole class.
-	virtual void runSystem_GetTimeLocal() const noexcept = 0;
+	virtual std::string runSystem_GetTimeLocal() const noexcept = 0;
 	virtual void WinToast_RemindTask() noexcept = 0;
 	virtual void WinToast_ShowTaskCForToday() noexcept = 0;
 	virtual void WinToast_ShowReminder() noexcept = 0;
@@ -204,7 +223,7 @@ public:
 	}
 	// Literal Technical Functions Declaration
 	virtual void ParseGivenParam(unsigned short argcount, char *argcmd[]) = 0;
-	virtual bool ComponentCheck(bool isNeededToRun) noexcept(false) = 0;
+	virtual unsigned short ComponentCheck(bool isNeededToRun) noexcept(false) = 0;
 
 	// Database SQLite3 Functions and Declarations
 	virtual void SQLite_Initialize() const noexcept(false) = 0; // CreateTable Must Be Here
@@ -247,7 +266,7 @@ public:
 
 	// TTRM's CoreFunc Functions
 	virtual void ParseGivenParam(unsigned short argcount, char *argcmd[]) override;
-	virtual bool ComponentCheck(bool isNeededToRun) noexcept(false) override;
+	virtual unsigned short ComponentCheck(bool isNeededToRun) noexcept(false) override;
 
 	virtual void runSystemMenu() noexcept(false) override;
 	virtual void DisplayTasks_AtWindow(DISPLAY_OPTIONS WindowID_INT) noexcept override;
@@ -257,7 +276,7 @@ public:
 	virtual void WinToast_RemindTask() noexcept override;
 	virtual void WinToast_ShowTaskCForToday() noexcept override;
 	virtual void WinToast_ShowReminder() noexcept override;
-	virtual void runSystem_GetTimeLocal() const noexcept override;
+	virtual std::string runSystem_GetTimeLocal() const noexcept override;
 	// Status Indicator Checkers
 	virtual std::string ComponentStats_Indicator(ComponentID CompToCheck) noexcept override;
 	virtual void MenuSel_ATask() noexcept(false) override;
@@ -346,21 +365,13 @@ class TTRM_TaskData
 {
 
 public:
-	TTRM_TaskData(void)
-	{
-		tm TimeInfo;
-		time_t theTime = time(NULL);
-    	localtime_s(&TimeInfo,&theTime);
-	}
-	unsigned short TaskID = INIT_NULL_INT;
-	unsigned short NotifierInterval = INIT_NULL_INT;
 	std::string TaskName = INIT_NULL_STR;
 	std::string TaskInCharge = INIT_NULL_STR;
 	unsigned short ReminderType = INIT_NULL_INT;
-	tm* DateCreated = INIT_NULL_INT;   // Reserved
-	tm* DateStartTime = INIT_NULL_INT; // Use YYYY-MM-DD, Does Not Use Time
-	tm* DateEndTime = INIT_NULL_INT;   // Use YYYY-MM-DD, Does Not Use Time
-	tm* TimeTrigger = INIT_NULL_INT;
+	tm DateStartTime; // Use YYYY-MM-DD, Does Not Use Time
+	tm DateEndTime;   // Use YYYY-MM-DD, Does Not Use Time
+	tm TimeTrigger;
+	unsigned short NotifierOffset = INIT_NULL_INT; // Id NOT Required...
 
 	//std::queue<> DB_DisplayList; // Used unsigned int just to reference a specific specific number id.
 };

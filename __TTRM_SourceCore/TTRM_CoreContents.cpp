@@ -28,7 +28,7 @@ void TTRM::ParseGivenParam(unsigned short argcount, char *argv[])
 	}
 }
 
-bool TTRM::ComponentCheck(bool isNeededToRun) noexcept(false)
+unsigned short TTRM::ComponentCheck(bool isNeededToRun) noexcept(false)
 {
 	long posx = INIT_NULL_INT, posy = INIT_NULL_INT;
 	try
@@ -81,11 +81,11 @@ bool TTRM::ComponentCheck(bool isNeededToRun) noexcept(false)
 			}
 			if (isNeededToRun)
 			{
-				return (bool)(TERM_SUCCESS);
+				return TERM_SUCCESS;
 			}
 			else
 			{
-				return (bool)(TERM_FAILED);
+				return TERM_FAILED;
 			}
 		}
 	}
@@ -112,22 +112,22 @@ void TTRM::runSystemMenu() noexcept(false)
 				  << std::endl;
 		// Create function for String To Time here.
 
-		std::cout << "Time From Your Local System |> "<< INIT_NULL_INT << std::endl;
+		std::cout << "Last Time Frame From Your Local System |> " << runSystem_GetTimeLocal() << std::endl;
 		std::cout << std::endl
 				  << "=== Incoming Task/s for Today =========================" << std::endl;
 		DisplayTasks_AtWindow(AtHome);
 		std::cout << std::endl
 				  << "=== Basic Tasks Functions ====================================" << std::endl
 				  << std::endl
-				  << "1 |> Add a Task [Currently Broken]" << std::endl
-				  << "2 |> Delete an Existing Task/s" << std::endl
+				  << "1 |> Add a Task [Flow Completed, Abort Option Left]" << std::endl
+				  << "2 |> Delete an Existing Task/s [Completed]" << std::endl
 				  << "3 |> Edit / Modify an Existing Task/s [Currently Broken]" << std::endl
-				  << "4 |> View All Tasks" << std::endl
+				  << "4 |> View All Tasks [Completed]" << std::endl
 				  << std::endl
 				  << "=== Advanced Tasks Functions ================================" << std::endl
 				  << std::endl
 				  << "5 |> Sort All Tasks from Queue [Currently !Implemented]" << std::endl
-				  << "6 |> Remove All Tasks from Queue" << std::endl
+				  << "6 |> Remove All Tasks from Queue [Completed]" << std::endl
 				  << "7 |> Sort All Tasks from Database [Currently !Implemented]" << std::endl
 				  << "8 |> Remove All Tasks from Database [Currently !Implemented]" << std::endl
 				  << "9 |> Refresh All Task from Database to Queue (w/ Sort) [Currently !Implemented]" << std::endl
@@ -218,7 +218,6 @@ void TTRM::DisplayTasks_AtWindow(DISPLAY_OPTIONS WindowID_INT) noexcept
 	}
 	else
 	{
-		std::deque<unsigned short>::iterator IterTasks;
 		std::cout << std::endl
 				  << "There are " << TaskList.size() << (TaskList.size() <= BY_ONE_OR_LESS ? " task" : " tasks");
 		switch (WindowID_INT)
@@ -274,8 +273,14 @@ void TTRM::DisplayTasks_AtWindow(DISPLAY_OPTIONS WindowID_INT) noexcept
 			}
 			else
 			{
-				std::cout << TaskNum << "|> " << IterTasks->TaskName << std::endl; //<< "\t" << IterTasks->DateStartTime << "\t"
-						  //<< IterTasks->DateEndTime << "\t" << std::endl;
+				std::cout << TaskNum << "|> " << IterTasks->TaskName
+						  << "\t" << IterTasks->TaskInCharge
+						  << "\t" << (!IterTasks->ReminderType ? "Continous" : "Time-Based")
+						  << "\t" << IterTasks->DateStartTime.tm_year << "-" << IterTasks->DateStartTime.tm_mon << "-" << IterTasks->DateStartTime.tm_mday
+						  << "\t" << IterTasks->DateEndTime.tm_year << "-" << IterTasks->DateEndTime.tm_mon << "-" << IterTasks->DateEndTime.tm_mday
+						  << "\t" << IterTasks->TimeTrigger.tm_hour << ":" << IterTasks->TimeTrigger.tm_min
+						  << "\t" << IterTasks->NotifierOffset
+						  << std::endl;
 				TaskNum++;
 			}
 		}
@@ -283,9 +288,14 @@ void TTRM::DisplayTasks_AtWindow(DISPLAY_OPTIONS WindowID_INT) noexcept
 	}
 }
 
-void TTRM::runSystem_GetTimeLocal() const noexcept
+std::string TTRM::runSystem_GetTimeLocal() const noexcept
 {
-	;
+	tm TimeStorage;
+	time_t TimeStamp = time(NULL);
+	std::stringstream StrTime;
+	localtime_s(&TimeStorage, &TimeStamp);
+	StrTime << TimeStorage.tm_mon + POS_OFFSET_BY_ONE << "-" << TimeStorage.tm_mday << "-" << TimeStorage.tm_year + START_CTIME << " | " << TimeStorage.tm_hour << ":" << TimeStorage.tm_min << ":" << TimeStorage.tm_sec;
+	return StrTime.str();
 }
 void TTRM::WinToast_RemindTask() noexcept
 {
@@ -341,40 +351,96 @@ std::string TTRM::ComponentStats_Indicator(ComponentID CompToCheck) noexcept
 
 void TTRM::MenuSel_ATask() noexcept(false)
 {
-	TTRM_TaskData *NewTask = new TTRM_TaskData;
+	TTRM_TaskData *NewTask = new TTRM_TaskData; // Create Object To Pass On...
+	tm TimeContainer;
+	time_t TimeStampData = time(NULL);
+	localtime_s(&TimeContainer, &TimeStampData);
 	while (PROCESS_AWAIT_CMPLT)
 	{
-
-		// Add Design here
 		WinCall_CMD("CLS");
-		std::cout << "[Req] Name of the Task |> ", std::getline(std::cin, NewTask->TaskName);
-		//std::cout << "[Req, YYYY-MM-DD or 'Today' or 'Tomo'] Task Start Point |> ", std::getline(std::cin, //NewTask->DateStartTime);
-		//std::cout << "[Req, YYYY-MM-DD or 'Today' or 'Tomo'] Task End Point |> ", std::getline(std::cin, //NewTask->DateEndTime);
-		//std::cout << "Time To Remind You | 24 Hour Format |> ";
-		//std::cout << "[Opt] Notify EarlyTime, By Minutes |> ", std::cin >> NewTask->NotifierInterval;
-		//std::cout << "[Opt] Notify Interval, # of Times To Remind (0-n) |> ", std::cin >> NewTask->NotifierInterval;
+		std::cout << "[Required] Name of the Task |> ", std::getline(std::cin, NewTask->TaskName);
+		std::cout << "[Required] Name of Person In Charge |> ", std::getline(std::cin, NewTask->TaskInCharge);
+		std::cout << "[Required, 0 = Continous, 1 = Time-Based] Type of Reminder |> ", std::cin >> NewTask->ReminderType;
+		std::cout << "[Req, Seperate by Space | YYYY MM DD] Task Start Point |> ", std::cin >> NewTask->DateStartTime.tm_year >> NewTask->DateStartTime.tm_mon >> NewTask->DateStartTime.tm_mday;
+		std::cout << "[Req, Seperate by Space | YYYY MM DD] Task End Point |> ", std::cin >> NewTask->DateEndTime.tm_year >> NewTask->DateEndTime.tm_mon >> NewTask->DateEndTime.tm_mday;
+		std::cout << "[Req, Seperate by Space | 00 00-23 59] Time To Remind You |> ", std::cin >> NewTask->TimeTrigger.tm_hour >> NewTask->TimeTrigger.tm_min;
+		std::cout << "[Opt, 0-180] Notification EarlyTime, By Minutes |> ", std::cin >> NewTask->NotifierOffset;
 		if (std::cin.fail())
 		{
 			std::cin.clear();
 			CinBuffer_ClearOptpt('\n');
-			std::cerr << "[Input Error] -> One of parameters has its input invalid. Please try again." << std::endl;
+			std::cerr << "[Input Error] -> One of parameters has its inputs is invalid. Please try again." << std::endl;
 			delay_time(SLEEP_ERROR_PROMPT);
 			continue;
 		}
 		else
 		{
-			//Pushing Area
-			try
+			if (NewTask->TaskName.length() <= MIN_CHAR_TASKNAME || NewTask->TaskInCharge.length() < MIN_CHAR_INCHARGE)
 			{
-				TaskList.push_back(NewTask);
-				break;
-			}
-			catch (std::exception &ErrMessage)
-			{
-				std::cerr << std::endl
-						  << ErrMessage.what() << std::endl;
-				delay_time(SLEEP_SIGNIFICANT_ERR);
+				std::cin.clear();
+				CinBuffer_ClearOptpt('\n');
+				std::cerr << "[INPUT ERR] |> TaskName or Task In Charge Character Is Not Enough. Try Again." << std::endl;
+				delay_time(SLEEP_ERROR_PROMPT);
 				continue;
+			}
+			else if (NewTask->ReminderType < RemindContinous || NewTask->ReminderType > RemindTimeBased)
+			{
+				std::cin.clear();
+				CinBuffer_ClearOptpt('\n');
+				std::cerr << "[INPUT ERR] |> Reminder Type Input is Invalid. Try Again." << std::endl;
+				delay_time(SLEEP_ERROR_PROMPT);
+				continue;
+			}
+			else if (NewTask->DateStartTime.tm_year < (TimeContainer.tm_year + START_CTIME) || (NewTask->DateStartTime.tm_mon < MIN_TIME_MONTH || NewTask->DateStartTime.tm_mon > MAX_TIME_MONTH || NewTask->DateStartTime.tm_mon < TimeContainer.tm_mon) || (NewTask->DateStartTime.tm_mday < MIN_TIME_DAY || NewTask->DateStartTime.tm_mday > MAX_TIME_DAY || NewTask->DateStartTime.tm_mday < TimeContainer.tm_mday))
+			{
+				std::cin.clear();
+				CinBuffer_ClearOptpt('\n');
+				std::cerr << "[INPUT ERR] |> Start Date Parameters is either invalid, less or exceed from expected value. Try Again." << std::endl;
+				delay_time(SLEEP_ERROR_PROMPT);
+				continue;
+			}
+			else if (NewTask->DateEndTime.tm_year < NewTask->DateStartTime.tm_year || (NewTask->DateEndTime.tm_mon < MIN_TIME_MONTH || NewTask->DateEndTime.tm_mon > MAX_TIME_MONTH || NewTask->DateEndTime.tm_mon < NewTask->DateStartTime.tm_mon) || (NewTask->DateEndTime.tm_mday < MIN_TIME_DAY || NewTask->DateEndTime.tm_mday > MAX_TIME_DAY || NewTask->DateEndTime.tm_mday < NewTask->DateStartTime.tm_mday))
+			{
+				std::cin.clear();
+				CinBuffer_ClearOptpt('\n');
+				std::cerr << "[INPUT ERR] |> End Date Parameters is either invalid, less or exceed from expected value. Try Again." << std::endl;
+				delay_time(SLEEP_ERROR_PROMPT);
+				continue;
+			}
+			else if ((NewTask->TimeTrigger.tm_hour < MIN_TIME_HOUR || NewTask->TimeTrigger.tm_hour > MAX_TIME_HOUR) || (NewTask->TimeTrigger.tm_min < MIN_TIME_MIN || NewTask->TimeTrigger.tm_min > MAX_TIME_MIN))
+			{
+				std::cin.clear();
+				CinBuffer_ClearOptpt('\n');
+				std::cerr << "[INPUT ERR] |> Time Input is Invalid. Keep in mind that I need 24 hour format. Try Again." << std::endl;
+				delay_time(SLEEP_ERROR_PROMPT);
+				continue;
+			}
+			else if (NewTask->NotifierOffset < MIN_EARLYTIME || NewTask->NotifierOffset > MAX_EARLYTIME)
+			{
+				std::cin.clear();
+				CinBuffer_ClearOptpt('\n');
+				std::cerr << "[INPUT ERR] |> Early Time Input is Invalid. Try Again." << std::endl;
+				delay_time(SLEEP_ERROR_PROMPT);
+				continue;
+			}
+			else
+			{
+				try
+				{
+					TaskList.push_back(NewTask);
+					break;
+				}
+				catch (std::exception &ErrMessage)
+				{
+					std::cerr << std::endl
+							  << ErrMessage.what() << std::endl;
+					delay_time(SLEEP_SIGNIFICANT_ERR);
+					continue;
+				}
+				catch (...)
+				{
+					std::cerr << "Unknown Error..." << std::endl;
+				}
 			}
 		}
 	}
