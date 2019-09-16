@@ -11,7 +11,7 @@
 
 #include "TTRM_CoreDeclares.h"
 
-std::deque<TTRM_TaskData *> TaskList;
+std::deque<TTRM_TaskData> TaskList;
 
 void TTRM::ParseGivenParam(unsigned short argcount, char *argv[])
 {
@@ -41,7 +41,7 @@ unsigned short TTRM::ComponentCheck(bool isNeededToRun) noexcept(false)
 		GetWindowRect(console, &ClietnScrWindow);
 		posx = GetSystemMetrics(SM_CXSCREEN) / 2 - (ClietnScrWindow.right - ClietnScrWindow.left) / 2,
 		posy = GetSystemMetrics(SM_CYSCREEN) / 2 - (ClietnScrWindow.bottom - ClietnScrWindow.top) / 2,
-		MoveWindow(console, posx, posy, ClietnScrWindow.right - ClietnScrWindow.left, (ClietnScrWindow.bottom - ClietnScrWindow.top) * (double)1.3, TRUE);
+		MoveWindow(console, posx, posy, ClietnScrWindow.right - ClietnScrWindow.left, (ClietnScrWindow.bottom - ClietnScrWindow.top) * (double)(1.3), TRUE);
 		//MoveWindow(console, ConsoleMainApp.left, ConsoleMainApp.top, 1000, 500, TRUE);
 
 		EnableMenuItem(hmenu, SC_CLOSE, MF_GRAYED);
@@ -126,9 +126,9 @@ void TTRM::runSystemMenu() noexcept(false)
 				  << std::endl
 				  << "=== Advanced Tasks Functions ================================" << std::endl
 				  << std::endl
-				  << "5 |> Sort All Tasks from Queue [Currently !Implemented]" << std::endl
+				  << "5 |> Sort All Tasks By Starting Date from Queue [Currently !Implemented]" << std::endl
 				  << "6 |> Remove All Tasks from Queue [Completed]" << std::endl
-				  << "7 |> Sort All Tasks from Database [Currently !Implemented]" << std::endl
+				  << "7 |> Sort All Tasks By Starting Date from Database [Currently !Implemented]" << std::endl
 				  << "8 |> Remove All Tasks from Database [Currently !Implemented]" << std::endl
 				  << "9 |> Refresh All Task from Database to Queue (w/ Sort) [Currently !Implemented]" << std::endl
 				  << std::endl
@@ -231,7 +231,7 @@ void TTRM::DisplayTasks_AtWindow(DISPLAY_OPTIONS WindowID_INT) noexcept
 					  << std::endl;
 			break;
 		case ViewTask:
-			std::cout << " in total currently queued!" << std::endl
+			std::cout << " in total currently in queue!" << std::endl
 					  << std::endl;
 			break;
 		case SortQueuedTask:
@@ -273,13 +273,13 @@ void TTRM::DisplayTasks_AtWindow(DISPLAY_OPTIONS WindowID_INT) noexcept
 			}
 			else
 			{
-				std::cout << TaskNum << "|> " << IterTasks->TaskName
-						  << "\t" << IterTasks->TaskInCharge
-						  << "\t" << (!IterTasks->ReminderType ? "Continous" : "Time-Based")
-						  << "\t" << IterTasks->DateStartTime.tm_year << "-" << IterTasks->DateStartTime.tm_mon << "-" << IterTasks->DateStartTime.tm_mday
-						  << "\t" << IterTasks->DateEndTime.tm_year << "-" << IterTasks->DateEndTime.tm_mon << "-" << IterTasks->DateEndTime.tm_mday
-						  << "\t" << IterTasks->TimeTrigger.tm_hour << ":" << IterTasks->TimeTrigger.tm_min
-						  << "\t" << IterTasks->NotifierOffset
+				std::cout << TaskNum << "|> " << IterTasks.TaskName
+						  << "\t" << IterTasks.TaskInCharge
+						  << "\t" << (!IterTasks.ReminderType ? "Continous" : "Time-Based")
+						  << "\t" << IterTasks.DateStartTime.tm_year << "-" << IterTasks.DateStartTime.tm_mon << "-" << IterTasks.DateStartTime.tm_mday
+						  << "\t" << IterTasks.DateEndTime.tm_year << "-" << IterTasks.DateEndTime.tm_mon << "-" << IterTasks.DateEndTime.tm_mday
+						  << "\t" << IterTasks.TimeTrigger.tm_hour << ":" << IterTasks.TimeTrigger.tm_min
+						  << "\t" << IterTasks.NotifierOffset
 						  << std::endl;
 				TaskNum++;
 			}
@@ -349,22 +349,28 @@ std::string TTRM::ComponentStats_Indicator(ComponentID CompToCheck) noexcept
 	}
 }
 
+/*bool TTRM::Object_CompareReturn(const std::deque<TTRM_TaskData> &Task1, const std::deque<TTRM_TaskData> &Task2) const noexcept
+{
+	// 
+	return Task1. ;
+}*/
+
 void TTRM::MenuSel_ATask() noexcept(false)
 {
-	TTRM_TaskData *NewTask = new TTRM_TaskData; // Create Object To Pass On...
+	TTRM_TaskData NewTask; // Create Object To Pass On...
 	tm TimeContainer;
 	time_t TimeStampData = time(NULL);
 	localtime_s(&TimeContainer, &TimeStampData);
 	while (PROCESS_AWAIT_CMPLT)
 	{
 		WinCall_CMD("CLS");
-		std::cout << "[Required] Name of the Task |> ", std::getline(std::cin, NewTask->TaskName);
-		std::cout << "[Required] Name of Person In Charge |> ", std::getline(std::cin, NewTask->TaskInCharge);
-		std::cout << "[Required, 0 = Continous, 1 = Time-Based] Type of Reminder |> ", std::cin >> NewTask->ReminderType;
-		std::cout << "[Req, Seperate by Space | YYYY MM DD] Task Start Point |> ", std::cin >> NewTask->DateStartTime.tm_year >> NewTask->DateStartTime.tm_mon >> NewTask->DateStartTime.tm_mday;
-		std::cout << "[Req, Seperate by Space | YYYY MM DD] Task End Point |> ", std::cin >> NewTask->DateEndTime.tm_year >> NewTask->DateEndTime.tm_mon >> NewTask->DateEndTime.tm_mday;
-		std::cout << "[Req, Seperate by Space | 00 00-23 59] Time To Remind You |> ", std::cin >> NewTask->TimeTrigger.tm_hour >> NewTask->TimeTrigger.tm_min;
-		std::cout << "[Opt, 0-180] Notification EarlyTime, By Minutes |> ", std::cin >> NewTask->NotifierOffset;
+		std::cout << "[Required] Name of the Task |> ", std::getline(std::cin, NewTask.TaskName);
+		std::cout << "[Required] Name of Person In Charge |> ", std::getline(std::cin, NewTask.TaskInCharge);
+		std::cout << "[Required, 0 = Continous, 1 = Time-Based] Type of Reminder |> ", std::cin >> NewTask.ReminderType;
+		std::cout << "[Req, Seperate by Space | YYYY MM DD] Task Start Point |> ", std::cin >> NewTask.DateStartTime.tm_year >> NewTask.DateStartTime.tm_mon >> NewTask.DateStartTime.tm_mday;
+		std::cout << "[Req, Seperate by Space | YYYY MM DD] Task End Point |> ", std::cin >> NewTask.DateEndTime.tm_year >> NewTask.DateEndTime.tm_mon >> NewTask.DateEndTime.tm_mday;
+		std::cout << "[Req, Seperate by Space | 00 00-23 59] Time To Remind You |> ", std::cin >> NewTask.TimeTrigger.tm_hour >> NewTask.TimeTrigger.tm_min;
+		std::cout << "[Opt, 0-180] Notification EarlyTime, By Minutes |> ", std::cin >> NewTask.NotifierOffset;
 		if (std::cin.fail())
 		{
 			std::cin.clear();
@@ -375,7 +381,7 @@ void TTRM::MenuSel_ATask() noexcept(false)
 		}
 		else
 		{
-			if (NewTask->TaskName.length() <= MIN_CHAR_TASKNAME || NewTask->TaskInCharge.length() < MIN_CHAR_INCHARGE)
+			if (NewTask.TaskName.length() <= MIN_CHAR_TASKNAME || NewTask.TaskInCharge.length() < MIN_CHAR_INCHARGE)
 			{
 				std::cin.clear();
 				CinBuffer_ClearOptpt('\n');
@@ -383,7 +389,7 @@ void TTRM::MenuSel_ATask() noexcept(false)
 				delay_time(SLEEP_ERROR_PROMPT);
 				continue;
 			}
-			else if (NewTask->ReminderType < RemindContinous || NewTask->ReminderType > RemindTimeBased)
+			else if (NewTask.ReminderType < RemindContinous || NewTask.ReminderType > RemindTimeBased)
 			{
 				std::cin.clear();
 				CinBuffer_ClearOptpt('\n');
@@ -391,7 +397,7 @@ void TTRM::MenuSel_ATask() noexcept(false)
 				delay_time(SLEEP_ERROR_PROMPT);
 				continue;
 			}
-			else if (NewTask->DateStartTime.tm_year < (TimeContainer.tm_year + START_CTIME) || (NewTask->DateStartTime.tm_mon < MIN_TIME_MONTH || NewTask->DateStartTime.tm_mon > MAX_TIME_MONTH || NewTask->DateStartTime.tm_mon < TimeContainer.tm_mon) || (NewTask->DateStartTime.tm_mday < MIN_TIME_DAY || NewTask->DateStartTime.tm_mday > MAX_TIME_DAY || NewTask->DateStartTime.tm_mday < TimeContainer.tm_mday))
+			else if (NewTask.DateStartTime.tm_year < (TimeContainer.tm_year + START_CTIME) || (NewTask.DateStartTime.tm_mon < MIN_TIME_MONTH || NewTask.DateStartTime.tm_mon > MAX_TIME_MONTH || NewTask.DateStartTime.tm_mon < TimeContainer.tm_mon) || (NewTask.DateStartTime.tm_mday < MIN_TIME_DAY || NewTask.DateStartTime.tm_mday > MAX_TIME_DAY || NewTask.DateStartTime.tm_mday < TimeContainer.tm_mday))
 			{
 				std::cin.clear();
 				CinBuffer_ClearOptpt('\n');
@@ -399,7 +405,7 @@ void TTRM::MenuSel_ATask() noexcept(false)
 				delay_time(SLEEP_ERROR_PROMPT);
 				continue;
 			}
-			else if (NewTask->DateEndTime.tm_year < NewTask->DateStartTime.tm_year || (NewTask->DateEndTime.tm_mon < MIN_TIME_MONTH || NewTask->DateEndTime.tm_mon > MAX_TIME_MONTH || NewTask->DateEndTime.tm_mon < NewTask->DateStartTime.tm_mon) || (NewTask->DateEndTime.tm_mday < MIN_TIME_DAY || NewTask->DateEndTime.tm_mday > MAX_TIME_DAY || NewTask->DateEndTime.tm_mday < NewTask->DateStartTime.tm_mday))
+			else if (NewTask.DateEndTime.tm_year < NewTask.DateStartTime.tm_year || (NewTask.DateEndTime.tm_mon < MIN_TIME_MONTH || NewTask.DateEndTime.tm_mon > MAX_TIME_MONTH || NewTask.DateEndTime.tm_mon < NewTask.DateStartTime.tm_mon) || (NewTask.DateEndTime.tm_mday < MIN_TIME_DAY || NewTask.DateEndTime.tm_mday > MAX_TIME_DAY || NewTask.DateEndTime.tm_mday < NewTask.DateStartTime.tm_mday))
 			{
 				std::cin.clear();
 				CinBuffer_ClearOptpt('\n');
@@ -407,7 +413,7 @@ void TTRM::MenuSel_ATask() noexcept(false)
 				delay_time(SLEEP_ERROR_PROMPT);
 				continue;
 			}
-			else if ((NewTask->TimeTrigger.tm_hour < MIN_TIME_HOUR || NewTask->TimeTrigger.tm_hour > MAX_TIME_HOUR) || (NewTask->TimeTrigger.tm_min < MIN_TIME_MIN || NewTask->TimeTrigger.tm_min > MAX_TIME_MIN))
+			else if ((NewTask.TimeTrigger.tm_hour < MIN_TIME_HOUR || NewTask.TimeTrigger.tm_hour > MAX_TIME_HOUR) || (NewTask.TimeTrigger.tm_min < MIN_TIME_MIN || NewTask.TimeTrigger.tm_min > MAX_TIME_MIN))
 			{
 				std::cin.clear();
 				CinBuffer_ClearOptpt('\n');
@@ -415,7 +421,7 @@ void TTRM::MenuSel_ATask() noexcept(false)
 				delay_time(SLEEP_ERROR_PROMPT);
 				continue;
 			}
-			else if (NewTask->NotifierOffset < MIN_EARLYTIME || NewTask->NotifierOffset > MAX_EARLYTIME)
+			else if (NewTask.NotifierOffset < MIN_EARLYTIME || NewTask.NotifierOffset > MAX_EARLYTIME)
 			{
 				std::cin.clear();
 				CinBuffer_ClearOptpt('\n');
@@ -474,7 +480,7 @@ void TTRM::MenuSel_DTask() noexcept
 				{
 					if (handleInputInt <= TaskSize)
 					{
-						std::cout << "Are you sure you want to delete this task: '" << TaskList.at(handleInputInt - POS_OFFSET_BY_ONE)->TaskName << "'?" << std::endl
+						std::cout << "Are you sure you want to delete this task: '" << TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TaskName << "'?" << std::endl
 								  << std::endl
 								  << "[Input, Y or N] |> ",
 							std::cin >> handleInputChar;
@@ -488,7 +494,7 @@ void TTRM::MenuSel_DTask() noexcept
 							{
 							case CONFIRMED_TRUE_LOWER:
 							case CONFIRMED_TRUE_UPPER:
-								std::cout << "[Confirmation, Success] |> Task '" << TaskList.at(handleInputInt - POS_OFFSET_BY_ONE)->TaskName << "' deleted." << std::endl;
+								std::cout << "[Confirmation, Success] |> Task '" << TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TaskName << "' deleted." << std::endl;
 								TaskList.erase(TaskList.begin() + (handleInputInt - POS_OFFSET_BY_ONE));
 								delay_time(SLEEP_OPRT_FINISHED);
 								continue;
@@ -558,7 +564,7 @@ void TTRM::MenuSel_ETask() noexcept(false)
 				{
 					if (TaskTarget <= TaskSize)
 					{
-						std::cout << "Are you sure you want to delete this task: '" << TaskList.at(TaskTarget - POS_OFFSET_BY_ONE)->TaskName << "'?" << std::endl
+						std::cout << "Are you sure you want to delete this task: '" << TaskList.at(TaskTarget - POS_OFFSET_BY_ONE).TaskName << "'?" << std::endl
 								  << std::endl
 								  << "[Input, Y or N] |> ",
 							std::cin >> handleInputChar;
@@ -572,7 +578,7 @@ void TTRM::MenuSel_ETask() noexcept(false)
 							{
 							case CONFIRMED_TRUE_LOWER:
 							case CONFIRMED_TRUE_UPPER:
-								std::cout << "[Confirmation, Success] |> Task '" << TaskList.at(TaskTarget - POS_OFFSET_BY_ONE)->TaskName << "' deleted." << std::endl;
+								std::cout << "[Confirmation, Success] |> Task '" << TaskList.at(TaskTarget - POS_OFFSET_BY_ONE).TaskName << "' deleted." << std::endl;
 								TaskList.erase(TaskList.begin() + (TaskTarget - POS_OFFSET_BY_ONE));
 								delay_time(SLEEP_OPRT_FINISHED);
 								continue;

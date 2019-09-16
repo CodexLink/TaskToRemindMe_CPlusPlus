@@ -182,6 +182,7 @@ public:
 	virtual void WinToast_ShowReminder() noexcept = 0;
 	// Status Indicators
 	virtual std::string ComponentStats_Indicator(ComponentID CompToCheck) noexcept = 0;
+	//virtual bool Object_CompareReturn(const std::deque<TTRM_TaskData> &Task1, const std::deque<TTRM_TaskData> &Task2) const noexcept = 0;
 	// runSystemMenu Sub Functions
 	// Basic Task Functions
 	virtual void MenuSel_ATask() noexcept(false) = 0;
@@ -279,6 +280,7 @@ public:
 	virtual std::string runSystem_GetTimeLocal() const noexcept override;
 	// Status Indicator Checkers
 	virtual std::string ComponentStats_Indicator(ComponentID CompToCheck) noexcept override;
+	//virtual bool Object_CompareReturn(const std::deque<TTRM_TaskData> &Task1, const std::deque<TTRM_TaskData> &Task2) const noexcept override;
 	virtual void MenuSel_ATask() noexcept(false) override;
 	virtual void MenuSel_DTask() noexcept override;
 	virtual void MenuSel_ETask() noexcept(false) override;
