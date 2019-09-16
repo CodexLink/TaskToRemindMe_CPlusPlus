@@ -514,8 +514,6 @@ void TTRM::MenuSel_DTask() noexcept
 }
 void TTRM::MenuSel_ETask() noexcept(false)
 {
-	unsigned short TaskTarget = INIT_NULL_INT;
-	char handleInputChar = INIT_NULL_CHAR;
 	while (PROCESS_AWAIT_CMPLT)
 	{
 		size_t TaskSize = TaskList.size();
@@ -527,7 +525,7 @@ void TTRM::MenuSel_ETask() noexcept(false)
 			DisplayTasks_AtWindow(EditTask);
 			std::cout << std::endl
 					  << "Please Select A Task To Edit..." << std::endl;
-			std::cout << "[Input] Task # or '0' To Go Back Menu |> ", std::cin >> TaskTarget;
+			std::cout << "[Input] Task # or '0' To Go Back Menu |> ", std::cin >> handleInputInt;
 			if (std::cin.fail())
 			{
 				std::cin.clear();
@@ -538,11 +536,11 @@ void TTRM::MenuSel_ETask() noexcept(false)
 			}
 			else
 			{
-				if (TaskTarget)
+				if (handleInputInt)
 				{
-					if (TaskTarget <= TaskSize)
+					if (handleInputInt <= TaskSize)
 					{
-						std::cout << "Are you sure you want to delete this task: '" << TaskList.at(TaskTarget - POS_OFFSET_BY_ONE).TaskName << "'?" << std::endl
+						std::cout << "Are you sure you want to edit this task: '" << TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TaskName << "'?" << std::endl
 								  << std::endl
 								  << "[Input, Y or N] |> ",
 							std::cin >> handleInputChar;
@@ -556,8 +554,8 @@ void TTRM::MenuSel_ETask() noexcept(false)
 							{
 							case CONFIRMED_TRUE_LOWER:
 							case CONFIRMED_TRUE_UPPER:
-								std::cout << "[Confirmation, Success] |> Task '" << TaskList.at(TaskTarget - POS_OFFSET_BY_ONE).TaskName << "' deleted." << std::endl;
-								TaskList.erase(TaskList.begin() + (TaskTarget - POS_OFFSET_BY_ONE));
+								std::cout << "[Confirmation, Success] |> Task '" << TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TaskName << "' deleted." << std::endl;
+								TaskList.erase(TaskList.begin() + (handleInputInt - POS_OFFSET_BY_ONE));
 								delay_time(SLEEP_OPRT_FINISHED);
 								continue;
 
