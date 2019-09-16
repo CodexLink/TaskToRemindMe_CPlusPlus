@@ -126,16 +126,14 @@ void TTRM::runSystemMenu() noexcept(false)
 				  << std::endl
 				  << "=== Advanced Tasks Functions ================================" << std::endl
 				  << std::endl
-				  << "5 |> Sort All Tasks By Starting Date from Queue [Currently !Implemented]" << std::endl
-				  << "6 |> Remove All Tasks from Queue [Completed]" << std::endl
-				  << "7 |> Sort All Tasks By Starting Date from Database [Currently !Implemented]" << std::endl
-				  << "8 |> Remove All Tasks from Database [Currently !Implemented]" << std::endl
-				  << "9 |> Refresh All Task from Database to Queue (w/ Sort) [Currently !Implemented]" << std::endl
+				  << "5 |> Sort All Tasks By Starting Date [Currently !Implemented]" << std::endl
+				  << "6 |> Remove All Tasks [Completed, Database Left]" << std::endl
+				  << "7 |> Refresh All Tasks [Currently !Implemented]" << std::endl
 				  << std::endl
 				  << "=== Technical Options =================================" << std::endl
 				  << std::endl
-				  << "10 |> Program Component Status and Enablers [Currently !Implemented]" << std::endl
-				  << "11 |> Minimize Program to System Tray [Currently !Implemented]" << std::endl
+				  << "8 |> Program Component Status and Enablers [Currently !Implemented]" << std::endl
+				  << "9 |> Minimize Program to System Tray [Currently !Implemented]" << std::endl
 				  << "0 |> Terminate / Exit Program" << std::endl
 				  << std::endl;
 		/*
@@ -171,17 +169,11 @@ void TTRM::runSystemMenu() noexcept(false)
 		case ViewTask:
 			MenuSel_VTask();
 			break;
-		case SortQueuedTask:
+		case SortTask:
 			MenuSel_SQT();
 			break;
-		case RemoveQueuedTask:
+		case RemoveAllTask:
 			MenuSel_RQT();
-			break;
-		case SortDatabaseTask:
-			MenuSel_SDT();
-			break;
-		case RemoveDatabaseTask:
-			MenuSel_RDT();
 			break;
 		case RefreshContainerTask:
 			MenuSel_RCT();
@@ -231,23 +223,15 @@ void TTRM::DisplayTasks_AtWindow(DISPLAY_OPTIONS WindowID_INT) noexcept
 					  << std::endl;
 			break;
 		case ViewTask:
-			std::cout << " in total currently in queue!" << std::endl
+			std::cout << " in total at queue system!" << std::endl
 					  << std::endl;
 			break;
-		case SortQueuedTask:
-			std::cout << " sorted from the queue!" << std::endl;
+		case SortTask:
+			std::cout << " sorted from the system!" << std::endl;
 			break;
 
-		case RemoveQueuedTask:
-			std::cout << " removed from the queue!" << std::endl;
-			break;
-
-		case SortDatabaseTask:
-			std::cout << " sorted from the database system!" << std::endl;
-			break;
-
-		case RemoveDatabaseTask:
-			std::cout << " removed from the database system!" << std::endl;
+		case RemoveAllTask:
+			std::cout << " removed from the system!" << std::endl;
 			break;
 
 		case RefreshContainerTask:
@@ -348,12 +332,6 @@ std::string TTRM::ComponentStats_Indicator(ComponentID CompToCheck) noexcept
 		return "Unknown";
 	}
 }
-
-/*bool TTRM::Object_CompareReturn(const std::deque<TTRM_TaskData> &Task1, const std::deque<TTRM_TaskData> &Task2) const noexcept
-{
-	// 
-	return Task1. ;
-}*/
 
 void TTRM::MenuSel_ATask() noexcept(false)
 {
@@ -677,14 +655,6 @@ void TTRM::MenuSel_RQT() noexcept(false)
 	}
 }
 
-void TTRM::MenuSel_SDT() noexcept(false)
-{
-	;
-}
-void TTRM::MenuSel_RDT() noexcept(false)
-{
-	;
-}
 void TTRM::MenuSel_RCT() noexcept(false)
 {
 	;

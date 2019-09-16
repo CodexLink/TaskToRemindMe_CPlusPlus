@@ -4,12 +4,8 @@
 */
 
 /*
-Things To Know #1 - Virtual Functions
-	is a function that can be overrided by another class by redeclaring this to a derived class.
-	HOW: First we declare the function in base class with equal to 0. Then redefine to a derived class that you want
-	a class to use for in the whole procedural.
 
-Things To Know #2 - ENUMs,
+Things To Know #1 - ENUMs,
 	A Group or contains that specific values that classifies specialized for returning
 	reference values. For example, we need a group of reference values for returning error codes.
 	Hence, this example is refernced to our first ENUM called TERM_RET_ERROR
@@ -43,12 +39,27 @@ Things To Know #2 - ENUMs,
 using namespace WinToastLib;
 
 #undef max // Visual Studio Overriding Function To Be Undefined.
-// TERM_RET_ERROR - An ENUM that contains Termination Return Error. Useful for Deconstructor Error Display
+		   // TERM_RET_ERROR - An ENUM that contains Termination Return Error. Useful for Deconstructor Error Display
+
+typedef enum
+{
+	WinToastID = 10,
+	AutoStartID = 11,
+	SQLiteID = 12
+} ComponentID; // This enum is only used for identifying Components To Check.
+
 enum TERM_RET_ERROR : unsigned short
 {
 	TERM_INVALID_PARAM = 2,
 	TERM_FAILED = 1,
 	TERM_SUCCESS = 0
+};
+
+enum SQLite_QueryType
+{
+	AddData,
+	EditData, // Equivalent to Update
+	DeleteData
 };
 
 enum REMINDER_TYPES
@@ -82,10 +93,8 @@ enum DISPLAY_OPTIONS
 	DeleteTask,
 	EditTask,
 	ViewTask,
-	SortQueuedTask,
-	RemoveQueuedTask,
-	SortDatabaseTask,
-	RemoveDatabaseTask,
+	SortTask,
+	RemoveAllTask,
 	RefreshContainerTask,
 	ComponentStatus,
 	MinimizeRunningInst,
@@ -155,95 +164,14 @@ enum SLEEP_TIMERS
 #define START_CTIME 1900
 #define MAX_SIZE ...
 #endif
-/*
-	TTRM_CoreFunc is a base class that contains only functions that is mainly focused on the system itself.
-	It doesn't include any external libraries function but only includes for display menus, etc.
-*/
-class TTRM_CoreFunc
-{
-public:
-	TTRM_CoreFunc(void)
-	{
-		std::cout << "[OBJECT] TTRM Core Function Initialized." << std::endl << std::endl;
-	}
-	// Variable for Storing Status Indicators of an Components
-	typedef enum
-	{
-		WinToastID = 10,
-		AutoStartID = 11,
-		SQLiteID = 12
-	} ComponentID; // This enum is only used for identifying Components To Check.
-	virtual void runSystemMenu() noexcept(false) = 0;
-	virtual void DisplayTasks_AtWindow(DISPLAY_OPTIONS WindowID_INT) noexcept = 0;
-	// TTRM_WinToast Relative Functions. Not Decalred to TTRM_WinToast due to Function Structure of the whole class.
-	virtual std::string runSystem_GetTimeLocal() const noexcept = 0;
-	virtual void WinToast_RemindTask() noexcept = 0;
-	virtual void WinToast_ShowTaskCForToday() noexcept = 0;
-	virtual void WinToast_ShowReminder() noexcept = 0;
-	// Status Indicators
-	virtual std::string ComponentStats_Indicator(ComponentID CompToCheck) noexcept = 0;
-	//virtual bool Object_CompareReturn(const std::deque<TTRM_TaskData> &Task1, const std::deque<TTRM_TaskData> &Task2) const noexcept = 0;
-	// runSystemMenu Sub Functions
-	// Basic Task Functions
-	virtual void MenuSel_ATask() noexcept(false) = 0;
-	virtual void MenuSel_DTask() noexcept = 0;
-	virtual void MenuSel_ETask() noexcept(false) = 0;
-	virtual void MenuSel_VTask() noexcept(false) = 0;
-	// Advanced Task Functions
-	virtual void MenuSel_SQT() noexcept(false) = 0; // SortQueuedTask
-	virtual void MenuSel_RQT() noexcept(false) = 0; // RemoveQueuedTask
-	virtual void MenuSel_SDT() noexcept(false) = 0; // SortDatabaseTask
-	virtual void MenuSel_RDT() noexcept(false) = 0; // RemoveDatabaseTask
-	virtual void MenuSel_RCT() noexcept(false) = 0; // RefreshContainerTask
-	virtual void MenuSel_CS() const noexcept(false) = 0; // ComponentStatus
-	virtual void MenuSel_MRI() const noexcept(false) = 0; // MinimizeRunningInst
-};
 
 /*
-	TTRM_TechFunc is a base class that contains only technical functions that utilizes
-	debugging, non-related proposed system functions such as printing some data, readjustment
-	of Console Window and more. This class contains Win32API User-Defined Functions, WinToast API for Windows 10
-	Notifications and lastly MySQL Library. Keep in mind that this is the place where external libraries added on this class.
+    TTRM is base class that initializes...
 */
-class TTRM_TechFunc
-{
-public:
-	enum SQLite_QueryType
-	{
-		AddData,
-		EditData, // Equivalent to Update
-		DeleteData
-	};
-
-	TTRM_TechFunc(void)
-	{
-		std::cout << "Task To Remind Me C++ in CLI version. BETA" << std::endl
-				  << std::endl
-				  << "Created by Data Structure Group 5, Group Members {Header Core Developer: 'Janrey Licas',\n AppFlow Director: 'Rejay Mar'};" << std::endl
-				  << std::endl;
-	}
-	// Literal Technical Functions Declaration
-	virtual void ParseGivenParam(unsigned short argcount, char *argcmd[]) = 0;
-	virtual unsigned short ComponentCheck(bool isNeededToRun) noexcept(false) = 0;
-
-	// Database SQLite3 Functions and Declarations
-	virtual void SQLite_Initialize() const noexcept(false) = 0; // CreateTable Must Be Here
-	virtual void SQLite_CheckDatabase() const noexcept(false) = 0;
-	virtual void SQLite_ReloadQueue() const noexcept(false) = 0;
-	virtual void SQLite_CRUD_Data(SQLite_QueryType ExecutionQueryType) const noexcept(false) = 0;
-
-protected:
-	const std::string DB_Path = "SQL_DataTest.db"; // Unconfirmed
-};
-
-/*
-    TTRM is derived class that initializes multiple (two or more) (base / another derived) class
-    that can be intialized in a single form factor. This means I want to use all of them by referencing only one class. 
-*/
-class TTRM : public TTRM_TechFunc, public TTRM_CoreFunc
+class TTRM
 {
 	/*
-		This class class contain variables, objects structors and functions (virtuals).
+		This class class contain variables, objects structors and functions.
 		So here's na overview.
 		- Constructors
 		- Variables
@@ -254,7 +182,10 @@ class TTRM : public TTRM_TechFunc, public TTRM_CoreFunc
 public:
 	TTRM(void)
 	{
-		std::cout << "[OBJECT] TTRM Derived Main Class has been successfully initialized." << std::endl;
+		std::cout << "Task To Remind Me C++ in CLI version. BETA" << std::endl
+				  << std::endl
+				  << "Created by Data Structure Group 5, Group Members {\nHeader Core Developer: 'Janrey Licas',\n AppFlow Director: 'Rejay Mar'\n};" << std::endl
+				  << std::endl;
 		delay_time(SLEEP_INIT_OBJECT);
 	}
 	~TTRM(void)
@@ -266,41 +197,43 @@ public:
 	}
 
 	// TTRM's CoreFunc Functions
-	virtual void ParseGivenParam(unsigned short argcount, char *argcmd[]) override;
-	virtual unsigned short ComponentCheck(bool isNeededToRun) noexcept(false) override;
+	void ParseGivenParam(unsigned short argcount, char *argcmd[]);
+	virtual unsigned short ComponentCheck(bool isNeededToRun) noexcept(false);
 
-	virtual void runSystemMenu() noexcept(false) override;
-	virtual void DisplayTasks_AtWindow(DISPLAY_OPTIONS WindowID_INT) noexcept override;
+	void runSystemMenu() noexcept(false);
+	void DisplayTasks_AtWindow(DISPLAY_OPTIONS WindowID_INT) noexcept;
 
 	// TTRM_WinToast Relative Functions. Not Decalred to TTRM_WinToast due to Function Structure of the whole class.
 
-	virtual void WinToast_RemindTask() noexcept override;
-	virtual void WinToast_ShowTaskCForToday() noexcept override;
-	virtual void WinToast_ShowReminder() noexcept override;
-	virtual std::string runSystem_GetTimeLocal() const noexcept override;
+	void WinToast_RemindTask() noexcept;
+	void WinToast_ShowTaskCForToday() noexcept;
+	void WinToast_ShowReminder() noexcept;
+	std::string runSystem_GetTimeLocal() const noexcept;
 	// Status Indicator Checkers
-	virtual std::string ComponentStats_Indicator(ComponentID CompToCheck) noexcept override;
-	//virtual bool Object_CompareReturn(const std::deque<TTRM_TaskData> &Task1, const std::deque<TTRM_TaskData> &Task2) const noexcept override;
-	virtual void MenuSel_ATask() noexcept(false) override;
-	virtual void MenuSel_DTask() noexcept override;
-	virtual void MenuSel_ETask() noexcept(false) override;
-	virtual void MenuSel_VTask() noexcept(false) override;
-	virtual void MenuSel_SQT() noexcept(false) override; // SortQueuedTask
-	virtual void MenuSel_RQT() noexcept(false) override; // RemoveQueuedTask
-	virtual void MenuSel_SDT() noexcept(false) override; // SortDatabaseTask
-	virtual void MenuSel_RDT() noexcept(false) override; // RemoveDatabaseTask
-	virtual void MenuSel_RCT() noexcept(false) override; // RefreshContainerTask
-	virtual void MenuSel_CS() const noexcept(false) override; // ComponentStatus
-	virtual void MenuSel_MRI() const noexcept(false) override; // MinimizeRunningInst
+	std::string ComponentStats_Indicator(ComponentID CompToCheck) noexcept;
+	void MenuSel_ATask() noexcept(false);
+	void MenuSel_DTask() noexcept;
+	void MenuSel_ETask() noexcept(false);
+	void MenuSel_VTask() noexcept(false);
+	void MenuSel_SQT() noexcept(false);		  // SortQueuedTask
+	void MenuSel_RQT() noexcept(false);		  // RemoveQueuedTask
+	void MenuSel_SDT() noexcept(false);		  // SortDatabaseTask
+	void MenuSel_RDT() noexcept(false);		  // RemoveDatabaseTask
+	void MenuSel_RCT() noexcept(false);		  // RefreshContainerTask
+	void MenuSel_CS() const noexcept(false);  // ComponentStatus
+	void MenuSel_MRI() const noexcept(false); // MinimizeRunningInst
 	// TTRM's TechFunc Functions
-	virtual void SQLite_Initialize() const noexcept(false) override; // CreateTable Must Be Here
-	virtual void SQLite_CheckDatabase() const noexcept(false) override;
-	virtual void SQLite_ReloadQueue() const noexcept(false) override;
-	virtual void SQLite_CRUD_Data(SQLite_QueryType ExecutionQueryType) const noexcept(false) override;
+	void SQLite_Initialize() const noexcept(false); // CreateTable Must Be Here
+	void SQLite_CheckDatabase() const noexcept(false);
+	void SQLite_ReloadQueue() const noexcept(false);
+	void SQLite_CRUD_Data(SQLite_QueryType ExecutionQueryType) const noexcept(false);
 	// These variables will be globally use by functions to reduce variable initialization by candidating only few ones from the class state.
-	unsigned short TASK_LIMIT_SIZE = TASK_DISPLAY_LIMIT; // By Default, 5. 
+	unsigned short TASK_LIMIT_SIZE = TASK_DISPLAY_LIMIT; // By Default, 5.
 	char handleInputChar = INIT_NULL_CHAR;
 	unsigned short handleInputInt = INIT_NULL_INT;
+
+protected:
+	const std::string DB_Path = "SQL_DataTest.db"; // Unconfirmed
 };
 
 /*
@@ -317,19 +250,19 @@ public:
 	{
 		WinToast::instance()->clear();
 	}
-	void toastActivated() const override
+	void toastActivated() const
 	{
 		;
 		//	std::wcout << L"The user clicked in this toast" << std::endl;
 		//	exit(0);
 	}
-	void toastActivated(int actionIndex) const override
+	void toastActivated(int actionIndex) const
 	{
 		;
 		//	std::wcout << L"The user clicked on action #" << actionIndex << //std::endl;
 		//	exit(16 + actionIndex);
 	}
-	void toastDismissed(WinToastDismissalReason state) const override
+	void toastDismissed(WinToastDismissalReason state) const
 	{
 		switch (state)
 		{
@@ -351,7 +284,7 @@ public:
 			break;
 		}
 	}
-	void toastFailed() const override
+	void toastFailed() const
 	{
 		;
 		//	std::wcout << L"Error showing current toast" << std::endl;
