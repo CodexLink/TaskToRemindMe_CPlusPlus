@@ -17,7 +17,7 @@ int main(unsigned short argc, char *argv[])
 		  CoreFunction.ParseGivenParam(argc, argv);
     
     if (!CoreFunction.ComponentCheck(IGNORE_PROCESS))
-		return TERM_FAILED;
+		return CoreFunction.TERM_FAILED;
     
 	CoreFunction.runSystemMenu();
 

@@ -32,7 +32,6 @@ Things To Know #1 - ENUMs,
 // #define Function-Like Declaration and Constant Uncategorized Definitions
 #define PROJECT_NAME L"Task To Remind Me | C++"
 #define PROJECT_VER L"Early Testing Case"
-#define NDEBUG
 #define delay_time(x) std::this_thread::sleep_for(std::chrono::milliseconds(x))
 #define WinCall_CMD(x) system(x);
 #define CinBuffer_ClearOptpt(__CharIgnore_Start) std::cin.ignore(std::numeric_limits<std::streamsize>::max(), __CharIgnore_Start);
@@ -40,78 +39,6 @@ using namespace WinToastLib;
 
 #undef max // Visual Studio Overriding Function To Be Undefined.
 		   // TERM_RET_ERROR - An ENUM that contains Termination Return Error. Useful for Deconstructor Error Display
-
-typedef enum
-{
-	WinToastID = 10,
-	AutoStartID = 11,
-	SQLiteID = 12
-} ComponentID; // This enum is only used for identifying Components To Check.
-
-enum TERM_RET_ERROR : unsigned short
-{
-	TERM_INVALID_PARAM = 2,
-	TERM_FAILED = 1,
-	TERM_SUCCESS = 0
-};
-
-enum SQLite_QueryType
-{
-	AddData,
-	EditData, // Equivalent to Update
-	DeleteData
-};
-
-enum REMINDER_TYPES
-{
-	RemindContinous = 0,
-	RemindTimeBased = 1
-};
-enum SET_CHOICE_PROCESS : char
-{
-	CONFIRMED_TRUE_LOWER = 'y',
-	CONFIRMED_TRUE_UPPER = 'Y',
-	CONFIRMED_FALSE_LOWER = 'n',
-	CONFIRMED_FALSE_UPPER = 'N'
-
-};
-enum TERM_CONSOLE_LOG_PRESET
-{
-
-};
-// CODE_CONSTRAINT_DEFAULT - An ENUM that contains Constraint to any function.
-enum CODE_CONSTRAINT_DEFAULT
-{
-	LIMIT_ARGC_COUNTER = 5,
-	MAX_TASK_EXISTING = 255 // Used for limiting possible task to enter.
-};
-
-enum DISPLAY_OPTIONS
-{
-	Termination,
-	AddTask,
-	DeleteTask,
-	EditTask,
-	ViewTask,
-	SortTask,
-	RemoveAllTask,
-	RefreshContainerTask,
-	ComponentStatus,
-	MinimizeRunningInst,
-	AtHome
-};
-
-enum SLEEP_TIMERS
-{
-	SLEEP_INIT_SETUP = 2000,
-	SLEEP_DISPLAY_WINDOW = 1500,
-	SLEEP_INIT_OBJECT = 2000,
-	SLEEP_TERM = 3000,
-	SLEEP_ERROR_PROMPT = 1850,
-	SLEEP_SIGNIFICANT_ERR = 3000,
-	SLEEP_OPRT_FAILED = 2500,
-	SLEEP_OPRT_FINISHED = 1500
-};
 /* CODE_RET_PROCESS
 	Contents: Function Returning Values for Processing Functions
 	Reason for ENUM to #define: 
@@ -133,6 +60,7 @@ enum SLEEP_TIMERS
 #define INIT_NULL_CHAR '0'
 #define POS_OFFSET_BY_ONE 1
 #define BY_ONE_OR_LESS 1
+#define DO_NOTHING 0
 
 // Superposition Method, Parameters used for when we want to run this function content or not. Used for Selected Technical  Functions only.
 #define IGNORE_PROCESS 0
@@ -159,8 +87,8 @@ enum SLEEP_TIMERS
 
 #define TASK_DISPLAY_LIMIT 5
 #define TASK_DISPLAY_CRUD 10
-#define MAX_TASK_ATTACH 255
-#define MAX_TASK_DATABASE 255
+#define MAX_TASK_ATTACHABLE 50
+#define MAX_TASK_DATABASE 50
 #define START_CTIME 1900
 #define MAX_SIZE ...
 #endif
@@ -180,6 +108,78 @@ class TTRM
 		- Functions
 	*/
 public:
+	typedef enum
+	{
+		WinToastID = 10,
+		AutoStartID = 11,
+		SQLiteID = 12
+	} ComponentID; // This enum is only used for identifying Components To Check.
+
+	enum TERM_RET_ERROR : unsigned short
+	{
+		TERM_INVALID_PARAM = 2,
+		TERM_FAILED = 1,
+		TERM_SUCCESS = 0
+	};
+
+	enum SQLite_QueryType
+	{
+		AddData,
+		EditData, // Equivalent to Update
+		DeleteData
+	};
+
+	enum REMINDER_TYPES
+	{
+		Reserved,
+		RemindContinous,
+		RemindTimeBased
+	};
+	enum SET_CHOICE_PROCESS : char
+	{
+		CONFIRMED_TRUE_LOWER = 'y',
+		CONFIRMED_TRUE_UPPER = 'Y',
+		CONFIRMED_FALSE_LOWER = 'n',
+		CONFIRMED_FALSE_UPPER = 'N'
+
+	};
+	enum TERM_CONSOLE_LOG_PRESET
+	{
+
+	};
+	// CODE_CONSTRAINT_DEFAULT - An ENUM that contains Constraint to any function.
+	enum CODE_CONSTRAINT_DEFAULT
+	{
+		LIMIT_ARGC_COUNTER = 5,
+		MAX_TASK_EXISTING = 255 // Used for limiting possible task to enter.
+	};
+
+	enum DISPLAY_OPTIONS
+	{
+		Termination,
+		AddTask,
+		DeleteTask,
+		EditTask,
+		ViewTask,
+		SortTask,
+		RemoveAllTask,
+		RefreshContainerTask,
+		ComponentStatus,
+		MinimizeRunningInst,
+		AtHome
+	};
+
+	enum SLEEP_TIMERS
+	{
+		SLEEP_INIT_SETUP = 2000,
+		SLEEP_DISPLAY_WINDOW = 1500,
+		SLEEP_INIT_OBJECT = 2000,
+		SLEEP_TERM = 3000,
+		SLEEP_ERROR_PROMPT = 1850,
+		SLEEP_SIGNIFICANT_ERR = 3000,
+		SLEEP_OPRT_FAILED = 2500,
+		SLEEP_OPRT_FINISHED = 1500
+	};
 	TTRM(void)
 	{
 		std::cout << "Task To Remind Me C++ in CLI version. BETA" << std::endl
@@ -307,7 +307,5 @@ public:
 	tm DateEndTime;   // Use YYYY-MM-DD, Does Not Use Time
 	tm TimeTrigger;
 	unsigned short NotifierOffset = INIT_NULL_INT; // Id NOT Required...
-
-	//std::queue<> DB_DisplayList; // Used unsigned int just to reference a specific specific number id.
 };
 #endif
