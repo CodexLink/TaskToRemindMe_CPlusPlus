@@ -474,7 +474,7 @@ void TTRM::MenuSel_ATask() noexcept(false)
 
 						localtime_s(&CurrentTContainer, &CurrentDateTime);
 
-						if (NewTask.RemindTime->tm_year == CurrentTContainer.tm_year && (NewTask.RemindTime->tm_mon == CurrentTContainer.tm_mon && NewTask.RemindTime->tm_mday == CurrentTContainer.tm_mday))
+						if (NewTask.RemindTime->tm_year == CurrentTContainer.tm_year && (NewTask.RemindTime->tm_mon == CurrentTContainer.tm_mon || NewTask.RemindTime->tm_mday == CurrentTContainer.tm_mday))
 						{
 
 							// ! Prerequisite Condition, if the datetime is exactly the same as the user added. Means 09/24/2019 == 09/24/2019. We check if the latest time is added by the user greater or less than.
