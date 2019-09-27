@@ -28,7 +28,6 @@ Things To Know #1 - ENUMs,
 #include <limits>
 #include <sstream>
 #include <ctime>
-#include <algorithm>
 
 // #define Function-Like Declaration and Constant Uncategorized Definitions
 #define PROJECT_NAME L"Task To Remind Me | C++"
@@ -39,6 +38,11 @@ Things To Know #1 - ENUMs,
 using namespace WinToastLib;
 
 #undef max // Visual Studio Overriding Function To Be Undefined.
+
+// ! Regarding 'This' Pragma. The reason of declaring this one is because of an issue about arguments that can be passed both on localtime_s and mktime. localtime_s needs a struct tm while mktime needs a struct *tm. This issue was caused on code issue where allocation happens and possible memory leak might be the result which is a bad idea.
+
+#pragma warning(disable : 4996) //_CRT_SECURE_NO_WARNINGS
+
 		   // TERM_RET_ERROR - An ENUM that contains Termination Return Error. Useful for Deconstructor Error Display
 /* CODE_RET_PROCESS
 	Contents: Function Returning Values for Processing Functions
@@ -79,12 +83,12 @@ using namespace WinToastLib;
 #define MAX_TIME_DAY 31
 #define MIN_TIME_MONTH 1
 #define MAX_TIME_MONTH 12
-#define MIN_TIME_HOUR 0
+#define MIN_TIME_HOUR 00
 #define MAX_TIME_HOUR 23
 #define MIN_TIME_MIN 0
 #define MAX_TIME_MIN 59
-#define MIN_TIMELEFT 0
-#define MAX_TIMELEFT 180
+#define MIN_EARLYTIME 0
+#define MAX_EARLYTIME 180
 
 #define TASK_DISPLAY_LIMIT 5
 #define TASK_DISPLAY_CRUD 10
@@ -118,26 +122,24 @@ public:
 
 	enum TERM_RET_ERROR : unsigned short
 	{
-		TERM_SUCCESS,
-		TERM_FAILED,
-		TERM_INVALID_PARAM
+		TERM_INVALID_PARAM = 2,
+		TERM_FAILED = 1,
+		TERM_SUCCESS = 0
 	};
 
 	enum SQLite_QueryType
 	{
 		AddData,
-		EditData,
+		EditData, // Equivalent to Update
 		DeleteData
 	};
 
-	enum REMINDER_TYPES : unsigned int
+	enum REMINDER_TYPES
 	{
 		Reserved,
-		QuickRemind,
-		DateBasedRemind,
-		ContinousRangeRemind
+		RemindContinous,
+		RemindTimeBased
 	};
-
 	enum SET_CHOICE_PROCESS : char
 	{
 		CONFIRMED_TRUE_LOWER = 'y',
@@ -146,12 +148,10 @@ public:
 		CONFIRMED_FALSE_UPPER = 'N'
 
 	};
-
 	enum TERM_CONSOLE_LOG_PRESET
 	{
-		//
-	};
 
+	};
 	// CODE_CONSTRAINT_DEFAULT - An ENUM that contains Constraint to any function.
 	enum CODE_CONSTRAINT_DEFAULT
 	{
@@ -185,7 +185,6 @@ public:
 		SLEEP_OPRT_FAILED = 2500,
 		SLEEP_OPRT_FINISHED = 1500
 	};
-
 	TTRM(void)
 	{
 		std::cout << "Task To Remind Me C++ in CLI version. BETA" << std::endl
@@ -194,7 +193,6 @@ public:
 				  << std::endl;
 		delay_time(SLEEP_INIT_OBJECT);
 	}
-
 	~TTRM(void)
 	{
 		std::cout << "Termination |> Closing Objects and Database before closing the program." << std::endl;
@@ -208,8 +206,8 @@ public:
 	virtual unsigned short ComponentCheck(bool isNeededToRun) noexcept(false);
 
 	void runSystemMenu() noexcept(false);
-	std::string DisplayItem_ParseType(REMINDER_TYPES IntType) noexcept;
 	void DisplayTasks_AtWindow(DISPLAY_OPTIONS WindowID_INT) noexcept;
+
 	// TTRM_WinToast Relative Functions. Not Decalred to TTRM_WinToast due to Function Structure of the whole class.
 
 	void WinToast_RemindTask() noexcept;
@@ -238,10 +236,6 @@ public:
 	unsigned short TASK_LIMIT_SIZE = TASK_DISPLAY_LIMIT; // By Default, 5.
 	char handleInputChar = INIT_NULL_CHAR;
 	unsigned short handleInputInt = INIT_NULL_INT;
-	unsigned short IterHandler_UnSh = INIT_NULL_INT;
-	unsigned int IterHandler_UnIn = INIT_NULL_INT;
-	signed int IterHandler_SiIn = INIT_NULL_INT;
-	signed short IterHandler_SiSh = INIT_NULL_INT;
 
 protected:
 	const std::string DB_Path = "SQL_DataTest.db"; // Unconfirmed
@@ -314,10 +308,9 @@ public:
 	std::string TaskName = INIT_NULL_STR;
 	std::string TaskInCharge = INIT_NULL_STR;
 	unsigned short ReminderType = INIT_NULL_INT;
-	unsigned short NotifyByTime = INIT_NULL_INT;
-	tm *StartDateTime = {0}; // Used for REMINDER_TYPES::ContinousRangeRemind
-	tm *EndDateTime = {0}; // Used for REMINDER_TYPES::ContinousRemind and REMINDER_TYPES::ContinousRangeRemind
-	tm *RemindTime = {0};
-	tm *TargetDateTime = {0}; // Used for REMINDER_TYPES::DateBasedRemind and Quick Time
+	tm DateStartTime; // Use YYYY-MM-DD, Does Not Use Time
+	tm DateEndTime;   // Use YYYY-MM-DD, Does Not Use Time
+	tm TimeTrigger;
+	unsigned short NotifierOffset = INIT_NULL_INT; // Id NOT Required...
 };
 #endif
