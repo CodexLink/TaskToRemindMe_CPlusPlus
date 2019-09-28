@@ -67,6 +67,7 @@ using namespace WinToastLib;
 #define INIT_NULL_CHAR '0'
 #define POS_OFFSET_BY_ONE 1
 #define BY_ONE_OR_LESS 1
+#define ZERO_CMPR_BASE 0
 #define DO_NOTHING 0
 
 // Superposition Method, Parameters used for when we want to run this function content or not. Used for Selected Technical  Functions only.
@@ -95,7 +96,6 @@ using namespace WinToastLib;
 #define TASK_DISPLAY_LIMIT 5
 #define TASK_DISPLAY_CRUD 10
 #define MAX_TASK_ATTACHABLE 50
-#define MAX_TASK_DATABASE 50
 #define START_CTIME 1900
 #define MAX_SIZE ...
 #endif
@@ -171,7 +171,6 @@ public:
 		DeleteTask,
 		EditTask,
 		ViewTask,
-		SortTask,
 		RemoveAllTask,
 		AtHome
 	};
@@ -224,7 +223,6 @@ public:
 	void MenuSel_DTask() noexcept;
 	void MenuSel_ETask() noexcept(false);
 	void MenuSel_VTask() noexcept(false);
-	void MenuSel_SQT() noexcept(false); // SortQueuedTask
 	void MenuSel_RQT() noexcept(false); // RemoveQueuedTask
 	// TTRM's TechFunc Functions
 	void SQLite_Initialize() const noexcept(false); // CreateTable Must Be Here

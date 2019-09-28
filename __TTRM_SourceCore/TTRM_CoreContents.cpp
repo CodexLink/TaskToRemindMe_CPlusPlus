@@ -45,7 +45,8 @@ unsigned short TTRM::ComponentCheck(bool isNeededToRun) noexcept(false)
 		//MoveWindow(console, ConsoleMainApp.left, ConsoleMainApp.top, 1000, 500, TRUE);
 
 		EnableMenuItem(hmenu, SC_CLOSE, MF_GRAYED);
-		std::cout << "Component Checking Point | Before Program Initialization" << std::endl << std::endl
+		std::cout << "Component Checking Point | Before Program Initialization" << std::endl
+				  << std::endl
 				  << "WinToast Library |> Checking Compatibility...";
 		if (WinToast::isCompatible())
 		{
@@ -113,7 +114,7 @@ void TTRM::runSystemMenu() noexcept(false)
 
 		std::cout << "Last Time Frame From Your Local System |> " << runSystem_GetTimeLocal() << std::endl;
 		std::cout << std::endl
-				  << "=== List of Task/s, Sorted by Date Time ================" << std::endl;
+				  << "=== List of Task/s, Arranged by Recent Insertion ========" << std::endl;
 		DisplayTasks_AtWindow(AtHome);
 		std::cout << std::endl
 				  << "=== Basic Tasks Functions ======================================" << std::endl
@@ -122,16 +123,10 @@ void TTRM::runSystemMenu() noexcept(false)
 				  << "2 |> Delete a Task/s" << std::endl
 				  << "3 |> Edit / Modify an Existing Task/s" << std::endl
 				  << "4 |> View All Tasks" << std::endl
-				  << "5 |> Sort All Tasks By Starting Date" << std::endl
-				  << "6 |> Remove All Tasks" << std::endl
+				  << "5 |> Remove All Tasks" << std::endl
 				  << std::endl
 				  << "0 |> Terminate / Exit Program" << std::endl
 				  << std::endl;
-		/*
-				  << "6 |> Set Auto-Start Application : Status > [" << ComponentStats_Indicator(AutoStartID) << "]" << std::endl
-				  << "7 |> Set WinToast Reminder: Status > [" << ComponentStats_Indicator(WinToastID) << "]" << std::endl
-				  << "8 |> Set SQL Database Status: Status > [" << ComponentStats_Indicator(SQLiteID) << "]" << std::endl
-				  */
 
 		std::cout << "[Input] Your Choice and ENTER |> ";
 		std::cin >> DisplayMenu_Input;
@@ -151,23 +146,26 @@ void TTRM::runSystemMenu() noexcept(false)
 		case AddTask:
 			MenuSel_ATask();
 			break;
+
 		case DeleteTask:
 			MenuSel_DTask();
 			break;
+
 		case EditTask:
 			MenuSel_ETask();
 			break;
+
 		case ViewTask:
 			MenuSel_VTask();
 			break;
-		case SortTask:
-			MenuSel_SQT();
-			break;
+
 		case RemoveAllTask:
 			MenuSel_RQT();
 			break;
+
 		case Termination:
 			break;
+
 		default:
 			std::cout << std::endl
 					  << "[ERROR] User Inputted Not Included in the List!" << std::endl;
@@ -225,9 +223,6 @@ void TTRM::DisplayTasks_AtWindow(DISPLAY_OPTIONS WindowID_INT) noexcept
 		case ViewTask:
 			std::cout << " in total at queue system!" << std::endl
 					  << std::endl;
-			break;
-		case SortTask:
-			std::cout << " sorted from the system!" << std::endl;
 			break;
 
 		case RemoveAllTask:
@@ -861,14 +856,23 @@ void TTRM::MenuSel_ETask() noexcept(false)
 										}
 
 									case DateBasedRemind:
-										(NewModifiedTask.TargetDateTime.tm_year != 0) ? TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TargetDateTime.tm_year = NewModifiedTask.TargetDateTime.tm_year : DO_NOTHING;
-										(NewModifiedTask.TargetDateTime.tm_mon != 0) ? TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TargetDateTime.tm_mon = NewModifiedTask.TargetDateTime.tm_mon : DO_NOTHING;
-										(NewModifiedTask.TargetDateTime.tm_mday != 0) ? TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TargetDateTime.tm_mday = NewModifiedTask.TargetDateTime.tm_mday : DO_NOTHING;
+										if (NewModifiedTask.TargetDateTime.tm_year != 0)
+											TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TargetDateTime.tm_year = NewModifiedTask.TargetDateTime.tm_year;
 
-										(NewModifiedTask.TargetDateTime.tm_hour != 0) ? TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TargetDateTime.tm_hour = NewModifiedTask.TargetDateTime.tm_hour : DO_NOTHING;
-										(NewModifiedTask.TargetDateTime.tm_min != 0) ? TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TargetDateTime.tm_min = NewModifiedTask.TargetDateTime.tm_min : DO_NOTHING;
+										if (NewModifiedTask.TargetDateTime.tm_mon != 0)
+											TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TargetDateTime.tm_mon = NewModifiedTask.TargetDateTime.tm_mon;
+
+										if (NewModifiedTask.TargetDateTime.tm_mday != 0)
+											TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TargetDateTime.tm_mday = NewModifiedTask.TargetDateTime.tm_mday;
+
+										if (NewModifiedTask.TargetDateTime.tm_hour != 0)
+											TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TargetDateTime.tm_hour = NewModifiedTask.TargetDateTime.tm_hour;
+
+										if (NewModifiedTask.TargetDateTime.tm_min != 0)
+											TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TargetDateTime.tm_min = NewModifiedTask.TargetDateTime.tm_min;
 
 										TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).RemindTime = {0};
+
 										break;
 									}
 
@@ -883,6 +887,7 @@ void TTRM::MenuSel_ETask() noexcept(false)
 									delay_time(SLEEP_SIGNIFICANT_ERR);
 									continue;
 								}
+
 							case CONFIRMED_FALSE_LOWER:
 							case CONFIRMED_FALSE_UPPER:
 								std::cout << "[Confirmation, Success] |> Task Deletion Cancelled." << std::endl;
@@ -900,7 +905,7 @@ void TTRM::MenuSel_ETask() noexcept(false)
 					}
 					else
 					{
-						std::cerr << "[Input Error] -> User Requested To Delete Tasks Non-Existent or Out of Range..." << std::endl;
+						std::cerr << "[Input Error] |> User Requested To Delete Tasks Non-Existent or Out of Range..." << std::endl;
 						delay_time(SLEEP_ERROR_PROMPT);
 						continue;
 					}
@@ -935,20 +940,6 @@ void TTRM::MenuSel_VTask() noexcept(false)
 	return;
 }
 
-void TTRM::MenuSel_SQT() noexcept(false)
-{
-	/*
-	Potential Deprecation.
-	try
-	{
-		sort(TaskList.begin(), TaskList.end(), TaskSort_Handler);
-	}
-	catch (...)
-	{
-		std::cerr << "[Error] Cannot sort objects. Unknown Detailed Error." << std::endl;
-	}
-	*/
-}
 
 void TTRM::MenuSel_RQT() noexcept(false)
 {
@@ -957,7 +948,7 @@ void TTRM::MenuSel_RQT() noexcept(false)
 		std::cout << std::endl
 				  << "[WARNING] |> Are you sure you want delete all tasks in queue system?" << std::endl
 				  << "[WARNING] |> All task can be restored if the database still contains all data you just deleted." << std::endl
-				  << "[INPUT  ] | ['Y'es or 'N'o] |> ",
+				  << "[INPUT  ] |> ['Y'es or 'N'o] |> ",
 			std::cin >> handleInputChar;
 		switch (handleInputChar)
 		{
