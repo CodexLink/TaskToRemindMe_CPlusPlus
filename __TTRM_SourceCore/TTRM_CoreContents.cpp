@@ -16,7 +16,7 @@ std::deque<TTRM_TaskData> TaskList;
 void TTRM::ParseGivenParam(unsigned short argcount, char *argv[])
 {
 	unsigned int ParamIter = INIT_NULL_INT;
-	std::cout << "Task To Remind Me C++ in CLI version. BETA" << std::endl
+	std::cout << "Quick Tasks To Remind Me C++ in CLI version. BETA" << std::endl
 			  << std::endl;
 	std::cout << "Created by Data Structure Group 5, Group Members {\n Header Core Developer: 'Janrey Licas',\n AppFlow Director: 'Rejay Mar'\n};" << std::endl
 			  << std::endl;
@@ -36,23 +36,23 @@ unsigned short TTRM::ComponentCheck(bool isNeededToRun) noexcept(false)
 		HWND console = GetConsoleWindow(); //, hwnd = GetConsoleWindow();
 		RECT ConsoleWindow, ClietnScrWindow;
 		HMENU hmenu = GetSystemMenu(console, FALSE);
-		SetConsoleTitle("Task To Remind Me | C++ | Early BETA // github.com/CodexLink");
+		SetConsoleTitle("Quick Tasks To Remind Me | C++ | Early BETA // github.com/CodexLink");
 		GetClientRect(console, &ConsoleWindow);
 		GetWindowRect(console, &ClietnScrWindow);
 		posx = GetSystemMetrics(SM_CXSCREEN) / 2 - (ClietnScrWindow.right - ClietnScrWindow.left) / 2,
 		posy = GetSystemMetrics(SM_CYSCREEN) / 2 - (ClietnScrWindow.bottom - ClietnScrWindow.top) / 2,
-		MoveWindow(console, posx, posy, ClietnScrWindow.right - ClietnScrWindow.left, (ClietnScrWindow.bottom - ClietnScrWindow.top) * (double)(1.3), TRUE);
+		MoveWindow(console, posx, posy, ClietnScrWindow.right - ClietnScrWindow.left, (ClietnScrWindow.bottom - ClietnScrWindow.top) * 1.3, TRUE);
 		//MoveWindow(console, ConsoleMainApp.left, ConsoleMainApp.top, 1000, 500, TRUE);
 
 		EnableMenuItem(hmenu, SC_CLOSE, MF_GRAYED);
-		std::cout << "Component Checking Point | Before Program Initialization" << std::endl
+		std::cout << "Component Checking Point | Before Program Initialization" << std::endl << std::endl
 				  << "WinToast Library |> Checking Compatibility...";
 		if (WinToast::isCompatible())
 		{
 			std::cout << std::endl
 					  << "WinToast Library |> Compatible. Setting Up Parameters..." << std::endl;
-			WinToast::instance()->setAppName(L"Task To Remind Me C++ CLI");
-			WinToast::instance()->setAppUserModelId(WinToast::configureAUMI(L"Data Struct Group 5", L"Task To Remind Me", L"TTRM C++", L"Early Beta Stage"));
+			WinToast::instance()->setAppName(L"Quick Tasks To Remind Me C++ CLI");
+			WinToast::instance()->setAppUserModelId(WinToast::configureAUMI(L"Data Struct Group 5", L"Quick Tasks To Remind Me", L"QTRM C++", L"Early Beta Stage"));
 			std::cout << "WinToast Library |> Application Name Loaded." << std::endl;
 
 			WinToastTemplate WinToastInit_Welcome(WinToastTemplate::Text02);
@@ -107,32 +107,24 @@ void TTRM::runSystemMenu() noexcept(false)
 	{
 		WinCall_CMD("CLS");
 		std::cout << std::endl
-				  << "Task To Remind Me C++ in CLI version. BETA" << std::endl
+				  << "Quick Tasks To Remind Me C++ in CLI version. BETA" << std::endl
 				  << std::endl;
 		// Create function for String To Time here.
 
 		std::cout << "Last Time Frame From Your Local System |> " << runSystem_GetTimeLocal() << std::endl;
 		std::cout << std::endl
-				  << "=== Incoming Task/s for Today =========================" << std::endl;
+				  << "=== List of Task/s, Sorted by Date Time ================" << std::endl;
 		DisplayTasks_AtWindow(AtHome);
 		std::cout << std::endl
-				  << "=== Basic Tasks Functions, Function Proggression 100% ==========" << std::endl
+				  << "=== Basic Tasks Functions ======================================" << std::endl
 				  << std::endl
-				  << "1 |> Add a Task [Abort Option Left]" << std::endl
+				  << "1 |> Add a Task" << std::endl
 				  << "2 |> Delete a Task/s" << std::endl
-				  << "3 |> Edit / Modify an Existing Task/s [TimeSens Not Purely Achieved]" << std::endl
+				  << "3 |> Edit / Modify an Existing Task/s" << std::endl
 				  << "4 |> View All Tasks" << std::endl
+				  << "5 |> Sort All Tasks By Starting Date" << std::endl
+				  << "6 |> Remove All Tasks" << std::endl
 				  << std::endl
-				  << "=== Advanced Tasks Functions ================================" << std::endl
-				  << std::endl
-				  << "5 |> Sort All Tasks By Starting Date [Potential Deprecation]" << std::endl
-				  << "6 |> Remove All Tasks [Completed, Database Left]" << std::endl
-				  << "7 |> Refresh All Tasks [Currently Not Implemented]" << std::endl
-				  << std::endl
-				  << "=== Technical Options =================================" << std::endl
-				  << std::endl
-				  << "8 |> Program Component Status and Enablers [Currently Not Implemented]" << std::endl
-				  << "9 |> Minimize Program to System Tray [Currently Not Implemented]" << std::endl
 				  << "0 |> Terminate / Exit Program" << std::endl
 				  << std::endl;
 		/*
@@ -174,15 +166,6 @@ void TTRM::runSystemMenu() noexcept(false)
 		case RemoveAllTask:
 			MenuSel_RQT();
 			break;
-		case RefreshContainerTask:
-			MenuSel_RCT();
-			break;
-		case ComponentStatus:
-			MenuSel_CS();
-			break;
-		case MinimizeRunningInst:
-			MenuSel_MRI();
-			break;
 		case Termination:
 			break;
 		default:
@@ -201,7 +184,7 @@ std::string TTRM::DisplayItem_ParseType(REMINDER_TYPES IntType) noexcept
 {
 	switch (IntType)
 	{
-	case Reserved:
+	case CancelOperation:
 		return "ERROR";
 		break;
 	case QuickRemind:
@@ -209,9 +192,6 @@ std::string TTRM::DisplayItem_ParseType(REMINDER_TYPES IntType) noexcept
 		break;
 	case DateBasedRemind:
 		return "Date Based Reminder";
-		break;
-	case ContinousRangeRemind:
-		return "Continous Ranged Reminder";
 		break;
 	default:
 		return "ERROR";
@@ -254,10 +234,6 @@ void TTRM::DisplayTasks_AtWindow(DISPLAY_OPTIONS WindowID_INT) noexcept
 			std::cout << " removed from the system!" << std::endl;
 			break;
 
-		case RefreshContainerTask:
-			std::cout << " loaded and sorted to the system!" << std::endl;
-			break;
-
 		case AtHome:
 			isAtHome = true;
 			std::cout << " for today~!" << std::endl
@@ -284,20 +260,12 @@ void TTRM::DisplayTasks_AtWindow(DISPLAY_OPTIONS WindowID_INT) noexcept
 				{
 				case QuickRemind:
 					// ! Done
-					std::cout << DisplayItem_ParseType((TTRM::REMINDER_TYPES)IterTasks.ReminderType) << " |> " << IterTasks.TaskName << " | In Charge: " << IterTasks.TaskInCharge << ", Trigger Time at " << std::setfill('0') << std::setw(2)<< IterTasks.RemindTime->tm_hour << ":" << std::setfill('0') << std::setw(2) << IterTasks.RemindTime->tm_min << std::endl;
+					std::cout << DisplayItem_ParseType((TTRM::REMINDER_TYPES)IterTasks.ReminderType) << " |> " << IterTasks.TaskName << " | In Charge: " << IterTasks.TaskInCharge << ", Trigger Time at " << std::setfill('0') << std::setw(2) << IterTasks.RemindTime.tm_hour << ":" << std::setfill('0') << std::setw(2) << IterTasks.RemindTime.tm_min << std::endl;
 					break;
 
 				case DateBasedRemind:
 					// ! Done
-					std::cout << DisplayItem_ParseType((TTRM::REMINDER_TYPES)IterTasks.ReminderType) << " |> " << IterTasks.TaskName << std::endl
-							  << " | In Charge |> " << IterTasks.TaskInCharge << " Date and Time Trigger |> " << IterTasks.TargetDateTime->tm_mon << "/" << IterTasks.TargetDateTime->tm_mday << "/" << IterTasks.TargetDateTime->tm_year << ", " << IterTasks.TargetDateTime->tm_hour << ":" << IterTasks.TargetDateTime->tm_sec << std::endl;
-					break;
-
-				case ContinousRangeRemind:
-					// ! Done
-					std::cout << DisplayItem_ParseType((TTRM::REMINDER_TYPES)IterTasks.ReminderType) << " |> " << IterTasks.TaskName << std::endl
-							  << " | In Charge |> " << IterTasks.TaskInCharge << std::endl
-							  << " Date Start |> " << IterTasks.StartDateTime->tm_mon << "/" << IterTasks.StartDateTime->tm_mday << "/" << IterTasks.StartDateTime->tm_year << " | DateTime End |>" << IterTasks.EndDateTime->tm_mon << "/" << IterTasks.EndDateTime->tm_mday << "/" << IterTasks.EndDateTime->tm_year << ", " << IterTasks.EndDateTime->tm_hour << ":" << IterTasks.EndDateTime->tm_sec << std::endl;
+					std::cout << DisplayItem_ParseType((TTRM::REMINDER_TYPES)IterTasks.ReminderType) << " |> " << IterTasks.TaskName << " | In Charge |> " << IterTasks.TaskInCharge << ", Date and Time Trigger |> " << std::setfill('0') << std::setw(2) << IterTasks.TargetDateTime.tm_mon << "/" << std::setfill('0') << std::setw(2) << IterTasks.TargetDateTime.tm_mday << "/" << std::setfill('0') << std::setw(2) << IterTasks.TargetDateTime.tm_year << ", " << std::setfill('0') << std::setw(2) << IterTasks.TargetDateTime.tm_hour << ":" << std::setfill('0') << std::setw(2) << IterTasks.TargetDateTime.tm_sec << std::endl;
 					break;
 
 				default:
@@ -316,7 +284,7 @@ std::string TTRM::runSystem_GetTimeLocal() const noexcept
 	time_t TimeStamp = time(NULL);
 	std::stringstream StrTime;
 	localtime_s(&TimeStorage, &TimeStamp);
-	StrTime << TimeStorage.tm_mon + POS_OFFSET_BY_ONE << "-" << TimeStorage.tm_mday << "-" << TimeStorage.tm_year + START_CTIME << " | " << TimeStorage.tm_hour << ":" << TimeStorage.tm_min << ":" << TimeStorage.tm_sec;
+	StrTime << TimeStorage.tm_mon + POS_OFFSET_BY_ONE << "/" << std::setfill('0') << std::setw(2) << TimeStorage.tm_mday << "/" << std::setfill('0') << std::setw(2) << (TimeStorage.tm_year + START_CTIME) << " | " << std::setfill('0') << std::setw(2) << TimeStorage.tm_hour << ":" << std::setfill('0') << std::setw(2) << TimeStorage.tm_min << ":" << std::setfill('0') << std::setw(2) << TimeStorage.tm_sec;
 	return StrTime.str();
 }
 
@@ -335,12 +303,12 @@ void TTRM::WinToast_ShowTaskCForToday() noexcept
 {
 	WinToast::instance()->clear(); // Clears First Toast. Overwritten by 'this' template.
 	WinToastTemplate TaskCountShow(WinToastTemplate::Text02);
-	std::wstring TaskCount = std::to_wstring(TaskList.size());
-	std::wstring WelcomeFirstPT = L"Hello User, You have ";
-	std::wstring WelcomeSecondPT = (TaskList.size() <= BY_ONE_OR_LESS) ? L" task" : L"tasks";
-	std::wstring WelcomeThirdPT = L" for today.";
+	//std::wstring TaskCount = std::to_wstring(TaskList.size());
+	std::wstring WelcomeFirstPT = L"Hello User, Welcome To Quick Task Remind Me System~!";
+	//std::wstring WelcomeSecondPT = (TaskList.size() <= BY_ONE_OR_LESS) ? L" task" : L"tasks";
+	//std::wstring WelcomeThirdPT = L" for today.";
 	TaskCountShow.setTextField(PROJECT_NAME, WinToastTemplate::FirstLine);
-	TaskCountShow.setTextField(WelcomeFirstPT + TaskCount + WelcomeSecondPT + WelcomeThirdPT, WinToastTemplate::SecondLine);
+	TaskCountShow.setTextField(WelcomeFirstPT /*+ TaskCount + WelcomeSecondPT + WelcomeThirdPT*/, WinToastTemplate::SecondLine);
 	// We dont check anything, since we have done it in the first place.
 	WinToast::instance()->showToast(TaskCountShow, new TTRM_WinToast);
 	return;
@@ -374,16 +342,17 @@ std::string TTRM::ComponentStats_Indicator(ComponentID CompToCheck) noexcept
 
 void TTRM::MenuSel_ATask() noexcept(false)
 {
+	time_t CompareUserDate = INIT_NULL_INT, CompareStoredDate = INIT_NULL_INT;
+	short int ObjIterateNum = INIT_NULL_INT;
+	double diffDateHandler = INIT_NULL_INT;
 	while (PROCESS_AWAIT_CMPLT)
 	{
 		TTRM_TaskData NewTask; // Create Object To Pass On...
-		time_t CurrentDateTime = time(NULL), NewT_DateTime;
+		time_t CurrentDateTime = time(NULL);
 		tm *CurrentTContainer = localtime(&CurrentDateTime);
 		WinCall_CMD("CLS");
 
-		double DTEpochTime;
-
-		std::cout << "[Required] Name of the Task |> ", std::getline(std::cin, NewTask.TaskName);
+		std::cout << "[Required] Name of the Task, Input --CANCEL to Quit Insertion. |> ", std::getline(std::cin, NewTask.TaskName);
 
 		if (NewTask.TaskName.length() < MIN_CHAR_TASKNAME || std::cin.fail())
 		{
@@ -392,8 +361,15 @@ void TTRM::MenuSel_ATask() noexcept(false)
 			CinBuffer_ClearOptpt('\n');
 			continue;
 		}
+		else if (NewTask.TaskName == "--CANCEL")
+		{
+			std::cin.clear();
+			std::cerr << "[INPUT ERR] |> New Task Insertion Operation is Cancelled by User..." << std::endl;
+			delay_time(SLEEP_OPRT_FINISHED);
+			return;
+		}
 
-		std::cout << "[Required] Name of Person In Charge |> ", std::getline(std::cin, NewTask.TaskInCharge);
+		std::cout << "[Required] Name of Person In Charge, Input --CANCEL to Quit Insertion. |> ", std::getline(std::cin, NewTask.TaskInCharge);
 
 		if (NewTask.TaskInCharge.length() < MIN_CHAR_INCHARGE || std::cin.fail())
 		{
@@ -402,12 +378,19 @@ void TTRM::MenuSel_ATask() noexcept(false)
 			CinBuffer_ClearOptpt('\n');
 			continue;
 		}
+		else if (NewTask.TaskInCharge == "--CANCEL")
+		{
+			std::cin.clear();
+			std::cerr << "[INPUT ERR] |> New Task Insertion Operation is Cancelled by User..." << std::endl;
+			delay_time(SLEEP_OPRT_FINISHED);
+			return;
+		}
 
-		std::cout << "[Req, 1 = Quick Remind, 2 = Date-Based, 3 = Continous-Ranged]" << std::endl
-				  << "|> Type of Reminder |> ",
+		std::cout << "[Req, 0 = To Cancel, 1 = Quick Remind, 2 = Date-Based]"
+				  << " |> Type of Reminder |> ",
 			std::cin >> NewTask.ReminderType;
 
-		if (NewTask.ReminderType < QuickRemind || NewTask.ReminderType > ContinousRangeRemind || std::cin.fail())
+		if (NewTask.ReminderType < CancelOperation || NewTask.ReminderType > DateBasedRemind || std::cin.fail())
 		{
 			std::cin.clear();
 			std::cerr << "[INPUT ERR] |> Reminder Type Input is Invalid. Press Any Key To Try Again." << std::endl;
@@ -419,10 +402,15 @@ void TTRM::MenuSel_ATask() noexcept(false)
 		{
 			switch (NewTask.ReminderType)
 			{
+			case CancelOperation:
+				std::cerr << "[INPUT ERR] |> New Task Insertion Operation is Cancelled by User..." << std::endl;
+				delay_time(SLEEP_OPRT_FINISHED);
+				return;
+
 			case QuickRemind:
 				std::cout << "[Required, Min: 1, Max: 180] Minutes Left To Remind You |> ", std::cin >> NewTask.NotifyByTime;
 				// TODO: Convert to time_t by mktime and return back to date time/. Done. Test Left.
-				if (NewTask.NotifyByTime < MIN_TIMELEFT || NewTask.NotifyByTime > MAX_TIMELEFT)
+				if (NewTask.NotifyByTime <= MIN_TIMELEFT || NewTask.NotifyByTime > MAX_TIMELEFT)
 				{
 					std::cerr << "[INPUT ERR] |> Time Entered is invalid. Please try again by pressing any key to restart." << std::endl;
 					CinBuffer_ClearOptpt('\n');
@@ -431,56 +419,70 @@ void TTRM::MenuSel_ATask() noexcept(false)
 				}
 				else
 				{
-					// ! Test Left.
-					// TODO: Add some Try and Except Block here.
+					// * Test Done. Success.
 					CurrentDateTime = time(0) + (60 * NewTask.NotifyByTime);
-					NewTask.RemindTime = localtime(&CurrentDateTime);
+					NewTask.TempTM = localtime(&CurrentDateTime);
+					NewTask.TempTM->tm_year += 1900;
+					NewTask.TempTM->tm_mon += 1;
+					NewTask.RemindTime = *NewTask.TempTM;
 					break;
 				}
 
 			case DateBasedRemind:
-				std::cout << "[Req, Seperate by Space | YYYY MM DD] Target Date of Reminding |> ", std::cin >> NewTask.TargetDateTime->tm_year >> NewTask.TargetDateTime->tm_mon >> NewTask.TargetDateTime->tm_mday;
+				CurrentDateTime = time(NULL);
+				CurrentTContainer = localtime(&CurrentDateTime), CurrentTContainer->tm_year += 1900, CurrentTContainer->tm_mon += 1;
 
-				NewT_DateTime = mktime(NewTask.TargetDateTime);
-				CurrentDateTime = mktime(CurrentTContainer);
-				DTEpochTime = difftime(NewT_DateTime, CurrentDateTime);
+				std::cout << "[Req, Seperate by Space | YYYY MM DD] Target Date of Reminding |> ", std::cin >> NewTask.TargetDateTime.tm_year >> NewTask.TargetDateTime.tm_mon >> NewTask.TargetDateTime.tm_mday;
 
-				if (DTEpochTime < 0 || std::cin.fail())
+				if (NewTask.TargetDateTime.tm_year < CurrentTContainer->tm_year)
 				{
 					std::cin.clear();
-					std::cerr << "[INPUT ERR] |> End Date Parameters is either invalid, less or exceeding from current date. Press Any Key To Try Again." << std::endl;
+					std::cerr << "[INPUT ERR] |> Target Year Parameter is either invalid or less from current date. Press Any Key To Try Again." << std::endl;
 					CinBuffer_ClearOptpt('\n');
 					_getche();
 					continue;
 				}
 				else
 				{
-
-					std::cout << "[Req, Seperate by Space | 00 00-23 59] Time To Remind You |> ", std::cin >> NewTask.RemindTime->tm_hour >> NewTask.RemindTime->tm_min;
-
-					//NewT_DateTime = mktime(NewTask.TargetDateTime);
-					//CurrentDateTime = mktime(CurrentTContainer);
-					//DTEpochTime = difftime(NewT_DateTime, CurrentDateTime);
+					if (NewTask.TargetDateTime.tm_mon < MIN_TIME_MONTH || NewTask.TargetDateTime.tm_mon > MAX_TIME_MONTH || NewTask.TargetDateTime.tm_mon < CurrentTContainer->tm_mon || std::cin.fail())
+					{
+						std::cin.clear();
+						std::cerr << "[INPUT ERR] |> Target Month Parameter is either invalid or less from current date. Press Any Key To Try Again." << std::endl;
+						CinBuffer_ClearOptpt('\n');
+						_getche();
+						continue;
+					}
+					else
+					{
+						if (NewTask.TargetDateTime.tm_mday < MIN_TIME_DAY || NewTask.TargetDateTime.tm_mday > MAX_TIME_DAY || (NewTask.TargetDateTime.tm_year == CurrentTContainer->tm_year && NewTask.TargetDateTime.tm_mon == CurrentTContainer->tm_mon && (NewTask.TargetDateTime.tm_mday < CurrentTContainer->tm_mday)) || std::cin.fail())
+						{
+							// ! If same month, check day.
+							std::cin.clear();
+							std::cerr << "[INPUT ERR] |> Target Day Parameter is either invalid or less from current date. Press Any Key To TryAgain." << std::endl;
+							CinBuffer_ClearOptpt('\n');
+							_getche();
+							continue;
+						}
+					}
+					std::cout << "[Req, Seperate by Space | 00:00 - 23:59] Time To Remind You |> ", std::cin >> NewTask.TargetDateTime.tm_hour >> NewTask.TargetDateTime.tm_min;
 
 					// ! Add Some Today To Today Sens Time. Currently WORK ON PROGRESS.
-					if ((NewTask.RemindTime->tm_hour < MIN_TIME_HOUR || NewTask.RemindTime->tm_hour > MAX_TIME_HOUR) || (NewTask.RemindTime->tm_min < MIN_TIME_MIN || NewTask.RemindTime->tm_min > MAX_TIME_MIN) || std::cin.fail())
+					if ((NewTask.TargetDateTime.tm_hour > MIN_TIME_HOUR || NewTask.TargetDateTime.tm_hour <= MAX_TIME_HOUR) || (NewTask.TargetDateTime.tm_min >= MIN_TIME_MIN || NewTask.TargetDateTime.tm_min <= MAX_TIME_MIN) || !std::cin.fail())
 					{
-						
+
 						// ! Prerequisite Condition, we can only get to this point if and only the datetime is exactly the same as the user added. Means 09/24/2019 == 09/24/2019. If we intend to have same date but different year then we go to else statement.
 
-						CurrentTContainer = localtime(&CurrentDateTime);
-
-						if (NewTask.RemindTime->tm_year == CurrentTContainer->tm_year && (NewTask.RemindTime->tm_mon == CurrentTContainer->tm_mon && NewTask.RemindTime->tm_mday == CurrentTContainer->tm_mday))
+						if (NewTask.TargetDateTime.tm_year == CurrentTContainer->tm_year && (NewTask.TargetDateTime.tm_mon == CurrentTContainer->tm_mon && NewTask.TargetDateTime.tm_mday == CurrentTContainer->tm_mday))
 						{
 
 							// ! Prerequisite Condition, if the datetime is exactly the same as the user added. Means 09/24/2019 == 09/24/2019. We check if the latest time is added by the user greater or less than.
 							// * Exactly done conditioning.
 
-							if (NewTask.RemindTime->tm_hour > CurrentTContainer->tm_hour)
+							if (NewTask.TargetDateTime.tm_hour >= CurrentTContainer->tm_hour)
 							{
-								if (NewTask.RemindTime->tm_min > CurrentTContainer->tm_min)
+								if (NewTask.TargetDateTime.tm_min < CurrentTContainer->tm_min)
 								{
-									std::cerr << "[INPUT ERR] |> Time Minute is Greater Than the Expected Day. Please Try Again." << std::endl;
+									std::cerr << "[INPUT ERR] |> Time Minute is Less Than the Expected Day. Please Try Again." << std::endl;
 									CinBuffer_ClearOptpt('\n');
 									_getche();
 									continue;
@@ -492,7 +494,7 @@ void TTRM::MenuSel_ATask() noexcept(false)
 							}
 							else
 							{
-								std::cerr << "[INPUT ERR] |> Time Hour is Greater Than Expected Hour. Please Try Again." << std::endl;
+								std::cerr << "[INPUT ERR] |> Time Hour is Lesser Than Expected Hour. Please Try Again." << std::endl;
 								CinBuffer_ClearOptpt('\n');
 								_getche();
 								continue;
@@ -514,25 +516,6 @@ void TTRM::MenuSel_ATask() noexcept(false)
 					}
 					break;
 				}
-
-			case ContinousRangeRemind:
-
-				std::cout << "[Req, Seperate by Space | YYYY MM DD] Starting Date of Reminding |> ", std::cin >> NewTask.StartDateTime->tm_year >> NewTask.StartDateTime->tm_mon >> NewTask.StartDateTime->tm_mday;
-				std::cout << "[Req, Seperate by Space | YYYY MM DD] End Date of Reminding |> ", std::cin >> NewTask.EndDateTime->tm_year >> NewTask.EndDateTime->tm_mon >> NewTask.EndDateTime->tm_mday;
-				std::cout << "[Req, Seperate by Space | 00 00-23 59] Time To Remind You |> ", std::cin >> NewTask.RemindTime->tm_hour >> NewTask.RemindTime->tm_min;
-
-				if ((NewTask.RemindTime->tm_hour < MIN_TIME_HOUR || NewTask.RemindTime->tm_hour > MAX_TIME_HOUR) || (NewTask.RemindTime->tm_min < MIN_TIME_MIN || NewTask.RemindTime->tm_min > MAX_TIME_MIN) || std::cin.fail())
-				{
-					std::cin.clear();
-					std::cerr << "[INPUT ERR] |> Time Input is Invalid. Keep in mind that I need 24 hour format. Press Any Key To Try Again." << std::endl;
-					CinBuffer_ClearOptpt('\n');
-					_getche();
-					continue;
-				}
-				else
-				{
-					break;
-				}
 			default:
 				std::cout << "Error" << std::endl;
 				system("pause");
@@ -547,32 +530,7 @@ void TTRM::MenuSel_ATask() noexcept(false)
 				}
 				else
 				{
-					std::deque<TTRM_TaskData>::iterator ObjIterIndex = TaskList.begin();
-					for (auto ObjIterator : TaskList)
-					{
-						/*
-						if (NewTask.StartDateTime.tm_year > ObjIterator.StartDateTime.tm_year && NewTask.StartDateTime.tm_mon > ObjIterator.StartDateTime.tm_mon && NewTask.StartDateTime.tm_mday > ObjIterator.StartDateTime.tm_mday)
-						{
-							if (NewTask.EndDateTime.tm_year > ObjIterator.EndDateTime.tm_year && NewTask.EndDateTime.tm_mon > ObjIterator.EndDateTime.tm_mon && NewTask.EndDateTime.tm_mday > ObjIterator.EndDateTime.tm_mday)
-							{
-								TaskList.insert(ObjIterIndex, NewTask);
-								ObjIterIndex++;
-								break;
-							}
-							else
-							{
-								ObjIterIndex++;
-								continue;
-							}
-						}
-						else
-						{
-							ObjIterIndex++;
-							continue;
-						}
-						*/
-					}
-					TaskList.insert(ObjIterIndex, NewTask);
+					TaskList.push_back(NewTask);
 				}
 				std::cout << std::endl
 						  << "[PROCESS] |> Task '" << NewTask.TaskName << "' has been successfully added to the queue!";
@@ -688,9 +646,8 @@ void TTRM::MenuSel_ETask() noexcept(false)
 	while (PROCESS_AWAIT_CMPLT)
 	{
 		TTRM_TaskData NewModifiedTask; // Create Object To Pass On...
-		tm CurrentTContainer;
-		time_t TimeStampData = time(NULL);
-		localtime_s(&CurrentTContainer, &TimeStampData);
+		time_t CurrentDateTime = time(NULL);
+		tm *CurrentTContainer = localtime(&CurrentDateTime);
 		size_t TaskSize = TaskList.size();
 		WinCall_CMD("CLS");
 		if (TaskSize)
@@ -753,7 +710,7 @@ void TTRM::MenuSel_ETask() noexcept(false)
 										continue;
 									}
 								}
-								std::cout << "[Required, 1 = Continous, 2 = Date-Based] Type of Reminder, Put 0 To Retain Changes |> ", std::cin >> NewModifiedTask.ReminderType;
+								std::cout << "[Required, 1 = Quick Remind, 2 = Date-Based] Type of Reminder, Put 0 To Retain Changes |> ", std::cin >> NewModifiedTask.ReminderType;
 								if (NewModifiedTask.ReminderType)
 								{
 									if (NewModifiedTask.ReminderType < QuickRemind || NewModifiedTask.ReminderType > DateBasedRemind || std::cin.fail())
@@ -765,40 +722,157 @@ void TTRM::MenuSel_ETask() noexcept(false)
 										continue;
 									}
 								}
-								std::cout << "[Req, Seperate by Space | YYYY MM DD] Task Start Point, Put 0000 00 00 To Retain Changes |> ", std::cin >> NewModifiedTask.StartDateTime->tm_year >> NewModifiedTask.StartDateTime->tm_mon >> NewModifiedTask.StartDateTime->tm_mday;
-								if ((NewModifiedTask.StartDateTime->tm_year != 0 && NewModifiedTask.StartDateTime->tm_mon != 0 && NewModifiedTask.StartDateTime->tm_mday != 0))
+
+								switch (NewModifiedTask.ReminderType)
 								{
-									if (NewModifiedTask.StartDateTime->tm_year < (CurrentTContainer.tm_year + START_CTIME) || (NewModifiedTask.StartDateTime->tm_mon < MIN_TIME_MONTH || NewModifiedTask.StartDateTime->tm_mon > MAX_TIME_MONTH || NewModifiedTask.StartDateTime->tm_mon < CurrentTContainer.tm_mon) || (NewModifiedTask.StartDateTime->tm_mday < MIN_TIME_DAY || NewModifiedTask.StartDateTime->tm_mday > MAX_TIME_DAY || NewModifiedTask.StartDateTime->tm_mday < CurrentTContainer.tm_mday) || std::cin.fail())
+								case QuickRemind:
+									std::cout << "[Required, Min: -180, Max: 180, 0 To Retain] Minutes Left To Remind You |> ", std::cin >> NewModifiedTask.NotifyByTime;
+									// TODO: Convert to time_t by mktime and return back to date time/. Done. Test Left.
+									if (NewModifiedTask.NotifyByTime < -180 || NewModifiedTask.NotifyByTime > MAX_TIMELEFT)
 									{
-										std::cin.clear();
-										std::cerr << "[INPUT ERR] |> Start Date Parameters is either invalid, less or exceed from expected value. Press Any Key To Try Again." << std::endl;
+										std::cerr << "[INPUT ERR] |> Time Entered is invalid. Please try again by pressing any key to restart." << std::endl;
 										CinBuffer_ClearOptpt('\n');
 										_getche();
 										continue;
 									}
-								}
-								std::cout << "[Req, Seperate by Space | YYYY MM DD] Task End Point, Put 0000 00 00 To Retain Changes |> ", std::cin >> NewModifiedTask.EndDateTime->tm_year >> NewModifiedTask.EndDateTime->tm_mon >> NewModifiedTask.EndDateTime->tm_mday;
-								if ((NewModifiedTask.EndDateTime->tm_year != 0 && NewModifiedTask.EndDateTime->tm_mon != 0 && NewModifiedTask.EndDateTime->tm_mday != 0))
-								{
-									if (NewModifiedTask.EndDateTime->tm_year < NewModifiedTask.StartDateTime->tm_year || (NewModifiedTask.EndDateTime->tm_mon < MIN_TIME_MONTH || NewModifiedTask.EndDateTime->tm_mon > MAX_TIME_MONTH || NewModifiedTask.EndDateTime->tm_mon < NewModifiedTask.StartDateTime->tm_mon) || (NewModifiedTask.EndDateTime->tm_mday < MIN_TIME_DAY || NewModifiedTask.EndDateTime->tm_mday > MAX_TIME_DAY || NewModifiedTask.EndDateTime->tm_mday < NewModifiedTask.StartDateTime->tm_mday) || std::cin.fail())
+									else
+									{
+										if (NewModifiedTask.NotifyByTime)
+										{
+											// * Test Done. Success.
+											CurrentDateTime = time(0) + (60 * NewModifiedTask.NotifyByTime);
+											NewModifiedTask.TempTM = localtime(&CurrentDateTime);
+											NewModifiedTask.TempTM->tm_year += 1900;
+											NewModifiedTask.TempTM->tm_mon += 1;
+											//NewModifiedTask.RemindTime = *NewModifiedTask.TempTM;
+											break;
+										}
+									}
+								case DateBasedRemind:
+									CurrentDateTime = time(NULL);
+									CurrentTContainer = localtime(&CurrentDateTime), CurrentTContainer->tm_year += 1900, CurrentTContainer->tm_mon += 1;
+
+									std::cout << "[Req, Seperate by Space | YYYY MM DD] Target Date of Reminding, Type 0 For Each To Retain |> ", std::cin >> NewModifiedTask.TargetDateTime.tm_year >> NewModifiedTask.TargetDateTime.tm_mon >> NewModifiedTask.TargetDateTime.tm_mday;
+
+									if (NewModifiedTask.TargetDateTime.tm_year < TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TargetDateTime.tm_year)
 									{
 										std::cin.clear();
-										std::cerr << "[INPUT ERR] |> End Date Parameters is either invalid, less or exceed from expected value. Press Any Key To Try Again." << std::endl;
+										std::cerr << "[INPUT ERR] |> Target Year Parameter is either invalid or less from current date. Press Any Key To Try Again." << std::endl;
 										CinBuffer_ClearOptpt('\n');
 										_getche();
 										continue;
 									}
+									else
+									{
+										if (NewModifiedTask.TargetDateTime.tm_mon < MIN_TIME_MONTH || NewModifiedTask.TargetDateTime.tm_mon > MAX_TIME_MONTH || NewModifiedTask.TargetDateTime.tm_mon < TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TargetDateTime.tm_mon || std::cin.fail())
+										{
+											std::cin.clear();
+											std::cerr << "[INPUT ERR] |> Target Month Parameter is either invalid or less from current date. Press Any Key To Try Again." << std::endl;
+											CinBuffer_ClearOptpt('\n');
+											_getche();
+											continue;
+										}
+										else
+										{
+											if (NewModifiedTask.TargetDateTime.tm_mday < MIN_TIME_DAY || NewModifiedTask.TargetDateTime.tm_mday > MAX_TIME_DAY || (NewModifiedTask.TargetDateTime.tm_year == TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TargetDateTime.tm_year && NewModifiedTask.TargetDateTime.tm_mon == TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TargetDateTime.tm_mon && (NewModifiedTask.TargetDateTime.tm_mday < TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TargetDateTime.tm_mday)) || std::cin.fail())
+											{
+												// ! If same month, check day.
+												std::cin.clear();
+												std::cerr << "[INPUT ERR] |> Target Day Parameter is either invalid or less from current date. Press Any Key To TryAgain." << std::endl;
+												CinBuffer_ClearOptpt('\n');
+												_getche();
+												continue;
+											}
+										}
+										std::cout << "[Req, Seperate by Space | 00:00 - 23:59] Time To Remind You |> ", std::cin >> NewModifiedTask.TargetDateTime.tm_hour >> NewModifiedTask.TargetDateTime.tm_min;
+
+										// ! Add Some Today To Today Sens Time. Currently WORK ON PROGRESS.
+										if ((NewModifiedTask.TargetDateTime.tm_hour > MIN_TIME_HOUR || NewModifiedTask.TargetDateTime.tm_hour <= MAX_TIME_HOUR) || (NewModifiedTask.TargetDateTime.tm_min >= MIN_TIME_MIN || NewModifiedTask.TargetDateTime.tm_min <= MAX_TIME_MIN) || !std::cin.fail())
+										{
+
+											// ! Prerequisite Condition, we can only get to this point if and only the datetime is exactly the same as the user added. Means 09/24/2019 == 09/24/2019. If we intend to have same date but different year then we go to else statement.
+
+											if (NewModifiedTask.TargetDateTime.tm_year == TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TargetDateTime.tm_year && (NewModifiedTask.TargetDateTime.tm_mon == TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TargetDateTime.tm_mon && NewModifiedTask.TargetDateTime.tm_mday == TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TargetDateTime.tm_mday))
+											{
+
+												// ! Prerequisite Condition, if the datetime is exactly the same as the user added. Means 09/24/2019 == 09/24/2019. We check if the latest time is added by the user greater or less than.
+												// * Exactly done conditioning.
+
+												if (NewModifiedTask.TargetDateTime.tm_hour >= TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TargetDateTime.tm_hour)
+												{
+													if (NewModifiedTask.TargetDateTime.tm_min < TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TargetDateTime.tm_min)
+													{
+														std::cerr << "[INPUT ERR] |> Time Minute is Less Than the Expected Day. Please Try Again." << std::endl;
+														CinBuffer_ClearOptpt('\n');
+														_getche();
+														continue;
+													}
+													else
+													{
+														break;
+													}
+												}
+												else
+												{
+													std::cerr << "[INPUT ERR] |> Time Hour is Lesser Than Expected Hour. Please Try Again." << std::endl;
+													CinBuffer_ClearOptpt('\n');
+													_getche();
+													continue;
+												}
+											}
+											else
+											{
+												// ! We proceed as there will be no conflict at timing.
+												break;
+											}
+										}
+										else
+										{
+											std::cin.clear();
+											std::cerr << "[INPUT ERR] |> Time Input is Invalid. Keep in mind that I need 24 hour format. Press Any Key To Try Again." << std::endl;
+											CinBuffer_ClearOptpt('\n');
+											_getche();
+											continue;
+										}
+										break;
+									}
+									break;
 								}
 								try
 								{
-									(NewModifiedTask.TaskName != "0") ? TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TaskName.assign(NewModifiedTask.TaskName) : DO_NOTHING;
-									(NewModifiedTask.TaskInCharge != "0") ? TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TaskInCharge.assign(NewModifiedTask.TaskInCharge) : DO_NOTHING;
-									(NewModifiedTask.ReminderType) ? TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).ReminderType = NewModifiedTask.ReminderType : DO_NOTHING;
-									(NewModifiedTask.EndDateTime->tm_year != 0) ? TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).EndDateTime->tm_year = NewModifiedTask.EndDateTime->tm_year : DO_NOTHING;
-									(NewModifiedTask.EndDateTime->tm_year != 0) ? TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).EndDateTime->tm_mon = NewModifiedTask.EndDateTime->tm_mon : DO_NOTHING;
-									(NewModifiedTask.EndDateTime->tm_year != 0) ? TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).EndDateTime->tm_mday = NewModifiedTask.EndDateTime->tm_mday : DO_NOTHING;
+									if (NewModifiedTask.TaskName != "0")
+										TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TaskName.assign(NewModifiedTask.TaskName);
 
-									std::cout << "[Confirmation, Success] |> Task Changes @ '" << TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TaskName << "' is now applied." << std::endl;
+									if (NewModifiedTask.TaskInCharge != "0")
+										TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TaskInCharge.assign(NewModifiedTask.TaskInCharge);
+
+									if (NewModifiedTask.ReminderType != TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).ReminderType)
+										TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).ReminderType = NewModifiedTask.ReminderType;
+
+									switch (NewModifiedTask.ReminderType)
+									{
+									// ! Clear Some Other Variable When That CASE is not using that variable.
+									case QuickRemind:
+										if (NewModifiedTask.NotifyByTime != 0)
+										{
+											TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).RemindTime = *NewModifiedTask.TempTM;
+											TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TargetDateTime = {0};
+											break;
+										}
+
+									case DateBasedRemind:
+										(NewModifiedTask.TargetDateTime.tm_year != 0) ? TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TargetDateTime.tm_year = NewModifiedTask.TargetDateTime.tm_year : DO_NOTHING;
+										(NewModifiedTask.TargetDateTime.tm_mon != 0) ? TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TargetDateTime.tm_mon = NewModifiedTask.TargetDateTime.tm_mon : DO_NOTHING;
+										(NewModifiedTask.TargetDateTime.tm_mday != 0) ? TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TargetDateTime.tm_mday = NewModifiedTask.TargetDateTime.tm_mday : DO_NOTHING;
+
+										(NewModifiedTask.TargetDateTime.tm_hour != 0) ? TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TargetDateTime.tm_hour = NewModifiedTask.TargetDateTime.tm_hour : DO_NOTHING;
+										(NewModifiedTask.TargetDateTime.tm_min != 0) ? TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TargetDateTime.tm_min = NewModifiedTask.TargetDateTime.tm_min : DO_NOTHING;
+
+										TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).RemindTime = {0};
+										break;
+									}
+
+									std::cout << "[Confirmation, Success] |> Task Modification @ '" << TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TaskName << "' is now applied~!" << std::endl;
 									delay_time(SLEEP_OPRT_FINISHED);
 									continue;
 								}
@@ -914,19 +988,6 @@ void TTRM::MenuSel_RQT() noexcept(false)
 		delay_time(SLEEP_OPRT_FINISHED);
 		return;
 	}
-}
-
-void TTRM::MenuSel_RCT() noexcept(false)
-{
-	;
-}
-void TTRM::MenuSel_CS() const noexcept(false)
-{
-	;
-}
-void TTRM::MenuSel_MRI() const noexcept(false)
-{
-	;
 }
 
 // CORE FUNCTION CONTENT DECLARATION - END POINT

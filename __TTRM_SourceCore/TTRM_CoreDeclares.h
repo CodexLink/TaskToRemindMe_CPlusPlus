@@ -32,7 +32,7 @@ Things To Know #1 - ENUMs,
 #include <iomanip>
 
 // #define Function-Like Declaration and Constant Uncategorized Definitions
-#define PROJECT_NAME L"Task To Remind Me | C++"
+#define PROJECT_NAME L"Quick Task To Me C++ CLI"
 #define PROJECT_VER L"Early Testing Case"
 #define delay_time(x) std::this_thread::sleep_for(std::chrono::milliseconds(x))
 #define WinCall_CMD(x) system(x);
@@ -45,7 +45,7 @@ using namespace WinToastLib;
 
 #pragma warning(disable : 4996) //_CRT_SECURE_NO_WARNINGS
 
-		   // TERM_RET_ERROR - An ENUM that contains Termination Return Error. Useful for Deconstructor Error Display
+// TERM_RET_ERROR - An ENUM that contains Termination Return Error. Useful for Deconstructor Error Display
 /* CODE_RET_PROCESS
 	Contents: Function Returning Values for Processing Functions
 	Reason for ENUM to #define: 
@@ -138,10 +138,9 @@ public:
 
 	enum REMINDER_TYPES : unsigned int
 	{
-		Reserved,
+		CancelOperation,
 		QuickRemind,
 		DateBasedRemind,
-		ContinousRangeRemind
 	};
 
 	enum SET_CHOICE_PROCESS : char
@@ -174,9 +173,6 @@ public:
 		ViewTask,
 		SortTask,
 		RemoveAllTask,
-		RefreshContainerTask,
-		ComponentStatus,
-		MinimizeRunningInst,
 		AtHome
 	};
 
@@ -194,9 +190,9 @@ public:
 
 	TTRM(void)
 	{
-		std::cout << "Task To Remind Me C++ in CLI version. BETA" << std::endl
+		std::cout << "Quick Tasks To Remind Me C++ CLI, Version 09/28/2019-2026" << std::endl
 				  << std::endl
-				  << "Created by Data Structure Group 5, Group Members {\nHeader Core Developer: 'Janrey Licas',\n AppFlow Director: 'Rejay Mar'\n};" << std::endl
+				  << "Created by Data Structure Group 5, Group Members {\nProject Leader and Program Developer: 'Janrey Licas',\n AppFlow Director: 'Rejay Mar'\n};" << std::endl
 				  << std::endl;
 		delay_time(SLEEP_INIT_OBJECT);
 	}
@@ -228,13 +224,8 @@ public:
 	void MenuSel_DTask() noexcept;
 	void MenuSel_ETask() noexcept(false);
 	void MenuSel_VTask() noexcept(false);
-	void MenuSel_SQT() noexcept(false);		  // SortQueuedTask
-	void MenuSel_RQT() noexcept(false);		  // RemoveQueuedTask
-	void MenuSel_SDT() noexcept(false);		  // SortDatabaseTask
-	void MenuSel_RDT() noexcept(false);		  // RemoveDatabaseTask
-	void MenuSel_RCT() noexcept(false);		  // RefreshContainerTask
-	void MenuSel_CS() const noexcept(false);  // ComponentStatus
-	void MenuSel_MRI() const noexcept(false); // MinimizeRunningInst
+	void MenuSel_SQT() noexcept(false); // SortQueuedTask
+	void MenuSel_RQT() noexcept(false); // RemoveQueuedTask
 	// TTRM's TechFunc Functions
 	void SQLite_Initialize() const noexcept(false); // CreateTable Must Be Here
 	void SQLite_CheckDatabase() const noexcept(false);
@@ -320,10 +311,9 @@ public:
 	std::string TaskName = INIT_NULL_STR;
 	std::string TaskInCharge = INIT_NULL_STR;
 	unsigned short ReminderType = INIT_NULL_INT;
-	unsigned short NotifyByTime = INIT_NULL_INT;
-	tm *StartDateTime = {0}; // Used for REMINDER_TYPES::ContinousRangeRemind
-	tm *EndDateTime = {0}; // Used for REMINDER_TYPES::ContinousRemind and REMINDER_TYPES::ContinousRangeRemind
-	tm *RemindTime = {0};
-	tm *TargetDateTime = {0}; // Used for REMINDER_TYPES::DateBasedRemind and Quick Time
+	signed short NotifyByTime = INIT_NULL_INT;
+	tm *TempTM = {0};
+	tm RemindTime = {0};
+	tm TargetDateTime = {0}; // Used for REMINDER_TYPES::DateBasedRemind and Quick Time
 };
 #endif
