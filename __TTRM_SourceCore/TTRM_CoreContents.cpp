@@ -284,8 +284,7 @@ void TTRM::DisplayTasks_AtWindow(DISPLAY_OPTIONS WindowID_INT) noexcept
 				{
 				case QuickRemind:
 					// ! Done
-					std::cout << DisplayItem_ParseType((TTRM::REMINDER_TYPES)IterTasks.ReminderType) << " |> " << IterTasks.TaskName << std::endl
-							  << " | In Charge |> " << IterTasks.TaskInCharge << " Time To Trigger |> " << IterTasks.TargetDateTime->tm_hour << ":" << IterTasks.TargetDateTime->tm_sec << std::endl;
+					std::cout << DisplayItem_ParseType((TTRM::REMINDER_TYPES)IterTasks.ReminderType) << " |> " << IterTasks.TaskName << " | In Charge: " << IterTasks.TaskInCharge << ", Trigger Time at " << std::setfill('0') << std::setw(2)<< IterTasks.RemindTime->tm_hour << ":" << std::setfill('0') << std::setw(2) << IterTasks.RemindTime->tm_min << std::endl;
 					break;
 
 				case DateBasedRemind:
@@ -378,9 +377,8 @@ void TTRM::MenuSel_ATask() noexcept(false)
 	while (PROCESS_AWAIT_CMPLT)
 	{
 		TTRM_TaskData NewTask; // Create Object To Pass On...
-		tm CurrentTContainer = {0};
-		time_t CurrentDateTime, NewT_DateTime;
-		localtime_s(&CurrentTContainer, &CurrentDateTime);
+		time_t CurrentDateTime = time(NULL), NewT_DateTime;
+		tm *CurrentTContainer = localtime(&CurrentDateTime);
 		WinCall_CMD("CLS");
 
 		double DTEpochTime;
@@ -435,10 +433,8 @@ void TTRM::MenuSel_ATask() noexcept(false)
 				{
 					// ! Test Left.
 					// TODO: Add some Try and Except Block here.
-					CurrentDateTime = time(NULL);
-					localtime_s(NewTask.RemindTime, &CurrentDateTime);
-					CurrentDateTime = mktime(NewTask.RemindTime) + (60 * NewTask.NotifyByTime);
-					localtime_s(NewTask.RemindTime, &CurrentDateTime);
+					CurrentDateTime = time(0) + (60 * NewTask.NotifyByTime);
+					NewTask.RemindTime = localtime(&CurrentDateTime);
 					break;
 				}
 
@@ -446,7 +442,7 @@ void TTRM::MenuSel_ATask() noexcept(false)
 				std::cout << "[Req, Seperate by Space | YYYY MM DD] Target Date of Reminding |> ", std::cin >> NewTask.TargetDateTime->tm_year >> NewTask.TargetDateTime->tm_mon >> NewTask.TargetDateTime->tm_mday;
 
 				NewT_DateTime = mktime(NewTask.TargetDateTime);
-				CurrentDateTime = mktime((tm *)CurrentTContainer);
+				CurrentDateTime = mktime(CurrentTContainer);
 				DTEpochTime = difftime(NewT_DateTime, CurrentDateTime);
 
 				if (DTEpochTime < 0 || std::cin.fail())
@@ -472,17 +468,17 @@ void TTRM::MenuSel_ATask() noexcept(false)
 						
 						// ! Prerequisite Condition, we can only get to this point if and only the datetime is exactly the same as the user added. Means 09/24/2019 == 09/24/2019. If we intend to have same date but different year then we go to else statement.
 
-						localtime_s(&CurrentTContainer, &CurrentDateTime);
+						CurrentTContainer = localtime(&CurrentDateTime);
 
-						if (NewTask.RemindTime->tm_year == CurrentTContainer.tm_year && (NewTask.RemindTime->tm_mon == CurrentTContainer.tm_mon && NewTask.RemindTime->tm_mday == CurrentTContainer.tm_mday))
+						if (NewTask.RemindTime->tm_year == CurrentTContainer->tm_year && (NewTask.RemindTime->tm_mon == CurrentTContainer->tm_mon && NewTask.RemindTime->tm_mday == CurrentTContainer->tm_mday))
 						{
 
 							// ! Prerequisite Condition, if the datetime is exactly the same as the user added. Means 09/24/2019 == 09/24/2019. We check if the latest time is added by the user greater or less than.
 							// * Exactly done conditioning.
 
-							if (NewTask.RemindTime->tm_hour > CurrentTContainer.tm_hour)
+							if (NewTask.RemindTime->tm_hour > CurrentTContainer->tm_hour)
 							{
-								if (NewTask.RemindTime->tm_min > CurrentTContainer.tm_min)
+								if (NewTask.RemindTime->tm_min > CurrentTContainer->tm_min)
 								{
 									std::cerr << "[INPUT ERR] |> Time Minute is Greater Than the Expected Day. Please Try Again." << std::endl;
 									CinBuffer_ClearOptpt('\n');

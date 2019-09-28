@@ -29,6 +29,7 @@ Things To Know #1 - ENUMs,
 #include <sstream>
 #include <ctime>
 #include <algorithm>
+#include <iomanip>
 
 // #define Function-Like Declaration and Constant Uncategorized Definitions
 #define PROJECT_NAME L"Task To Remind Me | C++"
