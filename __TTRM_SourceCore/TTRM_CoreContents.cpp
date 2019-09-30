@@ -80,6 +80,7 @@ unsigned short TTRM::ComponentCheck(bool isNeededToRun) noexcept(false)
 				std::cerr << "WinToast Library |> Error. Cannot Initialize WinToast, Notification Disabled." << std::endl;
 				delay_time(SLEEP_ERROR_PROMPT);
 			}
+			
 			if (isNeededToRun)
 			{
 				return TERM_SUCCESS;
@@ -308,23 +309,44 @@ void TTRM::WinToast_ShowTaskCForToday() noexcept
 	WinToast::instance()->showToast(TaskCountShow, new TTRM_WinToast);
 	return;
 }
-void TTRM::WinToast_ShowReminder() noexcept
+void TTRM::WinToast_ReminderPrompt(std::string ReadName, std::string ReadInCharge, unsigned short ReadReminderType, signed ReadNotifyByTime, tm TMToRead) noexcept
 {
-	//WinToastTemplate ShowReminder()
+	WinToastTemplate ShowReminder(WinToastTemplate::Text02);
+	ShowReminder.setTextField(L"Reminder Triggered~!", WinToastTemplate::FirstLine);
+	ShowReminder.setTextField(L"asd", WinToastTemplate::SecondLine);
 	return;
 }
 
 // This function should be scanning 10 reminders at ones.
-void TTRM:: MultiThread_ScanReminders() const noexcept
+unsigned int __stdcall TTRM::MultiThread_ScanReminders(void *ArgsReserved)
 {
 	auto ObjectScanIter = INIT_NULL_INT;
 	time_t ObjSlotScanConv = INIT_NULL_INT; //SecObj_Slot = INIT_NULL_INT;
 	while (NO_ERR_AT_SCAN)
 	{
-		if (TaskList.at(ObjectScanIter).Task)
-		ObjSlotScanConv = mktime(TaskList.at(ObjectScanIter).)
+		if (!TaskList.empty())
+		{
+			system("CLS");
+			std::cout << "TaskList is More." << std::endl;
+			WinToast_ReminderPrompt(TaskList.at(ObjectScanIter).TaskName, TaskList.at(ObjectScanIter).TaskInCharge, TaskList.at(ObjectScanIter).ReminderType, TaskList.at(ObjectScanIter).NotifyByTime, TaskList.at(ObjectScanIter).ReminderData);
+			for (ObjectScanIter = INIT_NULL_INT; ObjectScanIter >= TaskList.size() || ObjectScanIter > MAX_SCAN_REMINDERS; ObjectScanIter++)
+			{
+				if (mktime(&TaskList.at(ObjectScanIter).ReminderData) <= time(NULL))
+				{
+					WinToast_ReminderPrompt(TaskList.at(ObjectScanIter).TaskName, TaskList.at(ObjectScanIter).TaskInCharge, TaskList.at(ObjectScanIter).ReminderType, TaskList.at(ObjectScanIter).NotifyByTime, TaskList.at(ObjectScanIter).ReminderData);
+				}
+				else
+				{
+					continue;
+				}
+			}
+		}
+		else
+		{
+			continue;
+		}
 	}
-	return;
+	return NO_TASK_REPEAT_PRC; // We wont exit this scope anyway unless we call destructor...
 }
 
 std::string TTRM::ComponentStats_Indicator(ComponentID CompToCheck) noexcept
@@ -953,7 +975,6 @@ void TTRM::MenuSel_VTask() noexcept(false)
 	}
 	return;
 }
-
 
 void TTRM::MenuSel_RQT() noexcept(false)
 {

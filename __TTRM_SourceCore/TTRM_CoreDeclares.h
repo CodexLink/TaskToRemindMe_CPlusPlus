@@ -76,6 +76,8 @@ using namespace WinToastLib;
 #define RUN_PROCESS 1
 #define NOT_REQ_TERM 1
 #define NO_ERR_AT_SCAN 1
+#define NO_TASK_REPEAT_PRC 0
+#define EOS_FUNC 1
 #define PROCESS_AWAIT_CMPLT 1 // Awaiting Completion
 #endif
 
@@ -210,17 +212,17 @@ public:
 
 	// TTRM's CoreFunc Functions
 	void ParseGivenParam(unsigned short argcount, char *argcmd[]);
-	virtual unsigned short ComponentCheck(bool isNeededToRun) noexcept(false);
-
+	unsigned static __stdcall MultiThread_ScanReminders(void *);
+	
+	unsigned short ComponentCheck(bool isNeededToRun) noexcept(false);
 	void runSystemMenu() noexcept(false);
 	std::string DisplayItem_ParseType(REMINDER_TYPES IntType) noexcept;
 	void DisplayTasks_AtWindow(DISPLAY_OPTIONS WindowID_INT) noexcept;
-	// TTRM_WinToast Relative Functions. Not Decalred to TTRM_WinToast due to Function Structure of the whole class.
 
+	// TTRM_WinToast Relative Functions. Not Decalred to TTRM_WinToast due to Function Structure of the whole class.
 	void WinToast_RemindTask() noexcept;
 	void WinToast_ShowTaskCForToday() noexcept;
-	void WinToast_ShowReminder() noexcept;
-	void MultiThread_ScanReminders() const noexcept;
+	static void WinToast_ReminderPrompt(std::string ReadName, std::string ReadInCharge, unsigned short ReadReminderType, signed ReadNotifyByTime, tm TMToRead) noexcept;
 
 	std::string runSystem_GetTimeLocal() const noexcept;
 	// Status Indicator Checkers
@@ -243,6 +245,8 @@ public:
 	unsigned int IterHandler_UnIn = INIT_NULL_INT;
 	signed int IterHandler_SiIn = INIT_NULL_INT;
 	signed short IterHandler_SiSh = INIT_NULL_INT;
+	unsigned MultiThreadID;
+	HANDLE MultiThreadHandler;
 
 protected:
 	const std::string DB_Path = "SQL_DataTest.db"; // Unconfirmed

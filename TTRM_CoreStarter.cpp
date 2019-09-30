@@ -8,11 +8,10 @@
 
 TTRM CoreFunction;
 
-// We insist to use std::vector. But for the sake of accomplishing only said goals. We'll be go to std::queue;
-	
-
 int main(unsigned short argc, char *argv[])
 {
+    _beginthreadex(0, 0, &CoreFunction.MultiThread_ScanReminders, 0, 0, &CoreFunction.MultiThreadID);
+    
     if (argc > POS_OFFSET_BY_ONE)
 		  CoreFunction.ParseGivenParam(argc, argv);
     
