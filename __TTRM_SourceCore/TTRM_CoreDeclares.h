@@ -71,6 +71,7 @@ using namespace WinToastLib;
 #define ZERO_CMPR_BASE 0
 #define DO_NOTHING 0
 
+
 // Superposition Method, Parameters used for when we want to run this function content or not. Used for Selected Technical  Functions only.
 #define IGNORE_PROCESS 0
 #define RUN_PROCESS 1
@@ -103,6 +104,7 @@ using namespace WinToastLib;
 #define MAX_TASK_ATTACHABLE 50
 #define MAX_SCAN_REMINDERS 10
 #define START_CTIME 1900
+#define WAIT_STARTTHREAD 1000
 #define MAX_SIZE ...
 #endif
 
@@ -204,14 +206,17 @@ public:
 
 	~TTRM(void)
 	{
-		std::cout << "Termination |> Closing Objects and Database before closing the program." << std::endl;
-		std::cout << "Termination |> All Modules Is Closed. Program Terminates!" << std::endl;
+		std::cout << std::endl << "Termination |> Closing Objects and Threads." << std::endl;
+		std::cout << "Termination |> Multi-Thread Function Closed." << std::endl;
+		CloseHandle(MultiThreadHandler);
+		std::cout << "Termination |> Program Terminates in 2 Seconds. Goodbye.";
 		delay_time(SLEEP_INIT_OBJECT);
 		exit(USER_OUTOFSCOPE_TERM_SUCCESS);
 	}
 
 	// TTRM's CoreFunc Functions
 	void ParseGivenParam(unsigned short argcount, char *argcmd[]);
+	unsigned static __stdcall MultiThread_Wrapper(void *);
 	unsigned static __stdcall MultiThread_ScanReminders(void *);
 	
 	unsigned short ComponentCheck(bool isNeededToRun) noexcept(false);

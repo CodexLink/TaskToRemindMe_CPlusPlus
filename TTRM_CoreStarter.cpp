@@ -10,7 +10,7 @@ TTRM CoreFunction;
 
 int main(unsigned short argc, char *argv[])
 {
-    _beginthreadex(0, 0, &CoreFunction.MultiThread_ScanReminders, 0, 0, &CoreFunction.MultiThreadID);
+    //CoreFunction.MultiThreadHandler = (HANDLE)_beginthreadex(0, 0, &CoreFunction.MultiThread_ScanReminders, 0, 0, &CoreFunction.MultiThreadID);
     
     if (argc > POS_OFFSET_BY_ONE)
 		  CoreFunction.ParseGivenParam(argc, argv);
