@@ -20,6 +20,7 @@ Things To Know #1 - ENUMs,
 #include <deque>
 #include <stack>
 #include <windows.h> // For Win32 API, We manipulate our console here.
+#include <process.h>
 #include "WinToastLib/wintoastlib.h"
 #include "SQLite3/sqlite3.h"
 //#include <conio.h> // For Character Standard Input (STDIN) Capture for Switch-Case Statement
@@ -74,6 +75,7 @@ using namespace WinToastLib;
 #define IGNORE_PROCESS 0
 #define RUN_PROCESS 1
 #define NOT_REQ_TERM 1
+#define NO_ERR_AT_SCAN 1
 #define PROCESS_AWAIT_CMPLT 1 // Awaiting Completion
 #endif
 
@@ -93,9 +95,11 @@ using namespace WinToastLib;
 #define MIN_TIMELEFT 0
 #define MAX_TIMELEFT 180
 
+
 #define TASK_DISPLAY_LIMIT 5
 #define TASK_DISPLAY_CRUD 10
 #define MAX_TASK_ATTACHABLE 50
+#define MAX_SCAN_REMINDERS 10
 #define START_CTIME 1900
 #define MAX_SIZE ...
 #endif
@@ -216,6 +220,8 @@ public:
 	void WinToast_RemindTask() noexcept;
 	void WinToast_ShowTaskCForToday() noexcept;
 	void WinToast_ShowReminder() noexcept;
+	void MultiThread_ScanReminders() const noexcept;
+
 	std::string runSystem_GetTimeLocal() const noexcept;
 	// Status Indicator Checkers
 	std::string ComponentStats_Indicator(ComponentID CompToCheck) noexcept;
@@ -311,7 +317,6 @@ public:
 	unsigned short ReminderType = INIT_NULL_INT;
 	signed short NotifyByTime = INIT_NULL_INT;
 	tm *TempTM = {0};
-	tm RemindTime = {0};
-	tm TargetDateTime = {0}; // Used for REMINDER_TYPES::DateBasedRemind and Quick Time
+	tm ReminderData = {0};
 };
 #endif
