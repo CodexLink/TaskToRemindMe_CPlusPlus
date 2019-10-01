@@ -10,7 +10,7 @@ Things To Know #1 - ENUMs,
 	reference values. For example, we need a group of reference values for returning error codes.
 	Hence, this example is refernced to our first ENUM called TERM_RET_ERROR
 */
-
+#pragma once
 #ifndef TechProSpEssential_TTRM_H
 #define TechProSpEssential_TTRM_H // We define this marker for indication of "already initialized"
 
@@ -18,22 +18,22 @@ Things To Know #1 - ENUMs,
 #include <conio.h>
 #include <string>
 #include <deque>
-#include <stack>
+#include <vector>
 #include <windows.h> // For Win32 API, We manipulate our console here.
 #include <process.h>
 #include "WinToastLib/wintoastlib.h"
-#include "SQLite3/sqlite3.h"
-//#include <conio.h> // For Character Standard Input (STDIN) Capture for Switch-Case Statement
 #include <chrono>
 #include <thread>
 #include <limits>
+#include <fstream>
 #include <sstream>
-#include <ctime>
 #include <algorithm>
+#include <ctime>
 #include <iomanip>
 
+
 // #define Function-Like Declaration and Constant Uncategorized Definitions
-#define PROJECT_NAME L"Quick Task To Me C++ CLI"
+#define PROJECT_NAME L"Quick Task To Me C++ CLI | DS Group 5"
 #define PROJECT_VER L"Early Testing Case"
 #define delay_time(x) std::this_thread::sleep_for(std::chrono::milliseconds(x))
 #define WinCall_CMD(x) system(x);
@@ -250,11 +250,19 @@ public:
 	unsigned int IterHandler_UnIn = INIT_NULL_INT;
 	signed int IterHandler_SiIn = INIT_NULL_INT;
 	signed short IterHandler_SiSh = INIT_NULL_INT;
-	unsigned MultiThreadID;
+
+	time_t EpochHandler = INIT_NULL_INT;
+	unsigned MultiThreadID = INIT_NULL_INT; // For Multi-Threading HandleID...
+
+	// For CSV Implementation
+	std::string TempDataHandler, ConvertedHandler, DataLineHandler;
+	std::vector<std::string> PayloadHandler;
+	//std::stringstream RowHandler; ./ Went to Local Scope Declaration.
+	std::fstream SaveStateHandler;
 	HANDLE MultiThreadHandler;
 
 protected:
-	const std::string DB_Path = "SQL_DataTest.db"; // Unconfirmed
+	const std::string SaveStatePath = "ReminderSaveStates.csv"; // Unconfirmed
 };
 
 /*

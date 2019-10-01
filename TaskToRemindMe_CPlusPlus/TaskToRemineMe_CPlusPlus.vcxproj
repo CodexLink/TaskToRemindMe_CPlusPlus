@@ -19,14 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\__TTRM_SourceCore\SQLite3\sqlite3.h" />
     <ClInclude Include="..\__TTRM_SourceCore\TTRM_CoreDeclares.h" />
     <ClInclude Include="..\__TTRM_SourceCore\WinToastLib\wintoastlib.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\TTRM_CoreStarter.cpp" />
-    <ClCompile Include="..\__TTRM_SourceCore\SQLite3\sqlite3.c" />
     <ClCompile Include="..\__TTRM_SourceCore\TTRM_CoreContents.cpp" />
     <ClCompile Include="..\__TTRM_SourceCore\WinToastLib\wintoastlib.cpp" />
   </ItemGroup>
