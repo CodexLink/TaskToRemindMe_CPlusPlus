@@ -89,6 +89,7 @@ OtherLibraries_Demos/
 Experimentals/
 TaskToRemindMe_CPP_Check-cppcheck-build-dir/
 *.cppcheck
+*.csv
 
 # Visual Studio Code Workspace Folder
 

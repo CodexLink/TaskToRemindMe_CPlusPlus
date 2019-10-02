@@ -47,11 +47,6 @@ unsigned short TTRM::ComponentCheck(bool isNeededToRun) noexcept(false)
 
 		EnableMenuItem(hmenu, SC_CLOSE, MF_GRAYED);
 
-		std::cout << "Multi-Threading | Starting Simultaneous Wrapper..." << std::endl
-				  << std::endl;
-		_beginthreadex(0, 0, &TTRM::MultiThread_Wrapper, 0, 0, &MultiThreadID);
-		std::cout << "Multi-Threading | Simultaneous Wrapper Initialized..." << std::endl
-				  << std::endl;
 		std::cout << "Component Checking Point | Before Program Initialization..." << std::endl
 				  << std::endl
 				  << "WinToast Library |> Checking Compatibility...";
@@ -85,25 +80,23 @@ unsigned short TTRM::ComponentCheck(bool isNeededToRun) noexcept(false)
 					if (SaveStateHandler.is_open())
 					{
 						std::cout << "Save State Load  |> SaveState File Opened! Iterating and Collecting Saved Reminders";
-						while (SaveStateHandler >> TempDataHandler)
+						while (std::getline(SaveStateHandler, DataLineHandler))
 						{
 							std::cout << ".";
 							PayloadHandler.clear();
-							getline(SaveStateHandler, DataLineHandler);
 							std::stringstream RowHandler(DataLineHandler);
-							for (std::string ConvertedHandler; std::getline(RowHandler, ConvertedHandler, ','); PayloadHandler.push_back(ConvertedHandler))
-								;
-							for (int i = 0; i < PayloadHandler.size(); i++)
+
+							while (std::getline(RowHandler, ConvertedHandler, ','))
 							{
-								std::cout << PayloadHandler[i] << std::endl;
+								PayloadHandler.push_back(ConvertedHandler);
 							}
-							std::cout << "Done" << std::endl;
 							SaveStateContainer.TaskName = PayloadHandler[0];
 							SaveStateContainer.TaskInCharge = PayloadHandler[1];
 							SaveStateContainer.ReminderType = std::stoi(PayloadHandler[2]);
 							EpochHandler = std::stoll(PayloadHandler[3]);
 							SaveStateContainer.TempTM = localtime(&EpochHandler);
 							SaveStateContainer.ReminderData = *SaveStateContainer.TempTM;
+							++IterHandler_UnIn;
 							TaskList.push_back(SaveStateContainer);
 						}
 						SaveStateHandler.close();
@@ -111,6 +104,9 @@ unsigned short TTRM::ComponentCheck(bool isNeededToRun) noexcept(false)
 								  << std::endl
 								  << "Save State Loaded |> Done. Loaded " << IterHandler_UnIn << " Reminders!" << std::endl;
 						IterHandler_UnIn = INIT_NULL_INT;
+						std::cout << "Multi-Threading | Starting Simultaneous Wrapper..." << std::endl;
+						_beginthreadex(0, 0, &TTRM::MultiThread_Wrapper, 0, 0, &MultiThreadID);
+						std::cout << "Multi-Threading | Simultaneous Wrapper Initialized...";
 					}
 					delay_time(SLEEP_OPRT_FINISHED);
 				}
@@ -171,6 +167,7 @@ void TTRM::runSystemMenu() noexcept(false)
 				  << "3 |> Edit / Modify an Existing Task/s" << std::endl
 				  << "4 |> View All Tasks" << std::endl
 				  << "5 |> Remove All Tasks" << std::endl
+				  << "6 |> Refresh Tasks from Save State" << std::endl
 				  << std::endl
 				  << "0 |> Terminate / Exit Program" << std::endl
 				  << std::endl;
@@ -250,7 +247,7 @@ void TTRM::DisplayTasks_AtWindow(DISPLAY_OPTIONS WindowID_INT) noexcept
 	if (!TaskList.size())
 	{
 		std::cerr << std::endl
-				  << "There are no task/s in queue! Please add one." << std::endl;
+				  << "There are no tasks in queue! Please add one." << std::endl;
 		return;
 	}
 	else
@@ -330,40 +327,49 @@ std::string TTRM::runSystem_GetTimeLocal() const noexcept
 	return StrTime.str();
 }
 
-void TTRM::WinToast_RemindTask() noexcept
-{
-	//std::string TemplateToReturn;
-	std::stringstream TaskListSize;
-	//TaskListSize << "Hello There! There are" << TaskList.size() << ((TaskList.size() <= //BY_ONE_OR_LESS) ? "task" : "tasks") << " for today.";
-	//TemplateToReturn.append(TaskListSize.str());
-	//return TemplateToReturn;
-	TaskListSize << TaskList.size();
-	//std::wcout << TaskListSize.str();
-}
-
 void TTRM::WinToast_ShowTaskCForToday() noexcept
 {
 	WinToast::instance()->clear(); // Clears First Toast. Overwritten by 'this' template.
 	WinToastTemplate TaskCountShow(WinToastTemplate::Text02);
-	//std::wstring TaskCount = std::to_wstring(TaskList.size());
-	std::wstring WelcomeFirstPT = L"Hello User, Welcome To Quick Task Remind Me System~!";
-	//std::wstring WelcomeSecondPT = (TaskList.size() <= BY_ONE_OR_LESS) ? L" task" : L"tasks";
-	//std::wstring WelcomeThirdPT = L" for today.";
+	std::wstring TaskCount = std::to_wstring(TaskList.size());
+	std::wstring WelcomeFirstPT = L"Hello User! You currently have ";
+	std::wstring WelcomeSecondPT = (TaskList.size() <= BY_ONE_OR_LESS) ? L" task" : L" tasks";
+	std::wstring WelcomeThirdPT = L" for today.";
+
 	TaskCountShow.setTextField(PROJECT_NAME, WinToastTemplate::FirstLine);
 	TaskCountShow.setAttributionText(L"Data Struct Group 5");
-	TaskCountShow.setTextField(WelcomeFirstPT /*+ TaskCount + WelcomeSecondPT + WelcomeThirdPT*/, WinToastTemplate::SecondLine);
+	TaskCountShow.setTextField(WelcomeFirstPT + TaskCount + WelcomeSecondPT + WelcomeThirdPT, WinToastTemplate::SecondLine);
 	// We dont check anything, since we have done it in the first place.
 	WinToast::instance()->showToast(TaskCountShow, new TTRM_WinToast);
 	return;
 }
-void TTRM::WinToast_ReminderPrompt(std::string ReadName, std::string ReadInCharge, unsigned short ReadReminderType, signed ReadNotifyByTime, tm TMToRead) noexcept
+
+void TTRM::WinToast_ReminderPrompt(std::string ReadTaskName, std::string ReadPersonInCharge, unsigned short ReadReminderType, signed ReadNotifyByTime, tm TMToRead) noexcept
 {
+	// * WString Conversion from std::String. We don't want to change things globally by replacing std::string with std::wstring. Too late to change something that most functions used.
+	std::wstring ConvWStr_TaskN(ReadTaskName.begin(), ReadTaskName.end());
+	std::wstring ConvWStr_RPIC(ReadPersonInCharge.begin(), ReadPersonInCharge.end());
+
+	std::wstringstream ConvWStr_DateTimeData;
+
+	// ! Wstring Constant, We cannot concatenate literal strings with variables. We can only concatenate with variable to variable with + operator.
+
 	WinToast::instance()->clear();
 	WinToastTemplate ShowReminder(WinToastTemplate::Text04);
-	ShowReminder.setTextField(L"Quick Reminder Triggered~!", WinToastTemplate::FirstLine);
-	// TaskName for at Time...
-	ShowReminder.setTextField(L"Task 'Clean The Dishes' for Janrey Licas!", WinToastTemplate::SecondLine);
-	ShowReminder.setTextField(L"Time Triggered at 12:00AM", WinToastTemplate::ThirdLine);
+	if (ReadReminderType == QuickRemind)
+	{
+		ConvWStr_DateTimeData << L"Time Triggered at " << std::setw(2) << std::setfill(L'0') << TMToRead.tm_hour << L":" << std::setw(2) << std::setfill(L'0') << TMToRead.tm_min;
+		ShowReminder.setTextField(L"Quick Reminder Triggered~!", WinToastTemplate::FirstLine);
+		ShowReminder.setTextField(ConvWStr_DateTimeData.str(), WinToastTemplate::ThirdLine);
+	}
+	else
+	{
+		ConvWStr_DateTimeData << L"Date Time Triggered at " << std::setfill(L'0') << std::setw(2) << (TMToRead.tm_mon + 1) << "/" << std::setfill(L'0') << std::setw(2) << TMToRead.tm_mday << "/" << std::setfill(L'0') << std::setw(2) << (TMToRead.tm_year + START_CTIME) << ", " << std::setfill(L'0') << std::setw(2) << TMToRead.tm_hour << ":" << std::setfill(L'0') << std::setw(2) << TMToRead.tm_min << std::endl;
+		ShowReminder.setTextField(L"Date-Based Reminder Triggered~!", WinToastTemplate::FirstLine);
+		ShowReminder.setTextField(ConvWStr_DateTimeData.str(), WinToastTemplate::ThirdLine);
+	}
+	ShowReminder.setTextField(L"Task " + ConvWStr_TaskN + L" for " + ConvWStr_RPIC, WinToastTemplate::SecondLine);
+
 	ShowReminder.setAttributionText(PROJECT_NAME);
 	ShowReminder.setDuration(WinToastTemplate::Duration::Long);
 
@@ -372,11 +378,6 @@ void TTRM::WinToast_ReminderPrompt(std::string ReadName, std::string ReadInCharg
 	ShowReminder.addAction(L"Dismiss");
 
 	ShowReminder.setAudioPath(WinToastTemplate::Reminder);
-	std::cout << ReadName << " " << ReadInCharge << " " << ReadReminderType << " " << ReadNotifyByTime << std::endl;
-
-	std::cout << " |> Trigger Time at " << std::setfill('0') << std::setw(2) << TMToRead.tm_hour << ":" << std::setfill('0') << std::setw(2) << TMToRead.tm_min << std::endl;
-	//std::cout << DisplayItem_ParseType((TTRM::REMINDER_TYPES)IterTasks.ReminderType) << " |> " << IterTasks.TaskName << " | In Charge: " << IterTasks.TaskInCharge << ", Trigger Time at " << std::setfill('0') << std::setw(2) << IterTasks.ReminderData.tm_hour << ":" << std::setfill('0') << std::setw(2) << IterTasks.ReminderData.tm_min << std::endl;
-
 	WinToast::instance()->showToast(ShowReminder, new TTRM_WinToast);
 }
 
@@ -386,8 +387,10 @@ unsigned int __stdcall TTRM::MultiThread_Wrapper(void *DataReserved)
 	while (1)
 	{
 		MultiThreadWrapper = (HANDLE)_beginthreadex(0, 0, &TTRM::MultiThread_ScanReminders, 0, 0, 0);
+		WaitForSingleObject(MultiThreadWrapper, INFINITE);
 		delay_time(WAIT_STARTTHREAD);
 	}
+	return USER_OUTOFSCOPE_TERM_SUCCESS;
 }
 
 // This function should be scanning 10 reminders at ones.
@@ -398,41 +401,23 @@ unsigned int __stdcall TTRM::MultiThread_ScanReminders(void *ArgsReserved)
 	if (TaskList.size())
 	{
 		//std::cout << ".";
-		std::cout << mktime(&TaskList.at(ObjectScanIter).ReminderData) << " | " << time(NULL) << std::endl;
+		//std::cout << mktime(&TaskList.at(ObjectScanIter).ReminderData) << " | " << time(NULL) << std::endl;
 		//WinToast_ReminderPrompt(TaskList.at(ObjectScanIter).TaskName, TaskList.at(ObjectScanIter).TaskInCharge, TaskList.at(ObjectScanIter).ReminderType, TaskList.at(ObjectScanIter).NotifyByTime, TaskList.at(ObjectScanIter).ReminderData);
 		for (ObjectScanIter = INIT_NULL_INT; ObjectScanIter < TaskList.size(); ObjectScanIter++)
 		{
 			if (mktime(&TaskList.at(ObjectScanIter).ReminderData) <= time(NULL))
 			{
 				WinToast_ReminderPrompt(TaskList.at(ObjectScanIter).TaskName, TaskList.at(ObjectScanIter).TaskInCharge, TaskList.at(ObjectScanIter).ReminderType, TaskList.at(ObjectScanIter).NotifyByTime, TaskList.at(ObjectScanIter).ReminderData);
+				while (1)
+				{
+					//delay_time(10000);
+				}
 			}
 		}
 	}
 	else
 	{
 		return NO_TASK_REPEAT_PRC; // We wont exit this scope anyway unless we call destructor...
-	}
-}
-
-std::string TTRM::ComponentStats_Indicator(ComponentID CompToCheck) noexcept
-{
-	switch (CompToCheck)
-	{
-	case WinToastID:
-		if (WinToast::instance()->initialize())
-		{
-			return "Initialized, Working.";
-		}
-		else
-		{
-			return "Not Working At This Point.";
-		}
-	case AutoStartID:
-		return "Currently !Implemented";
-	case SQLiteID:
-		return "Currently !Implemented";
-	default:
-		return "Unknown";
 	}
 }
 
@@ -515,18 +500,18 @@ void TTRM::MenuSel_ATask() noexcept(false)
 				else
 				{
 					// * Test Done. Success.
-					CurrentDateTime = time(0) + (60 * NewTask.NotifyByTime);
+					CurrentDateTime = time(NULL) + (60 * NewTask.NotifyByTime);
 					NewTask.TempTM = localtime(&CurrentDateTime);
 					NewTask.ReminderData = *NewTask.TempTM;
 					break;
 				}
 
 			case DateBasedRemind:
-				CurrentDateTime = time(0);
+				CurrentDateTime = time(NULL);
 				NewTask.TempTM = localtime(&CurrentDateTime);
 				NewTask.ReminderData = *NewTask.TempTM;
 
-				std::cout << "[Req, Seperate by Space | YYYY MM DD] Target Date of Reminding |> ", std::cin >> NewTask.ReminderData.tm_year >> NewTask.ReminderData.tm_mon >> NewTask.ReminderData.tm_mday;
+				std::cout << "[Req, Seperate by Space | MM DD YYYY] Target Date of Reminding |> ", NewTask.ReminderData.tm_mon >> NewTask.ReminderData.tm_mday >> NewTask.ReminderData.tm_year;
 
 				if (NewTask.ReminderData.tm_year < CurrentTContainer->tm_year)
 				{
@@ -621,7 +606,6 @@ void TTRM::MenuSel_ATask() noexcept(false)
 				SaveStateHandler.open(SaveStatePath, std::ios::out | std::ios::app);
 				if (SaveStateHandler.is_open())
 				{
-
 					if (NewTask.ReminderType == QuickRemind)
 					{
 						SaveStateHandler << NewTask.TaskName << "," << NewTask.TaskInCharge << "," << NewTask.ReminderType << "," << mktime(NewTask.TempTM) << std::endl;
@@ -702,8 +686,40 @@ void TTRM::MenuSel_DTask() noexcept
 							{
 							case CONFIRMED_TRUE_LOWER:
 							case CONFIRMED_TRUE_UPPER:
+
+								SaveStateHandler.open(SaveStatePath, std::ios::in);
+								TempSaveStateHandler.open(FilePointState, std::ios::out);
+
+								while (!SaveStateHandler.eof())
+								{
+									PayloadHandler.clear();
+									std::getline(SaveStateHandler, DataLineHandler);
+									std::stringstream TempDataHandler(DataLineHandler);
+
+									for (DataLineHandler; std::getline(TempDataHandler, ConvertedHandler, ','); PayloadHandler.push_back(ConvertedHandler))
+										;
+									// ! Pure Integer Will Result to Deque Error!
+									if (PayloadHandler[0] != TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TaskName)
+									{
+										if (!SaveStateHandler.eof())
+										{
+											for (IterHandler_UnSh = INIT_NULL_INT; IterHandler_UnSh < PayloadHandler.size(); IterHandler_UnSh++)
+											{
+												TempSaveStateHandler << PayloadHandler[IterHandler_UnSh] << (IterHandler_UnSh == (PayloadHandler.size() - POS_OFFSET_BY_ONE) ? "\n" : ",");
+											}
+										}
+									}
+								}
+								SaveStateHandler.close();
+								TempSaveStateHandler.close();
+
+								remove(SaveStatePath);
+								rename(FilePointState, SaveStatePath);
+								remove(FilePointState);
+
 								std::cout << "[Confirmation, Success] |> Task '" << TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TaskName << "' deleted." << std::endl;
 								TaskList.erase(TaskList.begin() + (handleInputInt - POS_OFFSET_BY_ONE));
+
 								delay_time(SLEEP_OPRT_FINISHED);
 								continue;
 
@@ -814,16 +830,17 @@ void TTRM::MenuSel_ETask() noexcept(false)
 									}
 								}
 								std::cout << "[Required, 1 = Quick Remind, 2 = Date-Based] Type of Reminder, Put 0 To Retain Changes |> ", std::cin >> NewModifiedTask.ReminderType;
-								if (NewModifiedTask.ReminderType)
+								if (NewModifiedTask.ReminderType < QuickRemind || NewModifiedTask.ReminderType > DateBasedRemind || std::cin.fail())
 								{
-									if (NewModifiedTask.ReminderType < QuickRemind || NewModifiedTask.ReminderType > DateBasedRemind || std::cin.fail())
-									{
-										std::cin.clear();
-										std::cerr << "[INPUT ERR] |> Reminder Type Input is Invalid. Press Any Key To Try Again." << std::endl;
-										CinBuffer_ClearOptpt('\n');
-										_getche();
-										continue;
-									}
+									std::cin.clear();
+									std::cerr << "[INPUT ERR] |> Reminder Type Input is Invalid. Press Any Key To Try Again." << std::endl;
+									CinBuffer_ClearOptpt('\n');
+									_getche();
+									continue;
+								}
+								else
+								{
+									NewModifiedTask.ReminderType = TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).ReminderType;
 								}
 
 								switch (NewModifiedTask.ReminderType)
@@ -843,11 +860,9 @@ void TTRM::MenuSel_ETask() noexcept(false)
 										if (NewModifiedTask.NotifyByTime)
 										{
 											// * Test Done. Success.
-											CurrentDateTime = time(0) + (60 * NewModifiedTask.NotifyByTime);
+											CurrentDateTime = time(NULL) + (60 * NewModifiedTask.NotifyByTime);
 											NewModifiedTask.TempTM = localtime(&CurrentDateTime);
-											NewModifiedTask.TempTM->tm_year += 1900;
-											NewModifiedTask.TempTM->tm_mon += 1;
-											//NewModifiedTask.ReminderData = *NewModifiedTask.TempTM;
+											NewModifiedTask.TempTM->tm_year += 1900, NewModifiedTask.TempTM->tm_mon += 1;
 											break;
 										}
 									}
@@ -1050,6 +1065,7 @@ void TTRM::MenuSel_VTask() noexcept(false)
 
 void TTRM::MenuSel_RQT() noexcept(false)
 {
+
 	if (TaskList.size())
 	{
 		std::cout << std::endl
@@ -1061,6 +1077,9 @@ void TTRM::MenuSel_RQT() noexcept(false)
 		{
 		case CONFIRMED_TRUE_LOWER:
 		case CONFIRMED_TRUE_UPPER:
+			remove(SaveStatePath);
+			SaveStateHandler.open(SaveStatePath, std::ios::out);
+			SaveStateHandler.close();
 			TaskList.clear();
 			std::cout << "[PROCESS] |> All Task from Queue Removed!" << std::endl;
 			delay_time(SLEEP_OPRT_FINISHED);
@@ -1100,29 +1119,50 @@ void TTRM::MenuSel_RQT() noexcept(false)
 	Note that this CPP file will only contain external library functions.
 */
 
-//	SQLite Library Function Declaration - START
-void TTRM::SQLite_Initialize() const noexcept(false)
+// WinToast FUNCTION CONTENT DECLARATION - STARTING POINT
+
+void TTRM_WinToast::toastActivated() const
 {
-	return;
+
+	std::wcout << L"The user clicked in this toast" << std::endl;
 }
-void TTRM::SQLite_CheckDatabase() const noexcept(false)
+void TTRM_WinToast::toastActivated(int actionIndex) const
 {
-	return;
+
+	std::wcout << L"The user clicked on action #" << actionIndex << std::endl;
+	//	exit(16 + actionIndex);
 }
-void TTRM::SQLite_ReloadQueue() const noexcept(false)
+void TTRM_WinToast::toastDismissed(WinToastDismissalReason state) const
 {
-	return;
+	switch (state)
+	{
+	case UserCanceled:
+		//		std::wcout << L"The user dismissed this toast" << std::endl;
+		//		exit(1);
+		break;
+		//	case TimedOut:
+		//		std::wcout << L"The toast has timed out" << std::endl;
+		//		exit(2);
+		//		break;
+	case ApplicationHidden:
+		//		std::wcout << L"The application hid the toast using //ToastNotifier.hide()" << std::endl;
+		//		exit(3);
+		break;
+	default:
+		//		std::wcout << L"Toast not activated" << std::endl;
+		//		exit(4);
+		break;
+	}
 }
-void TTRM::SQLite_CRUD_Data(SQLite_QueryType ExecutionQueryType) const noexcept(false)
+void TTRM_WinToast::toastFailed() const
 {
-	return;
+	;
+	//	std::wcout << L"Error showing current toast" << std::endl;
+	//	exit(5);
 }
-//	SQLite Library Function Declaration - END
+
+// WinToast FUNCTION CONTENT DECLARATION - END POINT
 
 // TECHNICAL FUNCTION CONTENT DECLARATION - END POINT
 
 //----------------------------------------------------------------------------
-
-// WinToast FUNCTION CONTENT DECLARATION - STARTING POINT
-
-// WinToast FUNCTION CONTENT DECLARATION - END POINT

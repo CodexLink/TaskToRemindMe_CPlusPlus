@@ -31,7 +31,6 @@ Things To Know #1 - ENUMs,
 #include <ctime>
 #include <iomanip>
 
-
 // #define Function-Like Declaration and Constant Uncategorized Definitions
 #define PROJECT_NAME L"Quick Task To Me C++ CLI | DS Group 5"
 #define PROJECT_VER L"Early Testing Case"
@@ -71,7 +70,6 @@ using namespace WinToastLib;
 #define ZERO_CMPR_BASE 0
 #define DO_NOTHING 0
 
-
 // Superposition Method, Parameters used for when we want to run this function content or not. Used for Selected Technical  Functions only.
 #define IGNORE_PROCESS 0
 #define RUN_PROCESS 1
@@ -98,14 +96,12 @@ using namespace WinToastLib;
 #define MIN_TIMELEFT 0
 #define MAX_TIMELEFT 180
 
-
 #define TASK_DISPLAY_LIMIT 5
 #define TASK_DISPLAY_CRUD 10
 #define MAX_TASK_ATTACHABLE 50
 #define MAX_SCAN_REMINDERS 10
 #define START_CTIME 1900
 #define WAIT_STARTTHREAD 1000
-#define MAX_SIZE ...
 #endif
 
 /*
@@ -123,25 +119,11 @@ class TTRM
 		- Functions
 	*/
 public:
-	typedef enum
-	{
-		WinToastID = 10,
-		AutoStartID = 11,
-		SQLiteID = 12
-	} ComponentID; // This enum is only used for identifying Components To Check.
-
 	enum TERM_RET_ERROR : unsigned short
 	{
 		TERM_SUCCESS,
 		TERM_FAILED,
 		TERM_INVALID_PARAM
-	};
-
-	enum SQLite_QueryType
-	{
-		AddData,
-		EditData,
-		DeleteData
 	};
 
 	enum REMINDER_TYPES : unsigned int
@@ -158,11 +140,6 @@ public:
 		CONFIRMED_FALSE_LOWER = 'n',
 		CONFIRMED_FALSE_UPPER = 'N'
 
-	};
-
-	enum TERM_CONSOLE_LOG_PRESET
-	{
-		//
 	};
 
 	// CODE_CONSTRAINT_DEFAULT - An ENUM that contains Constraint to any function.
@@ -206,7 +183,8 @@ public:
 
 	~TTRM(void)
 	{
-		std::cout << std::endl << "Termination |> Closing Objects and Threads." << std::endl;
+		std::cout << std::endl
+				  << "Termination |> Closing Objects and Threads." << std::endl;
 		std::cout << "Termination |> Multi-Thread Function Closed." << std::endl;
 		CloseHandle(MultiThreadHandler);
 		std::cout << "Termination |> Program Terminates in 2 Seconds. Goodbye.";
@@ -218,30 +196,22 @@ public:
 	void ParseGivenParam(unsigned short argcount, char *argcmd[]);
 	unsigned static __stdcall MultiThread_Wrapper(void *);
 	unsigned static __stdcall MultiThread_ScanReminders(void *);
-	
+
 	unsigned short ComponentCheck(bool isNeededToRun) noexcept(false);
 	void runSystemMenu() noexcept(false);
 	std::string DisplayItem_ParseType(REMINDER_TYPES IntType) noexcept;
 	void DisplayTasks_AtWindow(DISPLAY_OPTIONS WindowID_INT) noexcept;
 
 	// TTRM_WinToast Relative Functions. Not Decalred to TTRM_WinToast due to Function Structure of the whole class.
-	void WinToast_RemindTask() noexcept;
 	void WinToast_ShowTaskCForToday() noexcept;
 	static void WinToast_ReminderPrompt(std::string ReadName, std::string ReadInCharge, unsigned short ReadReminderType, signed ReadNotifyByTime, tm TMToRead) noexcept;
 
 	std::string runSystem_GetTimeLocal() const noexcept;
-	// Status Indicator Checkers
-	std::string ComponentStats_Indicator(ComponentID CompToCheck) noexcept;
 	void MenuSel_ATask() noexcept(false);
 	void MenuSel_DTask() noexcept;
 	void MenuSel_ETask() noexcept(false);
 	void MenuSel_VTask() noexcept(false);
 	void MenuSel_RQT() noexcept(false); // RemoveQueuedTask
-	// TTRM's TechFunc Functions
-	void SQLite_Initialize() const noexcept(false); // CreateTable Must Be Here
-	void SQLite_CheckDatabase() const noexcept(false);
-	void SQLite_ReloadQueue() const noexcept(false);
-	void SQLite_CRUD_Data(SQLite_QueryType ExecutionQueryType) const noexcept(false);
 	// These variables will be globally use by functions to reduce variable initialization by candidating only few ones from the class state.
 	unsigned short TASK_LIMIT_SIZE = TASK_DISPLAY_LIMIT; // By Default, 5.
 	char handleInputChar = INIT_NULL_CHAR;
@@ -259,10 +229,13 @@ public:
 	std::vector<std::string> PayloadHandler;
 	//std::stringstream RowHandler; ./ Went to Local Scope Declaration.
 	std::fstream SaveStateHandler;
+	std::fstream TempSaveStateHandler;
 	HANDLE MultiThreadHandler;
 
 protected:
-	const std::string SaveStatePath = "ReminderSaveStates.csv"; // Unconfirmed
+// ! Const Char* Because of Rename Function Required Data Type. STDIO.h Cause
+	const char* SaveStatePath = "ReminderSaveStates.csv"; // Unconfirmed
+	const char* FilePointState = "ReminderSaveStatesTemp.csv"; // Unconfirmed
 };
 
 /*
@@ -279,46 +252,14 @@ public:
 	{
 		WinToast::instance()->clear();
 	}
-	void toastActivated() const
-	{
-		;
-		//	std::wcout << L"The user clicked in this toast" << std::endl;
-		//	exit(0);
-	}
-	void toastActivated(int actionIndex) const
-	{
-		;
-		//	std::wcout << L"The user clicked on action #" << actionIndex << //std::endl;
-		//	exit(16 + actionIndex);
-	}
-	void toastDismissed(WinToastDismissalReason state) const
-	{
-		switch (state)
-		{
-		case UserCanceled:
-			//		std::wcout << L"The user dismissed this toast" << std::endl;
-			//		exit(1);
-			break;
-			//	case TimedOut:
-			//		std::wcout << L"The toast has timed out" << std::endl;
-			//		exit(2);
-			//		break;
-		case ApplicationHidden:
-			//		std::wcout << L"The application hid the toast using //ToastNotifier.hide()" << std::endl;
-			//		exit(3);
-			break;
-		default:
-			//		std::wcout << L"Toast not activated" << std::endl;
-			//		exit(4);
-			break;
-		}
-	}
-	void toastFailed() const
-	{
-		;
-		//	std::wcout << L"Error showing current toast" << std::endl;
-		//	exit(5);
-	}
+	void toastActivated() const;
+	void toastActivated(int actionIndex) const;
+	void toastDismissed(WinToastDismissalReason state) const;
+	void toastFailed() const;
+
+
+	// ! We hold task index and pass it TaskList since TaskList which is a deque variable is declared as Local in this part of file.
+	unsigned TaskIndex = INIT_NULL_INT;
 };
 
 /*
