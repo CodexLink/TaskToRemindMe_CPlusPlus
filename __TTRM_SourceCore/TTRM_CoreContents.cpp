@@ -998,7 +998,40 @@ void TTRM::MenuSel_ETask() noexcept(false)
 
 										break;
 									}
-
+									SaveStateHandler.open(SaveStatePath, std::ios::in);
+									TempSaveStateHandler.open(SaveStatePath, std::ios::out);
+									TempSaveStateHandler.close();
+									if (SaveStateHandler.is_open())
+									{
+										while (!SaveStateHandler.eof())
+										{
+											PayloadHandler.clear();
+											std::getline(SaveStateHandler, DataLineHandler);
+											std::stringstream TempDataHandler(DataLineHandler);
+											for (DataLineHandler; std::getline(TempDataHandler, ConvertedHandler, ','); PayloadHandler.push_back(ConvertedHandler))
+												;
+											if (PayloadHandler[0] != TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TaskName)
+											{
+												if (!SaveStateHandler.eof())
+												{
+													for (IterHandler_UnSh = INIT_NULL_INT; IterHandler_UnSh < PayloadHandler.size(); IterHandler_UnSh++)
+													{
+														TempSaveStateHandler << PayloadHandler[IterHandler_UnSh] << (IterHandler_UnSh == (PayloadHandler.size() - POS_OFFSET_BY_ONE) ? "\n" : ",");
+													}
+												}
+											}
+											else
+											{
+												if (!SaveStateHandler.eof())
+												{
+													for (IterHandler_UnSh = INIT_NULL_INT; IterHandler_UnSh < PayloadHandler.size(); IterHandler_UnSh++)
+													{
+														TempSaveStateHandler << PayloadHandler[IterHandler_UnSh] << (IterHandler_UnSh == (PayloadHandler.size() - POS_OFFSET_BY_ONE) ? "\n" : ",");
+													}
+												}
+											}
+										}
+									}
 									std::cout << "[Confirmation, Success] |> Task Modification @ '" << TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TaskName << "' is now applied~!" << std::endl;
 									delay_time(SLEEP_OPRT_FINISHED);
 									continue;
