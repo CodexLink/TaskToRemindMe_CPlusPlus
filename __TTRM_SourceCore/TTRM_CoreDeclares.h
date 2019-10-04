@@ -157,6 +157,7 @@ public:
 		EditTask,
 		ViewTask,
 		RemoveAllTask,
+		RefreshTaskList,
 		AtHome
 	};
 
@@ -211,7 +212,8 @@ public:
 	void MenuSel_DTask() noexcept;
 	void MenuSel_ETask() noexcept(false);
 	void MenuSel_VTask() noexcept(false);
-	void MenuSel_RQT() noexcept(false); // RemoveQueuedTask
+	void MenuSel_RQT() noexcept(false); //  RemoveQueuedTask
+	void MenuSel_RTLFSS() noexcept(false); //  RefreshTaskListFromSaveStates
 	// These variables will be globally use by functions to reduce variable initialization by candidating only few ones from the class state.
 	unsigned short TASK_LIMIT_SIZE = TASK_DISPLAY_LIMIT; // By Default, 5.
 	char handleInputChar = INIT_NULL_CHAR;
@@ -224,7 +226,7 @@ public:
 	time_t EpochHandler = INIT_NULL_INT;
 	unsigned MultiThreadID = INIT_NULL_INT; // For Multi-Threading HandleID...
 
-	// For CSV Implementation
+	// For File Stream Implementation
 	std::string TempDataHandler, ConvertedHandler, DataLineHandler;
 	std::vector<std::string> PayloadHandler;
 	//std::stringstream RowHandler; ./ Went to Local Scope Declaration.
@@ -234,8 +236,8 @@ public:
 
 protected:
 // ! Const Char* Because of Rename Function Required Data Type. STDIO.h Cause
-	const char* SaveStatePath = "ReminderSaveStates.csv"; // Unconfirmed
-	const char* FilePointState = "ReminderSaveStatesTemp.csv"; // Unconfirmed
+	const char* SaveStatePath = "TTRM_SaveState._ttrmdat"; // Unconfirmed
+	const char* FilePointState = "TTRM_SaveStatesTemp._ttrmdat"; // Unconfirmed
 };
 
 /*

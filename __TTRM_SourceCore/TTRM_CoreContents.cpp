@@ -118,7 +118,6 @@ unsigned short TTRM::ComponentCheck(bool isNeededToRun) noexcept(false)
 							std::cout << "Save State Create |> SaveState File Created!" << std::endl;
 							TempSaveStateHandler.close();
 							rename(FilePointState, SaveStatePath);
-							//remove(FilePointState);
 						}
 						else
 						{
@@ -225,6 +224,9 @@ void TTRM::runSystemMenu() noexcept(false)
 		case RemoveAllTask:
 			MenuSel_RQT();
 			break;
+		
+		case RefreshTaskList:
+			MenuSel_RTLFSS();
 
 		case Termination:
 			break;
@@ -710,14 +712,14 @@ void TTRM::MenuSel_DTask() noexcept
 								SaveStateHandler.open(SaveStatePath, std::ios::in);
 								TempSaveStateHandler.open(FilePointState, std::ios::out);
 
-								while (!SaveStateHandler.eof())
+								while (!SaveStateHandler.eof() && std::getline(SaveStateHandler, DataLineHandler))
 								{
 									PayloadHandler.clear();
-									std::getline(SaveStateHandler, DataLineHandler);
 									std::stringstream TempDataHandler(DataLineHandler);
 
 									for (DataLineHandler; std::getline(TempDataHandler, ConvertedHandler, ','); PayloadHandler.push_back(ConvertedHandler))
 										;
+									std::cout << std::stoll(PayloadHandler[3]) << std::endl;
 									// * We delete data by comparing saved epoch time task and system saved epoch time task.
 									if (std::stoll(PayloadHandler[3]) != mktime(&TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).ReminderData))
 									{
@@ -1219,6 +1221,61 @@ void TTRM::MenuSel_RQT() noexcept(false)
 		delay_time(SLEEP_OPRT_FINISHED);
 		return;
 	}
+}
+
+void TTRM::MenuSel_RTLFSS() noexcept(false)
+{
+	TTRM_TaskData SaveStateContainer;
+	TaskList.clear();
+	std::cout << "Save State Load  |> Refreshing List from Save State File." << std::endl;
+	SaveStateHandler.open(SaveStatePath, std::ios::in);
+	if (SaveStateHandler.is_open())
+	{
+		std::cout << "Save State Load  |> SaveState File Opened! Collecting Reminders to Queue System.";
+		while (std::getline(SaveStateHandler, DataLineHandler))
+		{
+			std::cout << ".";
+			PayloadHandler.clear();
+			std::stringstream RowHandler(DataLineHandler);
+
+			while (std::getline(RowHandler, ConvertedHandler, ','))
+			{
+				PayloadHandler.push_back(ConvertedHandler);
+			}
+			SaveStateContainer.TaskName = PayloadHandler[0];
+			SaveStateContainer.TaskInCharge = PayloadHandler[1];
+			SaveStateContainer.ReminderType = std::stoi(PayloadHandler[2]);
+			EpochHandler = std::stoll(PayloadHandler[3]);
+			SaveStateContainer.TempTM = localtime(&EpochHandler);
+			SaveStateContainer.ReminderData = *SaveStateContainer.TempTM;
+			++IterHandler_UnIn;
+			TaskList.push_back(SaveStateContainer);
+		}
+		SaveStateHandler.close();
+		std::cout << std::endl
+				  << std::endl
+				  << "Save State Loaded |> Done. Loaded " << IterHandler_UnIn << " Reminders!" << std::endl;
+		IterHandler_UnIn = INIT_NULL_INT;
+	}
+	else
+	{
+		std::cout << "Save State Create |> Save File Doesn't Exist. Creating Save File..." << std::endl;
+		TempSaveStateHandler.open(FilePointState, std::ios::out);
+		if (TempSaveStateHandler.is_open())
+		{
+			std::cout << "Save State Create |> SaveState File Created!" << std::endl;
+			TempSaveStateHandler.close();
+			rename(FilePointState, SaveStatePath);
+		}
+		else
+		{
+			std::cout << "Save State Create |> SaveState File Creation Failure. Fatal Error | Terminating Program" << std::endl;
+			TTRM::~TTRM();
+		}
+	}
+	SaveStateHandler.close();
+	delay_time(SLEEP_OPRT_FINISHED);
+	return;
 }
 
 // CORE FUNCTION CONTENT DECLARATION - END POINT
