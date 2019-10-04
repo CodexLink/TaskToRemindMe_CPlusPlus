@@ -718,7 +718,7 @@ void TTRM::MenuSel_DTask() noexcept
 
 									for (DataLineHandler; std::getline(TempDataHandler, ConvertedHandler, ','); PayloadHandler.push_back(ConvertedHandler))
 										;
-									// * We delete data by comparing saved epoch time task and system saved epoch time task.
+									// * We delete data by comparing saved epoch task and system saved epoch task.
 									if (std::stoll(PayloadHandler[3]) != mktime(&TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).ReminderData))
 									{
 										if (!SaveStateHandler.eof())
@@ -728,6 +728,12 @@ void TTRM::MenuSel_DTask() noexcept
 												TempSaveStateHandler << PayloadHandler[IterHandler_UnSh] << (IterHandler_UnSh == (PayloadHandler.size() - POS_OFFSET_BY_ONE) ? "\n" : ",");
 											}
 										}
+										break;
+									}
+									else
+									{
+										std::cout << std::endl
+												  << std::stoll(PayloadHandler[3]) << " " << mktime(&TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).ReminderData);
 									}
 								}
 								SaveStateHandler.close();
