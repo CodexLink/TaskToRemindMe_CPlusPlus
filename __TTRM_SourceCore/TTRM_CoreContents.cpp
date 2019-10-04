@@ -13,6 +13,17 @@
 
 std::deque<TTRM_TaskData> TaskList;
 
+std::string TTRM::ReminderID_Generate() noexcept
+{
+	std::string GeneratedID = INIT_NULL_STR;
+	srand(time(NULL)); 	// Call To Get Rnadom RNG % Chance...
+	for (IterHandler_UnSh = INIT_NULL_INT; IterHandler_UnSh < RAND_MAXCHARID; IterHandler_UnSh++)
+	{
+		GeneratedID += AlphaNumConst[rand() % RAND_MODULOVAL];
+	}
+	return GeneratedID;
+}
+
 void TTRM::ParseGivenParam(unsigned short argcount, char *argv[])
 {
 	unsigned int ParamIter = INIT_NULL_INT;
@@ -90,10 +101,11 @@ unsigned short TTRM::ComponentCheck(bool isNeededToRun) noexcept(false)
 							{
 								PayloadHandler.push_back(ConvertedHandler);
 							}
-							SaveStateContainer.TaskName = PayloadHandler[0];
-							SaveStateContainer.TaskInCharge = PayloadHandler[1];
-							SaveStateContainer.ReminderType = std::stoi(PayloadHandler[2]);
-							EpochHandler = std::stoll(PayloadHandler[3]);
+							SaveStateContainer.TaskID = PayloadHandler[0];
+							SaveStateContainer.TaskName = PayloadHandler[1];
+							SaveStateContainer.TaskInCharge = PayloadHandler[2];
+							SaveStateContainer.ReminderType = std::stoi(PayloadHandler[3]);
+							EpochHandler = std::stoll(PayloadHandler[4]);
 							SaveStateContainer.TempTM = localtime(&EpochHandler);
 							SaveStateContainer.ReminderData = *SaveStateContainer.TempTM;
 							++IterHandler_UnIn;
@@ -224,7 +236,7 @@ void TTRM::runSystemMenu() noexcept(false)
 		case RemoveAllTask:
 			MenuSel_RQT();
 			break;
-		
+
 		case RefreshTaskList:
 			MenuSel_RTLFSS();
 
@@ -619,7 +631,6 @@ void TTRM::MenuSel_ATask() noexcept(false)
 				}
 			default:
 				std::cout << "Error" << std::endl;
-				system("pause");
 				continue;
 			}
 
@@ -630,12 +641,12 @@ void TTRM::MenuSel_ATask() noexcept(false)
 				{
 					if (NewTask.ReminderType == QuickRemind)
 					{
-						SaveStateHandler << NewTask.TaskName << "," << NewTask.TaskInCharge << "," << NewTask.ReminderType << "," << mktime(NewTask.TempTM) << std::endl;
+						SaveStateHandler << ReminderID_Generate() << "," << NewTask.TaskName << "," << NewTask.TaskInCharge << "," << NewTask.ReminderType << "," << mktime(NewTask.TempTM) << std::endl;
 					}
 					else
 					{
 						NewTask.ReminderData.tm_year -= 1900, NewTask.ReminderData.tm_mon -= 1, NewTask.ReminderData.tm_sec = 0;
-						SaveStateHandler << NewTask.TaskName << "," << NewTask.TaskInCharge << "," << NewTask.ReminderType << "," << mktime(&NewTask.ReminderData) << std::endl;
+						SaveStateHandler << ReminderID_Generate() << "," << NewTask.TaskName << "," << NewTask.TaskInCharge << "," << NewTask.ReminderType << "," << mktime(&NewTask.ReminderData) << std::endl;
 					}
 					TaskList.push_back(NewTask);
 				}
@@ -719,9 +730,8 @@ void TTRM::MenuSel_DTask() noexcept
 
 									for (DataLineHandler; std::getline(TempDataHandler, ConvertedHandler, ','); PayloadHandler.push_back(ConvertedHandler))
 										;
-									std::cout << std::stoll(PayloadHandler[3]) << std::endl;
 									// * We delete data by comparing saved epoch time task and system saved epoch time task.
-									if (std::stoll(PayloadHandler[3]) != mktime(&TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).ReminderData))
+									if (PayloadHandler[0] != TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TaskID)
 									{
 										if (!SaveStateHandler.eof())
 										{
@@ -740,7 +750,6 @@ void TTRM::MenuSel_DTask() noexcept
 
 								std::cout << "[Confirmation, Success] |> Task '" << TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TaskName << "' deleted." << std::endl;
 								TaskList.erase(TaskList.begin() + (handleInputInt - POS_OFFSET_BY_ONE));
-								system("pause");
 								delay_time(SLEEP_OPRT_FINISHED);
 								continue;
 
@@ -885,7 +894,8 @@ void TTRM::MenuSel_ETask() noexcept(false)
 										if (NewModifiedTask.NotifyByTime)
 										{
 											// * Test Done. Success.
-											CurrentDateTime = time(NULL) + (60 * NewModifiedTask.NotifyByTime);
+											//NewModifiedTask.ReminderType = TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).ReminderData
+											CurrentDateTime = mktime(&TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).ReminderData) + (60 * NewModifiedTask.NotifyByTime);
 											NewModifiedTask.TempTM = localtime(&CurrentDateTime);
 											NewModifiedTask.TempTM->tm_year += 1900, NewModifiedTask.TempTM->tm_mon += 1;
 											break;
@@ -897,7 +907,7 @@ void TTRM::MenuSel_ETask() noexcept(false)
 									}
 								case DateBasedRemind:
 									CurrentDateTime = time(NULL);
-									CurrentTContainer = localtime(&CurrentDateTime), CurrentTContainer->tm_year += 1900, CurrentTContainer->tm_mon += 1;
+									CurrentTContainer = localtime(&CurrentDateTime); //, CurrentTContainer->tm_year += 1900, CurrentTContainer->tm_mon += 1;
 
 									std::cout << "[Req, Seperate by Space | MM DD YYYY] Target Date of Reminding, Type 0 For Each To Retain |> ", std::cin >> NewModifiedTask.ReminderData.tm_mon >> NewModifiedTask.ReminderData.tm_mday >> NewModifiedTask.ReminderData.tm_year;
 
@@ -987,6 +997,9 @@ void TTRM::MenuSel_ETask() noexcept(false)
 								}
 								try
 								{
+
+									NewModifiedTask.TaskID.assign(TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TaskID);
+
 									if (NewModifiedTask.TaskName != "0")
 									{
 										TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TaskName.assign(NewModifiedTask.TaskName);
@@ -1024,7 +1037,9 @@ void TTRM::MenuSel_ETask() noexcept(false)
 										}
 										else
 										{
-											NewModifiedTask.ReminderData = TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).ReminderData;
+											EpochHandler = mktime(&TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).ReminderData);
+											NewModifiedTask.TempTM = localtime(&EpochHandler);
+											NewModifiedTask.ReminderData = *NewModifiedTask.TempTM;
 										}
 										break;
 
@@ -1077,34 +1092,31 @@ void TTRM::MenuSel_ETask() noexcept(false)
 									}
 
 									SaveStateHandler.open(SaveStatePath, std::ios::in);
-									TempSaveStateHandler.open(SaveStatePath, std::ios::out);
+									TempSaveStateHandler.open(FilePointState, std::ios::out);
 
-									while (!SaveStateHandler.eof())
+									while (!SaveStateHandler.eof() && std::getline(SaveStateHandler, DataLineHandler))
 									{
 										PayloadHandler.clear();
-										std::getline(SaveStateHandler, DataLineHandler);
 										std::stringstream TempDataHandler(DataLineHandler);
 
 										for (DataLineHandler; std::getline(TempDataHandler, ConvertedHandler, ','); PayloadHandler.push_back(ConvertedHandler))
 											;
 
-										if (PayloadHandler[0] != TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TaskName)
+										if (PayloadHandler[0] != TaskList.at(handleInputInt - POS_OFFSET_BY_ONE).TaskID)
 										{
-											for (IterHandler_UnSh = INIT_NULL_INT; IterHandler_UnSh < PayloadHandler.size(); IterHandler_UnSh++)
+											if (!SaveStateHandler.eof())
 											{
-												TempSaveStateHandler << PayloadHandler[IterHandler_UnSh] << (IterHandler_UnSh == (PayloadHandler.size() - POS_OFFSET_BY_ONE) ? "\n" : ",");
+												for (IterHandler_UnSh = INIT_NULL_INT; IterHandler_UnSh < PayloadHandler.size(); IterHandler_UnSh++)
+												{
+													TempSaveStateHandler << PayloadHandler[IterHandler_UnSh] << (IterHandler_UnSh == (PayloadHandler.size() - POS_OFFSET_BY_ONE) ? "\n" : ",");
+												}
 											}
 										}
 										else
 										{
-											if (NewModifiedTask.ReminderType == QuickRemind)
+											if (!SaveStateHandler.eof())
 											{
-												TempSaveStateHandler << NewModifiedTask.TaskName << "," << NewModifiedTask.TaskInCharge << "," << NewModifiedTask.ReminderType << "," << mktime(NewModifiedTask.TempTM) << std::endl;
-											}
-											else
-											{
-												NewModifiedTask.ReminderData.tm_year -= 1900, NewModifiedTask.ReminderData.tm_mon -= 1, NewModifiedTask.ReminderData.tm_sec = 0;
-												TempSaveStateHandler << NewModifiedTask.TaskName << "," << NewModifiedTask.TaskInCharge << "," << NewModifiedTask.ReminderType << "," << mktime(&NewModifiedTask.ReminderData) << std::endl;
+												TempSaveStateHandler << NewModifiedTask.TaskID << "," << NewModifiedTask.TaskName << "," << NewModifiedTask.TaskInCharge << "," << NewModifiedTask.ReminderType << "," << mktime(&NewModifiedTask.ReminderData) << "\n";
 											}
 										}
 									}
@@ -1242,10 +1254,11 @@ void TTRM::MenuSel_RTLFSS() noexcept(false)
 			{
 				PayloadHandler.push_back(ConvertedHandler);
 			}
-			SaveStateContainer.TaskName = PayloadHandler[0];
-			SaveStateContainer.TaskInCharge = PayloadHandler[1];
-			SaveStateContainer.ReminderType = std::stoi(PayloadHandler[2]);
-			EpochHandler = std::stoll(PayloadHandler[3]);
+			SaveStateContainer.TaskID = PayloadHandler[0];
+			SaveStateContainer.TaskName = PayloadHandler[1];
+			SaveStateContainer.TaskInCharge = PayloadHandler[2];
+			SaveStateContainer.ReminderType = std::stoi(PayloadHandler[3]);
+			EpochHandler = std::stoll(PayloadHandler[4]);
 			SaveStateContainer.TempTM = localtime(&EpochHandler);
 			SaveStateContainer.ReminderData = *SaveStateContainer.TempTM;
 			++IterHandler_UnIn;

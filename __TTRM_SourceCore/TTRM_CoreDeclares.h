@@ -98,8 +98,10 @@ using namespace WinToastLib;
 
 #define TASK_DISPLAY_LIMIT 5
 #define TASK_DISPLAY_CRUD 10
-#define MAX_TASK_ATTACHABLE 50
-#define MAX_SCAN_REMINDERS 10
+
+#define RAND_MAXCHARID 6
+#define RAND_MODULOVAL 70
+
 #define START_CTIME 1900
 #define WAIT_STARTTHREAD 1000
 #endif
@@ -194,6 +196,7 @@ public:
 	}
 
 	// TTRM's CoreFunc Functions
+	std::string ReminderID_Generate() noexcept;
 	void ParseGivenParam(unsigned short argcount, char *argcmd[]);
 	unsigned static __stdcall MultiThread_Wrapper(void *);
 	unsigned static __stdcall MultiThread_ScanReminders(void *);
@@ -232,7 +235,9 @@ public:
 	//std::stringstream RowHandler; ./ Went to Local Scope Declaration.
 	std::fstream SaveStateHandler;
 	std::fstream TempSaveStateHandler;
+	const std::string AlphaNumConst = "0123456789!@#$%^&*ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 	HANDLE MultiThreadHandler;
+	
 
 protected:
 // ! Const Char* Because of Rename Function Required Data Type. STDIO.h Cause
@@ -272,6 +277,7 @@ class TTRM_TaskData
 {
 
 public:
+	std::string TaskID = INIT_NULL_STR;
 	std::string TaskName = INIT_NULL_STR;
 	std::string TaskInCharge = INIT_NULL_STR;
 	unsigned short ReminderType = INIT_NULL_INT;
