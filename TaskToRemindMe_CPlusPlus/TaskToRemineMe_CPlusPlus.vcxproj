@@ -31,6 +31,9 @@
   <ItemGroup>
     <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\__TTRM_SourceCore\IconsReminders\done_all.ico" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{CE79575B-1DD2-4D89-BDB6-040BB573BB23}</ProjectGuid>

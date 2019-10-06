@@ -4,18 +4,16 @@
     Represented as Data Struct Group 7
 */
 
-#include "__TTRM_SourceCore/TTRM_CoreDeclares.h"
+#include "__TTRM_SourceCore/TTRM_CoreDeclarations.h"
 
 TTRM CoreFunction;
 
 int main(unsigned short argc, char *argv[])
 {
-    //CoreFunction.MultiThreadHandler = (HANDLE)_beginthreadex(0, 0, &CoreFunction.MultiThread_ScanReminders, 0, 0, &CoreFunction.MultiThreadID);
-    
-    if (argc > POS_OFFSET_BY_ONE)
+    if (argc > CONTAINS_ONE_ELEM)
 		  CoreFunction.ParseGivenParam(argc, argv);
     
-    if (!CoreFunction.ComponentCheck(IGNORE_PROCESS))
+    if (!CoreFunction.ComponentCheck(RUN_PROCESS))
 		return CoreFunction.TERM_FAILED;
     
 	CoreFunction.runSystemMenu();
