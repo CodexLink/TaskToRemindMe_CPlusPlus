@@ -19,13 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\__TTRM_SourceCore\TTRM_CoreDeclares.h" />
+    <ClInclude Include="..\__TTRM_SourceCore\TTRM_CoreDeclarations.h" />
     <ClInclude Include="..\__TTRM_SourceCore\WinToastLib\wintoastlib.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\TTRM_CoreStarter.cpp" />
-    <ClCompile Include="..\__TTRM_SourceCore\TTRM_CoreContents.cpp" />
+    <ClCompile Include="..\TTRM_CoreInitializer.cpp" />
+    <ClCompile Include="..\__TTRM_SourceCore\TTRM_CoreComponents.cpp" />
     <ClCompile Include="..\__TTRM_SourceCore\WinToastLib\wintoastlib.cpp" />
   </ItemGroup>
   <ItemGroup>

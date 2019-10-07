@@ -13,10 +13,9 @@ int main(unsigned short argc, char *argv[])
     if (argc > CONTAINS_ONE_ELEM)
 		  CoreFunction.ParseGivenParam(argc, argv);
     
-    if (!CoreFunction.ComponentCheck(RUN_PROCESS))
-		return CoreFunction.TERM_FAILED;
+    if (CoreFunction.Cmpnt_Initializer())
+        CoreFunction.SP_DisplayMenu();
     
-	CoreFunction.runSystemMenu();
 
 	//End Scope. TTRM Should Call Destructors.
 }

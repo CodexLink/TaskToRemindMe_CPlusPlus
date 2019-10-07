@@ -18,10 +18,10 @@
     <ClInclude Include="..\__TTRM_SourceCore\WinToastLib\wintoastlib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\__TTRM_SourceCore\TTRM_CoreDeclares.h">
+    <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
+    <ClInclude Include="..\__TTRM_SourceCore\TTRM_CoreDeclarations.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -29,10 +29,10 @@
     <ClCompile Include="..\__TTRM_SourceCore\WinToastLib\wintoastlib.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\__TTRM_SourceCore\TTRM_CoreContents.cpp">
+    <ClCompile Include="..\__TTRM_SourceCore\TTRM_CoreComponents.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\TTRM_CoreStarter.cpp">
+    <ClCompile Include="..\TTRM_CoreInitializer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

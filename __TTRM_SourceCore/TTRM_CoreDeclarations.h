@@ -49,11 +49,20 @@ using namespace WinToastLib;
 
 // ! String Literal Project Description Defined Macro Declarations
 #define PROJECT_NAME L"Tasks To Remind Me C++ CLI"
+#define PROJECT_SHORTCODE L"TTRM for C++"
 #define PROJECT_VER L"Close Beta Stage"
 #define PROJECT_CREATOR L"Data Structure Group 5"
+#define PROJECT_LINK L"https://github.com/CodexLink/TaskToRemindMe_CPlusPlus"
+
+// ! String Literals Version
+#define PROJECT_NAME_STRL "Tasks To Remind Me C++ CLI"
+#define PROJECT_SHORTCODE_STRL "TTRM for C++"
+#define PROJECT_VER_STRL "Close Beta Stage"
+#define PROJECT_CREATOR_STRL "Data Structure Group 5"
+#define PROJECT_LINK_STRL "https://github.com/CodexLink/TaskToRemindMe_CPlusPlus"
 
 // ! Short-Term Functions, Macro Definitions
-#define DelayRunTimeBy(millsec) std::this_thread::sleep_for(std::chrono::milliseconds(millsec))
+#define DelayRunTimeBy(MillSec) std::this_thread::sleep_for(std::chrono::milliseconds(MillSec))
 #define ConsoleCall(ConsoleCommand) system(ConsoleCommand)
 #define BufferClear_STDIN(_CharDelimiter_) std::cin.ignore(std::numeric_limits<std::streamsize>::max(), _CharDelimiter_);
 #undef max // ! Visual Studio Overriding Function To Be Undefined.
@@ -69,11 +78,14 @@ using namespace WinToastLib;
 #define THREAD_PRC_TERM -2		// * Significance for Thread Goes Out Of Scope Due To No Task Is Being Processed.
 
 // ! Magic Number To Significance from Initializers to Comparison Base Value Declarations
-#define INIT_BASE_NUM 0		 // * Significance for Base Positive Number is Zero.
-#define START_BY_ONE 1		 // * Significance for Base Starting Point is One.
-#define NULL_STR ""			 // * Significance for String Initialization at Starting Point of NULL.
-#define NULL_CHAR ''			 // * Significance for CHAR Initialization at Starting Point of NULL.
-#define NULL_SET {0} 		 // * Significance for Setting Some Structure Members to Zero.
+#define INIT_BASE_NUM 0 // * Significance for Base Positive Number is Zero.
+#define START_BY_ONE 1  // * Significance for Base Starting Point is One.
+#define NULL_STR ""		// * Significance for String Initialization at Starting Point of NULL.
+#define NULL_CHAR '0'   // * Significance for CHAR Initialization at Starting Point of NULL.
+#define NULL_SET \
+	{            \
+		0        \
+	}						 // * Significance for Setting Some Structure Members to Zero.
 #define ADJUST_BY_ONE 1		 // * Significance for Adjusting Particular Variable by One. Decrement Or Increment, Neither Of The Two. Or By Checking Index with Offset of One.
 #define CONTAINS_ONE_ELEM 1  // * Significance for IF 'THAT' Contains Only One Element OR Less.
 #define CONTINOUS_RNN_PROC 1 // * Significance for Continous Running Process.
@@ -124,12 +136,15 @@ using namespace WinToastLib;
 class TTRM
 {
 public:
-	enum REMINDER_TYPES : unsigned int
+	// ! REMINDER_TYPES, Types of Reminder, Basically.
+	enum REMINDER_TYPES : unsigned
 	{
 		CancelOperation,
 		QuickRemind,
 		DateBasedRemind,
 	};
+
+	// ! SET_CHOICE_PROCESS, Added Both Possibility Writes by User
 	enum SET_CHOICE_PROCESS : char
 	{
 		CONFIRMED_TRUE_LOWER = 'y',
@@ -137,8 +152,9 @@ public:
 		CONFIRMED_FALSE_LOWER = 'n',
 		CONFIRMED_FALSE_UPPER = 'N'
 	};
-
-	enum DISPLAY_OPTIONS
+	
+	// ! DISPLAY_OPTIONS, Used for Switch-Case Situations.
+	enum DISPLAY_OPTIONS : unsigned
 	{
 		Termination,
 		AddTask,
@@ -151,72 +167,86 @@ public:
 		AtHome
 	};
 
+	// ! Class Initializer Declaration
 	TTRM(void)
 	{
-		std::cout << PROJECT_NAME << " | " << PROJECT_VER << std::endl
-				  << "Created by " << PROJECT_CREATOR << std::endl
+		std::cout << PROJECT_NAME_STRL << " | " << PROJECT_VER_STRL << std::endl
+				  << "Created by " << PROJECT_CREATOR_STRL << std::endl
 				  << std::endl
-				  << "Group Members\n\t\tProject Lead: 'Janrey Licas',\n\t\tSystem Director: 'Rejay Mar'\n"
+				  << "Group Members\n\tProject Lead: 'Janrey Licas',\n\tSystem Director: 'Rejay Mar'\n"
 				  << std::endl
 				  << std::endl;
 		DelayRunTimeBy(SLEEP_INIT_OBJECT);
 	}
 
+	// ! Class Destructor Declaration
 	~TTRM(void)
 	{
 		std::cout << std::endl
-				  << "Termination |> Closing Objects and Threads." << std::endl;
+				  << "Termination |> Closing Objects and Threads..." << std::endl;
 		std::cout << "Termination |> Multi-Thread Function Closed." << std::endl;
 		CloseHandle(MultiThreadHandler);
-		std::cout << "Termination |> Program Terminates in 2 Seconds. Goodbye.";
+		std::cout << "Termination |> Program Terminated. Window Closing... Goodbye.";
 		DelayRunTimeBy(SLEEP_INIT_OBJECT);
 		exit(FUNC_OOS);
 	}
 
-	// TTRM's CoreFunc Functions
-	std::string ReminderID_Generate() noexcept;
-	void ParseGivenParam(unsigned short argcount, char *argcmd[]);
+	// ! Multi Threading Static Functions
 	unsigned static __stdcall MultiThread_Wrapper(void *);
 	unsigned static __stdcall MultiThread_ScanReminders(void *);
 
-	unsigned short ComponentCheck(bool isNeededToRun) noexcept(false);
-	void runSystemMenu() noexcept(false);
-	std::string DisplayItem_ParseType(REMINDER_TYPES IntType) noexcept;
-	void DisplayTasks_AtWindow(DISPLAY_OPTIONS WindowID_INT) noexcept;
+	// ! Function Prototype Declarations
 
-	// TTRM_WinToast Relative Functions. Not Decalred to TTRM_WinToast due to Function Structure of the whole class.
-	void WinToast_ShowTaskCForToday() noexcept;
+	// ! TTRM's Initializer Function Declarations
+	void ParseGivenParam(unsigned short argcount, char *argcmd[]);
+	unsigned short Cmpnt_Initializer() noexcept(false);
+
+	// ! Task / Menu Displays Function Declarations
+	void SP_DisplayTasks(DISPLAY_OPTIONS WindowID_INT) noexcept(false);
+	std::string SP_DisplayTasksParser(REMINDER_TYPES IntType) noexcept(true);
+	void SP_DisplayMenu() noexcept(false);
+	std::string SP_DLT() const noexcept(false); // * Displays Local Time of the System
+	void DC_ATask() noexcept(false);			// * Adds Task To The System, Both Applies to Save State and Queue System
+	void DC_DTask() noexcept(false);			// * Deletes Task To The System, Both Applies to Save State and Queue System
+	void DC_ETask() noexcept(false);			// * Modifies Task To The System, Both Applies to Save State and Queue System
+	void DC_VTask() noexcept(false);			// * Views Task To The System, # of Reminders Limitations is Not Applied, This Checks Only On Queue System
+	void DC_RQT() noexcept(false);				//  *Removes Queued Tasks and Removes Save State Data
+	void DC_RTLFSS() noexcept(false);			// * Refresh TaskList From Save States
+
+	// ! Side Component >> Function ID Generator for Reminders, Used for Both Types of Reminders.
+	std::string Gen_UniqueRID() noexcept(true);
+
+	// ! TTRM_WinToast Relative Functions. Not Decalred to TTRM_WinToast due to Function Structure of the whole class.
 	static void WinToast_ReminderPrompt(std::string ReadName, std::string ReadInCharge, unsigned short ReadReminderType, signed ReadNotifyByTime, tm TMToRead) noexcept;
 
-	std::string runSystem_GetTimeLocal() const noexcept;
-	void MenuSel_ATask() noexcept(false);
-	void MenuSel_DTask() noexcept;
-	void MenuSel_ETask() noexcept(false);
-	void MenuSel_VTask() noexcept(false);
-	void MenuSel_RQT() noexcept(false);	//  RemoveQueuedTask
-	void MenuSel_RTLFSS() noexcept(false); //  RefreshTaskListFromSaveStates
-	// These variables will be globally use by functions to reduce variable initialization by candidating only few ones from the class state.
-	unsigned short TASK_LIMIT_SIZE = TASK_DISPLAY_LIMIT; // By Default, 5.
-	char handleInputChar = NULL_CHAR;
-	unsigned short handleInputInt = INIT_BASE_NUM;
-	unsigned short IterHandler_UnSh = INIT_BASE_NUM;
-	unsigned int IterHandler_UnIn = INIT_BASE_NUM;
-	signed int IterHandler_SiIn = INIT_BASE_NUM;
-	signed short IterHandler_SiSh = INIT_BASE_NUM;
+	// ! Class Member Global-Like Variables. Used for Minimal Initialization on Some Functions.
 
-	//static unsigned short WinToast_ReturnTrigger;
+	// ! Input Handlers
+	char InputHandler_Char = NULL_CHAR;
+	unsigned short InputHandler_Int = INIT_BASE_NUM;
 
-	time_t EpochHandler = INIT_BASE_NUM;
-	unsigned MultiThreadID = INIT_BASE_NUM; // For Multi-Threading HandleID...
+	// ! Iterator Handlers
+	unsigned short IterHandler_UnShort = INIT_BASE_NUM;
+	unsigned int IterHandler_UnInt = INIT_BASE_NUM;
 
-	// For File Stream Implementation
+	// ! Various Important Handler >> Localtime and Multi-Threading
+	time_t EpochHandler = INIT_BASE_NUM;   // ! LocalTime Handler.
+	unsigned MTID_Handler = INIT_BASE_NUM; // ! Multi-Threading ID Handler, Can Possibly Anything.
+	HANDLE MultiThreadHandler;			   // * Special Variable for Checking Status of Thread, Used for WaitForSingleObject
+
+	// ! File Stream Implementation
+	/* 
+		* TempDataHandler, String Storage to StringStream
+		* ConvertedHandler, Diced Data to PayloadHandler
+		* DataLineHandler, Whole Data Row from TempDataHandler
+		* PayloadHandler, Diced Data Storage
+	*/
 	std::string TempDataHandler, ConvertedHandler, DataLineHandler;
 	std::vector<std::string> PayloadHandler;
-	//std::stringstream RowHandler; ./ Went to Local Scope Declaration.
-	std::fstream SaveStateHandler;
-	std::fstream TempSaveStateHandler;
+	std::fstream SaveStateHandler;	 // ! Handler for Save State File
+	std::fstream TempSaveStateHandler; // ! Handler for Temporary File
+
 	const std::string AlphaNumConst = "0123456789!@#$%^&*ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-	HANDLE MultiThreadHandler;
 
 protected:
 	// ! Const Char* Because of Rename Function Required Data Type. STDIO.h Cause
@@ -225,18 +255,20 @@ protected:
 };
 
 /*
-	TTRM_WinToast is a base class specifically seperated to use WinToast Class 'IWinToastHandler'
-	We seperated this for a reason. The reason why is because according to the template or the 
-	same code, we have to call 'this' (TTRM_WinToast) class everytime we are gonna display some toast.
-	IF we didn't seperate this class from one another, we cannot initiate it.
+	* TTRM_WinToast is a base class specifically seperated to use WinToast Class 'IWinToastHandler'
+	* We seperated this for a reason. The reason why is because according to the template or the 
+	* same code, we have to call 'this' (TTRM_WinToast) class everytime we are gonna display some toast.
+	* IF we didn't seperate this class from one another, we cannot initiate it.
 */
 class TTRM_WinToast : public IWinToastHandler
 {
 public:
 	~TTRM_WinToast(void)
-	{ WinToast::instance()->clear(); }
+	{
+		WinToast::instance()->clear();
+	} // ! Destroys Toast After To Reduce Memory Consumption.
 
-	// * Overriders. Not Doing That Much But Handles Something...
+	// * Function Overriders. Not Doing That Much But Handles Something...
 	void toastActivated() const;
 	void toastActivated(int actionIndex) const;
 	void toastDismissed(WinToastDismissalReason state) const;
@@ -244,19 +276,19 @@ public:
 };
 
 /*
- TTRM_TaskData is an important base class that utilizes System-Proposed Functions specificially used for scheduler. This means that all functions residing
- in this class is basically related to the Proposed System that we wanted to make. This base class was not on a confirmed status. Please be advised.
+  ! TTRM_TaskData Class is an important base class that utilizes as an object for storing reminders.
+  ! It can have two types of reminders which still use the same variables for time storage. It does not
+  ! have any functions, nor initializers or destructors.
 */
 class TTRM_TaskData
 {
-
 public:
-	std::string TaskID = NULL_STR;
-	std::string TaskName = NULL_STR;
-	std::string TaskInCharge = NULL_STR;
-	unsigned short ReminderType = INIT_BASE_NUM;
-	signed short NotifyByTime = INIT_BASE_NUM;
-	tm *TempTM = NULL_SET;
-	tm ReminderData = NULL_SET;
+	std::string TaskID = NULL_STR;				 // * Unique Task ID Generated by Gen_UniqueRID
+	std::string TaskName = NULL_STR;			 // * Task Name
+	std::string TaskInCharge = NULL_STR;		 // * Name of the Person Incharge.
+	unsigned short ReminderType = INIT_BASE_NUM; // * Used To Distinguish Type of Reminder.
+	signed short NotifyByTime = INIT_BASE_NUM;   // * Used by QuickRemind Type Reminder.
+	tm *TempTM = NULL_SET;						 // * Temporary Use for Localtime and Data Passing to ReminderData.
+	tm ReminderData = NULL_SET;					 // * Actual Storage of the Reminders.
 };
 #endif
