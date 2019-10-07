@@ -1,12 +1,15 @@
 /*
-    Technical Project Specific Essential Function CPP File by Janrey "CodexLink" Licas
-    File Category Type: Technical and Core Function Body Definition, "CoreFunc".
-	
-	Overview	 
+	* Task To Temind Me Core Components
+    * Side Note: Technical Project Specific Essential Function Header File
+    * File Category Type: Technical and Core Function Body Definition, "CoreFunc".
+	* Version: Close Beta Stage
+	* 
+	* Project Lead, Janrey "CodexLink" Licas
+	* Project Director, Rejay "figureness" Mar
 
-	- Core Functions
-
-	- Technical Functions
+	! Overview	 
+	* Core Functions
+	* Technical Functions
 */
 
 #include "TTRM_CoreDeclarations.h"
@@ -28,24 +31,25 @@ std::string TTRM::Gen_UniqueRID() noexcept(true)
 
 void TTRM::ParseGivenParam(unsigned short argcount, char *argv[])
 {
-	unsigned int ParamIter = INIT_BASE_NUM;
+	IterHandler_UnInt = INIT_BASE_NUM;
 	std::cout << "Quick Tasks To Remind Me C++ in CLI version. BETA" << std::endl
 			  << std::endl;
 	std::cout << "Created by Data Structure Group 5, Group Members {\n Header Core Developer: 'Janrey Licas',\n AppFlow Director: 'Rejay Mar'\n};" << std::endl
 			  << std::endl;
 	std::cout << "[Perform Parameter Given] |> Counted Parameter: " << argcount << std::endl;
-	while (!strcmp(argv[ParamIter], "") && ParamIter != LIMIT_ARGC_COUNTER)
+	while (!strcmp(argv[IterHandler_UnInt], "") && IterHandler_UnInt != LIMIT_ARGC_COUNTER)
 	{
-		// Create more features here. Use switch for Selection of Data here.
-		std::cout << " Parameter Index " << ParamIter << " |> Parameter Value -> " << argv[ParamIter] << std::endl;
+		// TODO: Create more features here. Use switch for Selection of Data here.
+		std::cout << " Parameter Index " << IterHandler_UnInt << " |> Parameter Value -> " << argv[IterHandler_UnInt] << std::endl;
 	}
 }
 
 unsigned short TTRM::Cmpnt_Initializer() noexcept(false)
 {
 	TTRM_TaskData SaveStateContainer;
+
 	long posx = INIT_BASE_NUM, posy = INIT_BASE_NUM;
-	HWND console = GetConsoleWindow(); //, hwnd = GetConsoleWindow();
+	HWND console = GetConsoleWindow();
 	RECT ConsoleWindow, ClietnScrWindow;
 	HMENU hmenu = GetSystemMenu(console, FALSE);
 	SetConsoleTitle("Tasks To Remind Me C++ CLI, Close Beta Stage | Data Structure Group 5 >> https://github.com/CodexLink/TaskToRemindMe_CPlusPlus");
@@ -172,7 +176,6 @@ unsigned short TTRM::Cmpnt_Initializer() noexcept(false)
 // ! Starting Point of Program |> Display Menu, Does Not Throw Any Exceptions
 void TTRM::SP_DisplayMenu() noexcept(false)
 {
-	unsigned int DisplayMenu_Input = INIT_BASE_NUM;
 	while (CONTINOUS_RNN_PROC)
 	{
 		ConsoleCall("CLS");
@@ -198,7 +201,7 @@ void TTRM::SP_DisplayMenu() noexcept(false)
 				  << std::endl;
 
 		std::cout << "[Input] Your Choice and ENTER |> ";
-		std::cin >> DisplayMenu_Input;
+		std::cin >> InputHandler_Int;
 		BufferClear_STDIN('\n');
 		if (std::cin.fail())
 		{
@@ -208,9 +211,9 @@ void TTRM::SP_DisplayMenu() noexcept(false)
 			DelayRunTimeBy(SLEEP_ERROR_PROMPT);
 			continue;
 		}
-		// Stack the function.
-		// Return to 'this' function so that we can go back to this function easily.
-		switch (DisplayMenu_Input)
+		// ! Stack the function.
+		// ! Return to 'this' function so that we can go back to this function easily.
+		switch (InputHandler_Int)
 		{
 		case AddTask:
 			DC_ATask();
@@ -251,7 +254,7 @@ void TTRM::SP_DisplayMenu() noexcept(false)
 			DelayRunTimeBy(SLEEP_ERROR_PROMPT);
 			break;
 		}
-		if (!DisplayMenu_Input)
+		if (!InputHandler_Int)
 			break;
 	}
 	return;
@@ -277,7 +280,7 @@ std::string TTRM::SP_DisplayTasksParser(REMINDER_TYPES IntType) noexcept(true)
 
 void TTRM::SP_DisplayTasks(DISPLAY_OPTIONS WindowID_INT) noexcept(false)
 {
-	unsigned short TaskNum = START_BY_ONE;
+	TaskNumHandler = START_BY_ONE;
 	bool isAtHome = false;
 	if (!TaskList.size())
 	{
@@ -316,19 +319,17 @@ void TTRM::SP_DisplayTasks(DISPLAY_OPTIONS WindowID_INT) noexcept(false)
 		default:
 			std::cerr << "... ???" << std::endl;
 		}
-		// ! This function is degrading grade of code quality due to completixty. Try to do some method to reduce this.
-		// TODO: Normalize This Function.
 		for (auto IterTasks : TaskList)
 		{
-			if (isAtHome && TaskNum > TASK_DISPLAY_LIMIT)
+			if (isAtHome && TaskNumHandler > TASK_DISPLAY_LIMIT)
 			{
 				std::cout << std::endl
-						  << "And there are other " << (TaskList.size() + ADJUST_BY_ONE) - TaskNum << (((TaskList.size() + ADJUST_BY_ONE) - TaskNum) == CONTAINS_ONE_ELEM ? " task" : " tasks") << " available!" << std::endl;
+						  << "And there are other " << (TaskList.size() + ADJUST_BY_ONE) - TaskNumHandler << (((TaskList.size() + ADJUST_BY_ONE) - TaskNumHandler) == CONTAINS_ONE_ELEM ? " task" : " tasks") << " available!" << std::endl;
 				break;
 			}
 			else
 			{
-				std::cout << "Task # " << TaskNum << " | ";
+				std::cout << "Task # " << TaskNumHandler << " | ";
 
 				switch (IterTasks.ReminderType)
 				{
@@ -345,7 +346,7 @@ void TTRM::SP_DisplayTasks(DISPLAY_OPTIONS WindowID_INT) noexcept(false)
 				default:
 					break;
 				}
-				TaskNum++;
+				TaskNumHandler++;
 			}
 		}
 		return;
@@ -410,13 +411,11 @@ unsigned int __stdcall TTRM::MultiThread_ScanReminders(void *ArgsReserved)
 {
 	auto ObjectScanIter = INIT_BASE_NUM;
 	time_t ObjSlotScanConv = INIT_BASE_NUM;
+	// ! Redeclaration Since This Function is Static, I don't want to take more time to inherit class to static function member.
 	const char *SaveStatePath_WT = "TTRM_SaveState._ttrmdat";
 	const char *FilePointState_WT = "TTRM_SaveStatesTemp._ttrmdat";
 	if (TaskList.size())
 	{
-		//std::cout << ".";
-		//std::cout << mktime(&TaskList.at(ObjectScanIter).ReminderData) << " | " << time(NULL) << std::endl;
-		//WinToast_ReminderPrompt(TaskList.at(ObjectScanIter).TaskName, TaskList.at(ObjectScanIter).TaskInCharge, TaskList.at(ObjectScanIter).ReminderType, TaskList.at(ObjectScanIter).NotifyByTime, TaskList.at(ObjectScanIter).ReminderData);
 		for (ObjectScanIter = INIT_BASE_NUM; ObjectScanIter < TaskList.size(); ObjectScanIter++)
 		{
 			if (mktime(&TaskList.at(ObjectScanIter).ReminderData) <= time(NULL))
@@ -494,7 +493,7 @@ void TTRM::DC_ATask() noexcept(false)
 	double diffDateHandler = INIT_BASE_NUM;
 	while (FUNC_AWAIT_CMPLT)
 	{
-		TTRM_TaskData NewTask; // Create Object To Pass On...
+		TTRM_TaskData NewTask; // * Create Object To Pass On...
 		time_t CurrentDateTime = time(NULL);
 		tm *CurrentTContainer = localtime(&CurrentDateTime);
 		ConsoleCall("CLS");
@@ -613,7 +612,6 @@ void TTRM::DC_ATask() noexcept(false)
 					// ! Add Some Today To Today Sens Time. Currently WORK ON PROGRESS. Checks if Input is following 24-Hour Standards.
 					if ((NewTask.ReminderData.tm_hour > MIN_TIME_HOUR || NewTask.ReminderData.tm_hour <= MAX_TIME_HOUR) || (NewTask.ReminderData.tm_min >= MIN_TIME_MIN || NewTask.ReminderData.tm_min <= MAX_TIME_MIN) || !std::cin.fail())
 					{
-
 						// ! Prerequisite Condition, we can only get to this point if and only the datetime is exactly the same as the user added. Means 09/24/2019 == 09/24/2019. If we intend to have same date but different year then we go to else statement.
 						if (NewTask.ReminderData.tm_mon - ADJUST_BY_ONE == CurrentTContainer->tm_mon && NewTask.ReminderData.tm_mday == CurrentTContainer->tm_mday && NewTask.ReminderData.tm_year - START_CTIME == CurrentTContainer->tm_year)
 						{
@@ -661,9 +659,6 @@ void TTRM::DC_ATask() noexcept(false)
 					}
 					break;
 				}
-			default:
-				std::cout << "Error" << std::endl;
-				continue;
 			}
 
 			try
@@ -677,7 +672,7 @@ void TTRM::DC_ATask() noexcept(false)
 					}
 					else
 					{
-						NewTask.ReminderData.tm_year -= 1900, NewTask.ReminderData.tm_mon -= 1, NewTask.ReminderData.tm_sec = 0;
+						NewTask.ReminderData.tm_year -= START_CTIME, NewTask.ReminderData.tm_mon -= ADJUST_BY_ONE, NewTask.ReminderData.tm_sec = INIT_BASE_NUM;
 						SaveStateHandler << Gen_UniqueRID() << "," << NewTask.TaskName << "," << NewTask.TaskInCharge << "," << NewTask.ReminderType << "," << mktime(&NewTask.ReminderData) << std::endl;
 					}
 					TaskList.push_back(NewTask);
@@ -710,9 +705,9 @@ void TTRM::DC_DTask() noexcept(false)
 {
 	while (FUNC_AWAIT_CMPLT)
 	{
-		size_t TaskSize = TaskList.size();
+		TaskHandlerSize = TaskList.size();
 		ConsoleCall("CLS");
-		if (TaskSize)
+		if (TaskHandlerSize)
 		{
 			std::cout << std::endl
 					  << "=== Task List Available ===============================" << std::endl;
@@ -732,7 +727,7 @@ void TTRM::DC_DTask() noexcept(false)
 			{
 				if (InputHandler_Int)
 				{
-					if (InputHandler_Int <= TaskSize)
+					if (InputHandler_Int <= TaskHandlerSize)
 					{
 						std::cout << std::endl
 								  << "Are you sure you want to delete this task: '" << TaskList.at(InputHandler_Int - ADJUST_BY_ONE).TaskName << "'?" << std::endl
@@ -762,7 +757,7 @@ void TTRM::DC_DTask() noexcept(false)
 
 									for (DataLineHandler; std::getline(TempDataHandler, ConvertedHandler, ','); PayloadHandler.push_back(ConvertedHandler))
 										;
-									// * We delete data by comparing saved epoch time task and system saved epoch time task.
+									// ! We delete data by comparing saved epoch time task and system saved epoch time task.
 									if (PayloadHandler[0] != TaskList.at(InputHandler_Int - ADJUST_BY_ONE).TaskID)
 									{
 										if (!SaveStateHandler.eof())
@@ -826,12 +821,12 @@ void TTRM::DC_ETask() noexcept(false)
 {
 	while (FUNC_AWAIT_CMPLT)
 	{
-		TTRM_TaskData NewModifiedTask; // Create Object To Pass On...
+		TTRM_TaskData NewModifiedTask; // * Create Object To Pass On...
 		time_t CurrentDateTime = time(NULL);
 		tm *CurrentTContainer = localtime(&CurrentDateTime);
-		size_t TaskSize = TaskList.size();
+		TaskHandlerSize = TaskList.size();
 		ConsoleCall("CLS");
-		if (TaskSize)
+		if (TaskHandlerSize)
 		{
 			std::cout << std::endl
 					  << "=== Task Lists ===========================================" << std::endl;
@@ -851,7 +846,7 @@ void TTRM::DC_ETask() noexcept(false)
 			{
 				if (InputHandler_Int)
 				{
-					if (InputHandler_Int <= TaskSize)
+					if (InputHandler_Int <= TaskHandlerSize)
 					{
 						std::cout << "[WARNING] |> Are you sure you want to edit this task: '" << TaskList.at(InputHandler_Int - ADJUST_BY_ONE).TaskName << "'?" << std::endl
 								  << "[INPUT  ] | ['Y'es or 'N'o] |> ",
@@ -914,7 +909,7 @@ void TTRM::DC_ETask() noexcept(false)
 								case QuickRemind:
 									std::cout << "[Required, Min: -45, Max: 180, 0 To Retain] Minutes Left To Remind You |> ", std::cin >> NewModifiedTask.NotifyByTime;
 									// TODO: Convert to time_t by mktime and return back to date time/. Done. Test Left.
-									if (NewModifiedTask.NotifyByTime < -QUICKR_INV_MAX_TIME || NewModifiedTask.NotifyByTime > QUICKR_MAX_TIME)
+									if (NewModifiedTask.NotifyByTime < QUICKR_INV_MAX_TIME || NewModifiedTask.NotifyByTime > QUICKR_MAX_TIME)
 									{
 										std::cerr << "[INPUT ERR] |> Time Entered is invalid. Please try again by pressing any key to restart." << std::endl;
 										BufferClear_STDIN('\n');
@@ -925,12 +920,9 @@ void TTRM::DC_ETask() noexcept(false)
 									{
 										if (NewModifiedTask.NotifyByTime)
 										{
-											// * Test Done. Success.
-											//NewModifiedTask.ReminderType = TaskList.at(InputHandler_Int - ADJUST_BY_ONE).ReminderData
-											//std::cout << mktime(&TaskList.at(InputHandler_Int - ADJUST_BY_ONE).ReminderData) << " " << ((MAX_TIME_MIN + 1) * NewModifiedTask.NotifyByTime) << std::endl;
-											CurrentDateTime = mktime(&TaskList.at(InputHandler_Int - ADJUST_BY_ONE).ReminderData) + ((MAX_TIME_MIN + 1) * NewModifiedTask.NotifyByTime);
+											CurrentDateTime = mktime(&TaskList.at(InputHandler_Int - ADJUST_BY_ONE).ReminderData) + ((MAX_TIME_MIN + ADJUST_BY_ONE) * NewModifiedTask.NotifyByTime);
 											NewModifiedTask.TempTM = localtime(&CurrentDateTime);
-											NewModifiedTask.TempTM->tm_year += 1900, NewModifiedTask.TempTM->tm_mon += 1;
+											NewModifiedTask.TempTM->tm_year += START_CTIME, NewModifiedTask.TempTM->tm_mon += ADJUST_BY_ONE;
 											break;
 										}
 										else
@@ -940,7 +932,7 @@ void TTRM::DC_ETask() noexcept(false)
 									}
 								case DateBasedRemind:
 									CurrentDateTime = time(NULL);
-									CurrentTContainer = localtime(&CurrentDateTime); //, CurrentTContainer->tm_year += 1900, CurrentTContainer->tm_mon += 1;
+									CurrentTContainer = localtime(&CurrentDateTime); //, CurrentTContainer->tm_year += START_CTIME, CurrentTContainer->tm_mon += ADJUST_BY_ONE;
 
 									std::cout << "[Req, Seperate by Space | MM DD YYYY] Target Date of Reminding, Type 0 For Each To Retain |> ", std::cin >> NewModifiedTask.ReminderData.tm_mon >> NewModifiedTask.ReminderData.tm_mday >> NewModifiedTask.ReminderData.tm_year;
 
@@ -979,9 +971,7 @@ void TTRM::DC_ETask() noexcept(false)
 										// ! Add Some Today To Today Sens Time. Currently WORK ON PROGRESS.
 										if ((NewModifiedTask.ReminderData.tm_hour > MIN_TIME_HOUR || NewModifiedTask.ReminderData.tm_hour <= MAX_TIME_HOUR) || (NewModifiedTask.ReminderData.tm_min >= MIN_TIME_MIN || NewModifiedTask.ReminderData.tm_min <= MAX_TIME_MIN) || !std::cin.fail())
 										{
-
 											// ! Prerequisite Condition, we can only get to this point if and only the datetime is exactly the same as the user added. Means 09/24/2019 == 09/24/2019. If we intend to have same date but different year then we go to else statement.
-
 											if (NewModifiedTask.ReminderData.tm_mon - ADJUST_BY_ONE == TaskList.at(InputHandler_Int - ADJUST_BY_ONE).ReminderData.tm_mon && NewModifiedTask.ReminderData.tm_mday == TaskList.at(InputHandler_Int - ADJUST_BY_ONE).ReminderData.tm_mday && NewModifiedTask.ReminderData.tm_year - START_CTIME == TaskList.at(InputHandler_Int - ADJUST_BY_ONE).ReminderData.tm_year)
 											{
 
@@ -1317,7 +1307,7 @@ void TTRM::DC_RTLFSS() noexcept(false)
 		else
 		{
 			std::cout << "Save State Create |> SaveState File Creation Failure. Fatal Error | Terminating Program" << std::endl;
-			TTRM::~TTRM();
+			TTRM::~TTRM(); // ! Calls Destructors Because This Function is VOID. So we terminate, explicitly.
 		}
 	}
 	SaveStateHandler.close();
@@ -1325,20 +1315,15 @@ void TTRM::DC_RTLFSS() noexcept(false)
 	return;
 }
 
-// CORE FUNCTION CONTENT DECLARATION - END POINT
+// ! CORE FUNCTION CONTENT DECLARATION - END POINT
 
-//----------------------------------------------------------------------------
+// * ----------------------------------------------------------------------------
 
-// TECHNICAL FUNCTION CONTENT DECLARATION - STARTING POINT
+// ! TECHNICAL FUNCTION CONTENT DECLARATION - STARTING POINT
 
-/*
-    Technical Project Specific Essential Function CPP File by Janrey "CodexLink" Licas
-    File Category Type: Core Function Body Definition, "CoreFunc".
-	Note that this CPP file will only contain external library functions.
-*/
+// ! WinToast FUNCTION CONTENT DECLARATION - STARTING POINT
 
-// WinToast FUNCTION CONTENT DECLARATION - STARTING POINT
-
+// ! These Functions Only Does Those...
 void TTRM_WinToast::toastActivated() const
 {
 	WinToast_ReturnTrigger = 2;
@@ -1371,8 +1356,22 @@ void TTRM_WinToast::toastFailed() const
 	WinToast_ReturnTrigger = 2;
 }
 
-// WinToast FUNCTION CONTENT DECLARATION - END POINT
+// ! WinToast FUNCTION CONTENT DECLARATION - END POINT
 
-// TECHNICAL FUNCTION CONTENT DECLARATION - END POINT
+// ! TECHNICAL FUNCTION CONTENT DECLARATION - END POINT
 
-//----------------------------------------------------------------------------
+// *----------------------------------------------------------------------------
+
+/*
+	* Task To Temind Me Core Components
+    * Side Note: Technical Project Specific Essential Function Header File
+    * File Category Type: Technical and Core Function Body Definition, "CoreFunc".
+	* Version: Close Beta Stage
+	* 
+	* Project Lead, Janrey "CodexLink" Licas
+	* Project Director, Rejay "figureness" Mar
+
+	! Overview	 
+	* Core Functions
+	* Technical Functions
+*/

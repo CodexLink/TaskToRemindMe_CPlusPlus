@@ -5,7 +5,7 @@
 	* Version: Close Beta Stage
 	* 
 	* Project Lead, Janrey "CodexLink" Licas
-	* Project Lead, Rejay "figureness" Mar
+	* Project Director, Rejay "figureness" Mar
 */
 
 // ! Declarations Start
@@ -152,7 +152,7 @@ public:
 		CONFIRMED_FALSE_LOWER = 'n',
 		CONFIRMED_FALSE_UPPER = 'N'
 	};
-	
+
 	// ! DISPLAY_OPTIONS, Used for Switch-Case Situations.
 	enum DISPLAY_OPTIONS : unsigned
 	{
@@ -195,7 +195,7 @@ public:
 	unsigned static __stdcall MultiThread_Wrapper(void *);
 	unsigned static __stdcall MultiThread_ScanReminders(void *);
 
-	// ! Function Prototype Declarations
+	// ! Function Prototype Declarations - START
 
 	// ! TTRM's Initializer Function Declarations
 	void ParseGivenParam(unsigned short argcount, char *argcmd[]);
@@ -213,6 +213,8 @@ public:
 	void DC_RQT() noexcept(false);				//  *Removes Queued Tasks and Removes Save State Data
 	void DC_RTLFSS() noexcept(false);			// * Refresh TaskList From Save States
 
+	// ! Function Prototype Declarations - START
+
 	// ! Side Component >> Function ID Generator for Reminders, Used for Both Types of Reminders.
 	std::string Gen_UniqueRID() noexcept(true);
 
@@ -227,7 +229,10 @@ public:
 
 	// ! Iterator Handlers
 	unsigned short IterHandler_UnShort = INIT_BASE_NUM;
+	unsigned short TaskNumHandler = START_BY_ONE;
 	unsigned int IterHandler_UnInt = INIT_BASE_NUM;
+	size_t TaskHandlerSize = INIT_BASE_NUM;
+	
 
 	// ! Various Important Handler >> Localtime and Multi-Threading
 	time_t EpochHandler = INIT_BASE_NUM;   // ! LocalTime Handler.
@@ -240,12 +245,15 @@ public:
 		* ConvertedHandler, Diced Data to PayloadHandler
 		* DataLineHandler, Whole Data Row from TempDataHandler
 		* PayloadHandler, Diced Data Storage
+		* SaveStateHandler, Handler for Save State File
+		* TempSaveStateHandler, Handler for Temporary File
 	*/
 	std::string TempDataHandler, ConvertedHandler, DataLineHandler;
 	std::vector<std::string> PayloadHandler;
-	std::fstream SaveStateHandler;	 // ! Handler for Save State File
-	std::fstream TempSaveStateHandler; // ! Handler for Temporary File
+	std::fstream SaveStateHandler;
+	std::fstream TempSaveStateHandler;
 
+	// ! Randomizer Required String
 	const std::string AlphaNumConst = "0123456789!@#$%^&*ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
 protected:
