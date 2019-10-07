@@ -13,6 +13,7 @@
 // ! Pragma For Declaration and Exemptions
 #pragma once
 #pragma warning(disable : 4996) // !_CRT_SECURE_NO_WARNINGS | Regarding 'This' Pragma. The reason of declaring this one is because of an issue about arguments that can be passed both on localtime_s and mktime. localtime_s needs a struct tm while mktime needs a struct *tm. This issue was caused on code issue where allocation happens and possible memory leak might be the result which is a bad idea.
+#pragma warning(disable : 6031) // ! Disable _Getche Return Value Ignored.
 
 #ifndef TechProSpEssential_TTRM_H // ! Checks if we haven't initialized this header.
 #define TechProSpEssential_TTRM_H // ! Set Indication that this header is NOW Initialized.
@@ -65,6 +66,8 @@ using namespace WinToastLib;
 #define DelayRunTimeBy(MillSec) std::this_thread::sleep_for(std::chrono::milliseconds(MillSec))
 #define ConsoleCall(ConsoleCommand) system(ConsoleCommand)
 #define BufferClear_STDIN(_CharDelimiter_) std::cin.ignore(std::numeric_limits<std::streamsize>::max(), _CharDelimiter_);
+#define ASCII_CharPrint(ASCIIVal) char(ASCIIVal)
+
 #undef max // ! Visual Studio Overriding Function To Be Undefined.
 
 // ! Return Value with Significance Declarations
@@ -102,6 +105,7 @@ using namespace WinToastLib;
 #define SLEEP_SIGNIFICANT_ERR 3000
 #define SLEEP_OPRT_FAILED 2500
 #define SLEEP_OPRT_FINISHED 1800
+#define SLEEP_SYS_TERM 3500
 
 // ! TIME (TM) Constraint Declarations
 #define MIN_TIME_MONTH 1
@@ -113,6 +117,15 @@ using namespace WinToastLib;
 #define MIN_TIME_MIN 0
 #define MAX_TIME_MIN 59
 #define START_CTIME 1900 // * Year Starting Point. Used To Minus or Plus To Avoid MKTime Returning -1.
+
+// ! WinToast Magic Return Value To Significant Literals Declarations
+#define IGNORE_REMINDER 0
+#define SNOOZE_REMINDER 1
+#define DISCARD_REMINDER 2
+
+// ! Console Positioning and Other Such-Related Declarations
+#define START_POSX 5
+#define START_POSY 5
 
 // ! TTRM Task Data Constraint Declarations
 #define CHAR_MIN_TASKNAME 2
@@ -170,12 +183,12 @@ public:
 	// ! Class Initializer Declaration
 	TTRM(void)
 	{
-		std::cout << PROJECT_NAME_STRL << " | " << PROJECT_VER_STRL << std::endl
-				  << "Created by " << PROJECT_CREATOR_STRL << std::endl
+		std::cout << std::endl
 				  << std::endl
-				  << "Group Members\n\tProject Lead: 'Janrey Licas',\n\tSystem Director: 'Rejay Mar'\n"
+				  << "\t" << PROJECT_NAME_STRL << " | " << PROJECT_VER_STRL << std::endl
+				  << "\tCreated by " << PROJECT_CREATOR_STRL << std::endl
 				  << std::endl
-				  << std::endl;
+				  << "\tGroup Members at CPE21FB1 Data Structure Group 5\n\t\tProject Lead: 'Janrey Licas',\n\t\tSystem Director: 'Rejay Mar Senar'";
 		DelayRunTimeBy(SLEEP_INIT_OBJECT);
 	}
 
@@ -183,62 +196,70 @@ public:
 	~TTRM(void)
 	{
 		std::cout << std::endl
-				  << "Termination |> Closing Objects and Threads..." << std::endl;
-		std::cout << "Termination |> Multi-Thread Function Closed." << std::endl;
+				  << "\tProgram Termination |> Closing Multi-Thread Runtime." << std::endl;
 		CloseHandle(MultiThreadHandler);
-		std::cout << "Termination |> Program Terminated. Window Closing... Goodbye.";
-		DelayRunTimeBy(SLEEP_INIT_OBJECT);
+		std::cout << "\tProgram Termination |> Multi-Thread Function Closed." << std::endl;
+		std::cout << "\tProgram Termination |> Program Terminating...";
+		std::cout << std::endl
+				  << std::endl
+				  << "\tGroup Members at CPE21FB1 Data Structure Group 5\n\t\tProject Lead: 'Janrey Licas',\n\t\tSystem Director: 'Rejay Mar Senar'"
+				  << std::endl;
+		std::cout << std::endl << "\tGoodbye.";
+		DelayRunTimeBy(SLEEP_SYS_TERM);
 		exit(FUNC_OOS);
 	}
 
-	// ! Multi Threading Static Functions
-	unsigned static __stdcall MultiThread_Wrapper(void *);
-	unsigned static __stdcall MultiThread_ScanReminders(void *);
-
 	// ! Function Prototype Declarations - START
+
+	// ! Multi Threading Static Functions
+	static unsigned __stdcall MultiThread_Wrapper(void *);
+	static unsigned __stdcall MultiThread_ScanReminders(void *);
+	// ! TTRM_WinToast Relative Functions. Not Declared to TTRM_WinToast due to Function Structure of the whole class.
+	static void WinToast_ReminderPrompt(std::string ReadName, std::string ReadInCharge, unsigned short ReadReminderType, signed ReadNotifyByTime, tm TMToRead) noexcept;
 
 	// ! TTRM's Initializer Function Declarations
 	void ParseGivenParam(unsigned short argcount, char *argcmd[]);
 	unsigned short Cmpnt_Initializer() noexcept(false);
 
+	// ! ASCII and Console Decorators Declarations
+	void SetConsoleCurPos(unsigned short SP_X, unsigned short SP_Y) noexcept(true);
+	void PrintConsoleASCII(char CharToIter, unsigned short IterValue) noexcept(false);
+
 	// ! Task / Menu Displays Function Declarations
-	void SP_DisplayTasks(DISPLAY_OPTIONS WindowID_INT) noexcept(false);
 	std::string SP_DisplayTasksParser(REMINDER_TYPES IntType) noexcept(true);
-	void SP_DisplayMenu() noexcept(false);
+	void SP_DisplayTasks(DISPLAY_OPTIONS WindowID_INT) noexcept(false);
 	std::string SP_DLT() const noexcept(false); // * Displays Local Time of the System
-	void DC_ATask() noexcept(false);			// * Adds Task To The System, Both Applies to Save State and Queue System
-	void DC_DTask() noexcept(false);			// * Deletes Task To The System, Both Applies to Save State and Queue System
-	void DC_ETask() noexcept(false);			// * Modifies Task To The System, Both Applies to Save State and Queue System
-	void DC_VTask() noexcept(false);			// * Views Task To The System, # of Reminders Limitations is Not Applied, This Checks Only On Queue System
-	void DC_RQT() noexcept(false);				//  *Removes Queued Tasks and Removes Save State Data
-	void DC_RTLFSS() noexcept(false);			// * Refresh TaskList From Save States
+	void SP_DisplayMenu() noexcept(false);
+	void DC_ATask() noexcept(false);  // * Adds Task To The System, Both Applies to Save State and Queue System
+	void DC_DTask() noexcept(false);  // * Deletes Task To The System, Both Applies to Save State and Queue System
+	void DC_ETask() noexcept(false);  // * Modifies Task To The System, Both Applies to Save State and Queue System
+	void DC_VTask() noexcept(false);  // * Views Task To The System, # of Reminders Limitations is Not Applied, This Checks Only On Queue System
+	void DC_RQT() noexcept(false);	//  *Removes Queued Tasks and Removes Save State Data
+	void DC_RTLFSS() noexcept(false); // * Refresh TaskList From Save States
 
 	// ! Function Prototype Declarations - START
 
 	// ! Side Component >> Function ID Generator for Reminders, Used for Both Types of Reminders.
 	std::string Gen_UniqueRID() noexcept(true);
 
-	// ! TTRM_WinToast Relative Functions. Not Decalred to TTRM_WinToast due to Function Structure of the whole class.
-	static void WinToast_ReminderPrompt(std::string ReadName, std::string ReadInCharge, unsigned short ReadReminderType, signed ReadNotifyByTime, tm TMToRead) noexcept;
-
 	// ! Class Member Global-Like Variables. Used for Minimal Initialization on Some Functions.
 
 	// ! Input Handlers
 	char InputHandler_Char = NULL_CHAR;
-	unsigned short InputHandler_Int = INIT_BASE_NUM;
+	signed int InputHandler_Int = INIT_BASE_NUM;
 
 	// ! Iterator Handlers
 	unsigned short IterHandler_UnShort = INIT_BASE_NUM;
 	unsigned short TaskNumHandler = START_BY_ONE;
 	unsigned int IterHandler_UnInt = INIT_BASE_NUM;
 	size_t TaskHandlerSize = INIT_BASE_NUM;
-	
 
-	// ! Various Important Handler >> Localtime and Multi-Threading
+	// ! Various Important Handler >> Localtime, Multi-Threading and Console Handling
 	time_t EpochHandler = INIT_BASE_NUM;   // ! LocalTime Handler.
 	unsigned MTID_Handler = INIT_BASE_NUM; // ! Multi-Threading ID Handler, Can Possibly Anything.
 	HANDLE MultiThreadHandler;			   // * Special Variable for Checking Status of Thread, Used for WaitForSingleObject
-
+	HANDLE ConsoleHandler;				   // * Special Variable for Handling Current Console Process To Modify View and Other Such.
+	COORD ConsolePosInfo = {INIT_BASE_NUM, INIT_BASE_NUM};
 	// ! File Stream Implementation
 	/* 
 		* TempDataHandler, String Storage to StringStream

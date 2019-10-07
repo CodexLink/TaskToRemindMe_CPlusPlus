@@ -14,14 +14,14 @@
 
 #include "TTRM_CoreDeclarations.h"
 
-// Non-Class Variables
+// ! Force Requiring Non-Class Variables, These Variables are declared to reduce insanity while working on them.
 std::deque<TTRM_TaskData> TaskList;
 unsigned short WinToast_ReturnTrigger;
 
 std::string TTRM::Gen_UniqueRID() noexcept(true)
 {
 	std::string GeneratedID = NULL_STR;
-	srand(time(NULL)); // Call To Get Rnadom RNG % Chance...
+	srand(time(NULL));
 	for (IterHandler_UnShort = INIT_BASE_NUM; IterHandler_UnShort < RAND_MAXID_LENGTH; IterHandler_UnShort++)
 	{
 		GeneratedID += AlphaNumConst[rand() % RAND_MODULO_VAL];
@@ -29,372 +29,7 @@ std::string TTRM::Gen_UniqueRID() noexcept(true)
 	return GeneratedID;
 }
 
-void TTRM::ParseGivenParam(unsigned short argcount, char *argv[])
-{
-	IterHandler_UnInt = INIT_BASE_NUM;
-	std::cout << "Quick Tasks To Remind Me C++ in CLI version. BETA" << std::endl
-			  << std::endl;
-	std::cout << "Created by Data Structure Group 5, Group Members {\n Header Core Developer: 'Janrey Licas',\n AppFlow Director: 'Rejay Mar'\n};" << std::endl
-			  << std::endl;
-	std::cout << "[Perform Parameter Given] |> Counted Parameter: " << argcount << std::endl;
-	while (!strcmp(argv[IterHandler_UnInt], "") && IterHandler_UnInt != LIMIT_ARGC_COUNTER)
-	{
-		// TODO: Create more features here. Use switch for Selection of Data here.
-		std::cout << " Parameter Index " << IterHandler_UnInt << " |> Parameter Value -> " << argv[IterHandler_UnInt] << std::endl;
-	}
-}
-
-unsigned short TTRM::Cmpnt_Initializer() noexcept(false)
-{
-	TTRM_TaskData SaveStateContainer;
-
-	long posx = INIT_BASE_NUM, posy = INIT_BASE_NUM;
-	HWND console = GetConsoleWindow();
-	RECT ConsoleWindow, ClietnScrWindow;
-	HMENU hmenu = GetSystemMenu(console, FALSE);
-	SetConsoleTitle("Tasks To Remind Me C++ CLI, Close Beta Stage | Data Structure Group 5 >> https://github.com/CodexLink/TaskToRemindMe_CPlusPlus");
-
-	std::cout << "Console Position and Styling |> Working On It." << std::endl;
-
-	GetClientRect(console, &ConsoleWindow);
-	GetWindowRect(console, &ClietnScrWindow);
-	posx = GetSystemMetrics(SM_CXSCREEN) / 2 - (ClietnScrWindow.right - ClietnScrWindow.left) / 2,
-	posy = GetSystemMetrics(SM_CYSCREEN) / 2 - (ClietnScrWindow.bottom - ClietnScrWindow.top) / 2,
-	MoveWindow(console, posx, posy, ClietnScrWindow.right - ClietnScrWindow.left, (ClietnScrWindow.bottom - ClietnScrWindow.top) * 1.3, TRUE);
-	EnableMenuItem(hmenu, SC_CLOSE, MF_GRAYED);
-
-	std::cout << "Console Position and Styling |> Done." << std::endl
-			  << std::endl;
-
-	std::cout << "Component Checking Point | Before Program Initialization..." << std::endl
-			  << std::endl
-			  << "WinToast Library |> Checking Compatibility...";
-
-	if (WinToast::isCompatible())
-	{
-		std::cout << std::endl
-				  << "WinToast Library |> Compatible. Setting Up Parameters..." << std::endl;
-
-		WinToast::instance()->setAppName(PROJECT_NAME);
-		WinToast::instance()->setAppUserModelId(WinToast::configureAUMI(PROJECT_CREATOR, PROJECT_NAME, PROJECT_SHORTCODE, PROJECT_VER));
-
-		std::cout << "WinToast Library |> Application Name Loaded." << std::endl;
-		std::cout << "Save State Load  |> Opening SaveState File..." << std::endl;
-		SaveStateHandler.open(SaveStatePath, std::ios::in);
-
-		if (SaveStateHandler.is_open())
-		{
-			std::cout << "Save State Load  |> SaveState File Opened! Iterating and Collecting Saved Reminders";
-			while (std::getline(SaveStateHandler, DataLineHandler))
-			{
-				std::cout << ".";
-				PayloadHandler.clear();
-				std::stringstream RowHandler(DataLineHandler);
-
-				while (std::getline(RowHandler, ConvertedHandler, ','))
-				{
-					PayloadHandler.push_back(ConvertedHandler);
-				}
-				SaveStateContainer.TaskID = PayloadHandler[0];
-				SaveStateContainer.TaskName = PayloadHandler[1];
-				SaveStateContainer.TaskInCharge = PayloadHandler[2];
-				SaveStateContainer.ReminderType = std::stoi(PayloadHandler[3]);
-				EpochHandler = std::stoll(PayloadHandler[4]);
-				SaveStateContainer.TempTM = localtime(&EpochHandler);
-				SaveStateContainer.ReminderData = *SaveStateContainer.TempTM;
-				++IterHandler_UnInt;
-				TaskList.push_back(SaveStateContainer);
-			}
-			SaveStateHandler.close();
-			std::cout << std::endl
-					  << std::endl
-					  << "Save State Loaded |> Done. Loaded " << IterHandler_UnInt << " Reminders!" << std::endl;
-		}
-		else
-		{
-			std::cout << "Save State Create |> Save File Doesn't Exist. Creating Save File..." << std::endl;
-
-			TempSaveStateHandler.open(FilePointState, std::ios::out);
-
-			if (TempSaveStateHandler.is_open())
-			{
-				std::cout << "Save State Create |> SaveState File Created!" << std::endl;
-				TempSaveStateHandler.close();
-				rename(FilePointState, SaveStatePath);
-			}
-			else
-			{
-				std::cout << "Save State Create |> SaveState File Creation Failure. Fatal Error | Terminating Program" << std::endl;
-				return TERM_FAILED;
-			}
-		}
-		SaveStateHandler.close();
-
-		if (WinToast::instance()->initialize())
-		{
-			WinToastTemplate TaskCountShow(WinToastTemplate::Text02);
-			std::wstring TaskCount = std::to_wstring(TaskList.size());
-			std::wstring WelcomeFirstPT = L"Hello User! You currently have ";
-			std::wstring WelcomeSecondPT = (TaskList.size() <= CONTAINS_ONE_ELEM) ? L" task" : L" tasks";
-			std::wstring WelcomeThirdPT = L" for today.";
-
-			TaskCountShow.setTextField(PROJECT_NAME, WinToastTemplate::FirstLine);
-			TaskCountShow.setAttributionText(L"Data Struct Group 5");
-			TaskCountShow.setTextField(WelcomeFirstPT + TaskCount + WelcomeSecondPT + WelcomeThirdPT, WinToastTemplate::SecondLine);
-
-			std::cout << "WinToast Library |> Library Prepped." << std::endl;
-			if (!WinToast::instance()->showToast(TaskCountShow, new TTRM_WinToast))
-			{
-				std::cerr << "WinToast Library |> Error. Could Not Launch Toast Notification!" << std::endl;
-				Sleep(SLEEP_SIGNIFICANT_ERR);
-			}
-
-			std::cout << std::endl
-					  << "Multi-Threading | Starting Simultaneous Threading Wrapper..." << std::endl;
-			// * Start Our Threading and Checking of Reminders.
-			_beginthreadex(0, 0, &TTRM::MultiThread_Wrapper, 0, 0, &MTID_Handler);
-			std::cout << "Multi-Threading | Simultaneous Wrapper Threading Initialized...";
-			DelayRunTimeBy(SLEEP_OPRT_FINISHED);
-			return TERM_SUCCESS;
-		}
-		else
-		{
-			std::cerr << "WinToast Library |> Error. Cannot Initialize WinToast Library, Program Terminated." << std::endl;
-			DelayRunTimeBy(SLEEP_ERROR_PROMPT);
-			return TERM_FAILED;
-		}
-	}
-	else
-	{
-		std::cerr << "WinToast Library |> Error. Cannot Initialize WinToast Library, Program Terminated." << std::endl;
-		DelayRunTimeBy(SLEEP_ERROR_PROMPT);
-		return TERM_FAILED;
-	}
-	return FUNC_OOS;
-}
-
-// ! Starting Point of Program |> Display Menu, Does Not Throw Any Exceptions
-void TTRM::SP_DisplayMenu() noexcept(false)
-{
-	while (CONTINOUS_RNN_PROC)
-	{
-		ConsoleCall("CLS");
-		std::cout << std::endl
-				  << PROJECT_NAME_STRL << " | " << PROJECT_VER_STRL << std::endl
-				  << std::endl;
-		std::cout << "Last Time Frame From Your Local System |> " << SP_DLT() << std::endl;
-		std::cout << std::endl
-				  << "=== List of Task/s, Arranged by Recent Insertion ========" << std::endl;
-		SP_DisplayTasks(AtHome);
-		std::cout << std::endl
-				  << "=== Basic Tasks Functions ======================================" << std::endl
-				  << std::endl
-				  << "1 |> Add a Task" << std::endl
-				  << "2 |> Delete a Task/s" << std::endl
-				  << "3 |> Edit / Modify an Existing Task/s" << std::endl
-				  << "4 |> View All Tasks" << std::endl
-				  << "5 |> Remove All Tasks" << std::endl
-				  << "6 |> Refresh Tasks from Save State" << std::endl
-				  << "7 |> Refresh Current Local Time and Reminder Status" << std::endl
-				  << std::endl
-				  << "0 |> Terminate / Exit Program" << std::endl
-				  << std::endl;
-
-		std::cout << "[Input] Your Choice and ENTER |> ";
-		std::cin >> InputHandler_Int;
-		BufferClear_STDIN('\n');
-		if (std::cin.fail())
-		{
-			std::cin.clear();
-			BufferClear_STDIN('\n');
-			std::cout << "[ERROR] User Input Error -> Input Is Non-Existing or Non-Integer." << std::endl;
-			DelayRunTimeBy(SLEEP_ERROR_PROMPT);
-			continue;
-		}
-		// ! Stack the function.
-		// ! Return to 'this' function so that we can go back to this function easily.
-		switch (InputHandler_Int)
-		{
-		case AddTask:
-			DC_ATask();
-			break;
-
-		case DeleteTask:
-			DC_DTask();
-			break;
-
-		case EditTask:
-			DC_ETask();
-			break;
-
-		case ViewTask:
-			DC_VTask();
-			break;
-
-		case RemoveAllTask:
-			DC_RQT();
-			break;
-
-		case RefreshTaskList:
-			DC_RTLFSS();
-			break;
-
-		case RefreshMenu:
-			std::cout << std::endl
-					  << "Refreshing...";
-			DelayRunTimeBy(SLEEP_DISPLAY_WINDOW);
-			continue;
-
-		case Termination:
-			break;
-
-		default:
-			std::cout << std::endl
-					  << "[ERROR] User Inputted Not Included in the List!" << std::endl;
-			DelayRunTimeBy(SLEEP_ERROR_PROMPT);
-			break;
-		}
-		if (!InputHandler_Int)
-			break;
-	}
-	return;
-}
-
-std::string TTRM::SP_DisplayTasksParser(REMINDER_TYPES IntType) noexcept(true)
-{
-	switch (IntType)
-	{
-	case CancelOperation:
-		return "ERROR";
-		break;
-	case QuickRemind:
-		return "Quick Reminder";
-		break;
-	case DateBasedRemind:
-		return "Date Based Reminder";
-		break;
-	default:
-		return "ERROR";
-	}
-}
-
-void TTRM::SP_DisplayTasks(DISPLAY_OPTIONS WindowID_INT) noexcept(false)
-{
-	TaskNumHandler = START_BY_ONE;
-	bool isAtHome = false;
-	if (!TaskList.size())
-	{
-		std::cerr << std::endl
-				  << "There are no tasks in queue! Please add one." << std::endl;
-		return;
-	}
-	else
-	{
-		std::cout << std::endl
-				  << "There" << (TaskList.size() <= CONTAINS_ONE_ELEM ? " is " : " are ") << TaskList.size() << (TaskList.size() <= CONTAINS_ONE_ELEM ? " task" : " tasks");
-		switch (WindowID_INT)
-		{
-		case DeleteTask:
-			std::cout << " available to delete!" << std::endl
-					  << std::endl;
-			break;
-		case EditTask:
-			std::cout << " available to edit!" << std::endl
-					  << std::endl;
-			break;
-		case ViewTask:
-			std::cout << " in total at queue system!" << std::endl
-					  << std::endl;
-			break;
-
-		case RemoveAllTask:
-			std::cout << " removed from the system!" << std::endl;
-			break;
-
-		case AtHome:
-			isAtHome = true;
-			std::cout << " for today~!" << std::endl
-					  << std::endl;
-			break;
-		default:
-			std::cerr << "... ???" << std::endl;
-		}
-		for (auto IterTasks : TaskList)
-		{
-			if (isAtHome && TaskNumHandler > TASK_DISPLAY_LIMIT)
-			{
-				std::cout << std::endl
-						  << "And there are other " << (TaskList.size() + ADJUST_BY_ONE) - TaskNumHandler << (((TaskList.size() + ADJUST_BY_ONE) - TaskNumHandler) == CONTAINS_ONE_ELEM ? " task" : " tasks") << " available!" << std::endl;
-				break;
-			}
-			else
-			{
-				std::cout << "Task # " << TaskNumHandler << " | ";
-
-				switch (IterTasks.ReminderType)
-				{
-				case QuickRemind:
-					// ! Done
-					std::cout << SP_DisplayTasksParser((TTRM::REMINDER_TYPES)IterTasks.ReminderType) << " |> " << IterTasks.TaskName << " | In Charge: " << IterTasks.TaskInCharge << ", Trigger Time at " << std::setfill('0') << std::setw(2) << IterTasks.ReminderData.tm_hour << ":" << std::setfill('0') << std::setw(2) << IterTasks.ReminderData.tm_min << std::endl;
-					break;
-
-				case DateBasedRemind:
-					// ! Done
-					std::cout << SP_DisplayTasksParser((TTRM::REMINDER_TYPES)IterTasks.ReminderType) << " |> " << IterTasks.TaskName << " | In Charge |> " << IterTasks.TaskInCharge << ", Date and Time Trigger |> " << std::setfill('0') << std::setw(2) << IterTasks.ReminderData.tm_mon + 1 << "/" << std::setfill('0') << std::setw(2) << IterTasks.ReminderData.tm_mday << "/" << std::setfill('0') << std::setw(2) << IterTasks.ReminderData.tm_year + START_CTIME << ", " << std::setfill('0') << std::setw(2) << IterTasks.ReminderData.tm_hour << ":" << std::setfill('0') << std::setw(2) << IterTasks.ReminderData.tm_min << std::endl;
-					break;
-
-				default:
-					break;
-				}
-				TaskNumHandler++;
-			}
-		}
-		return;
-	}
-}
-
-std::string TTRM::SP_DLT() const noexcept(false)
-{
-	time_t TimeStamp = time(NULL);
-	std::stringstream StrTime;
-	tm *TimeStorage = localtime(&TimeStamp);
-	StrTime << TimeStorage->tm_mon + ADJUST_BY_ONE << "/" << std::setfill('0') << std::setw(2) << TimeStorage->tm_mday << "/" << std::setfill('0') << std::setw(2) << (TimeStorage->tm_year + START_CTIME) << " | " << std::setfill('0') << std::setw(2) << TimeStorage->tm_hour << ":" << std::setfill('0') << std::setw(2) << TimeStorage->tm_min << ":" << std::setfill('0') << std::setw(2) << TimeStorage->tm_sec;
-	return StrTime.str();
-}
-
-void TTRM::WinToast_ReminderPrompt(std::string ReadTaskName, std::string ReadPersonInCharge, unsigned short ReadReminderType, signed ReadNotifyByTime, tm TMToRead) noexcept
-{
-	std::wstring SnoozeTime = std::to_wstring(SNOOZE_TIME);
-
-	// * WString Conversion from std::String. We don't want to change things globally by replacing std::string with std::wstring. Too late to change something that most functions used.
-	std::wstring ConvWStr_TaskN(ReadTaskName.begin(), ReadTaskName.end());
-	std::wstring ConvWStr_RPIC(ReadPersonInCharge.begin(), ReadPersonInCharge.end());
-
-	std::wstringstream ConvWStr_DateTimeData;
-	WinToastTemplate ShowReminder(WinToastTemplate::Text04);
-	if (ReadReminderType == QuickRemind)
-	{
-		ConvWStr_DateTimeData << L"Time Triggered at " << std::setw(2) << std::setfill(L'0') << TMToRead.tm_hour << L":" << std::setw(2) << std::setfill(L'0') << TMToRead.tm_min;
-		ShowReminder.setTextField(L"Quick Reminder Triggered~!", WinToastTemplate::FirstLine);
-		ShowReminder.setTextField(ConvWStr_DateTimeData.str(), WinToastTemplate::ThirdLine);
-	}
-	else
-	{
-		ConvWStr_DateTimeData << L"Date Time Triggered at " << std::setfill(L'0') << std::setw(2) << (TMToRead.tm_mon + 1) << "/" << std::setfill(L'0') << std::setw(2) << TMToRead.tm_mday << "/" << std::setfill(L'0') << std::setw(2) << (TMToRead.tm_year + START_CTIME) << ", " << std::setfill(L'0') << std::setw(2) << TMToRead.tm_hour << ":" << std::setfill(L'0') << std::setw(2) << TMToRead.tm_min << std::endl;
-		ShowReminder.setTextField(L"Date-Based Reminder Triggered~!", WinToastTemplate::FirstLine);
-		ShowReminder.setTextField(ConvWStr_DateTimeData.str(), WinToastTemplate::ThirdLine);
-	}
-	ShowReminder.setTextField(L"Task " + ConvWStr_TaskN + L" for " + ConvWStr_RPIC, WinToastTemplate::SecondLine);
-
-	ShowReminder.setAttributionText(PROJECT_NAME);
-	ShowReminder.setDuration(WinToastTemplate::Duration::Long);
-	ShowReminder.addAction(L"Snooze for " + SnoozeTime + L" Minutes");
-	ShowReminder.addAction(L"Dismiss");
-	ShowReminder.setAudioPath(WinToastTemplate::Reminder);
-	WinToast::instance()->showToast(ShowReminder, new TTRM_WinToast);
-}
-
-unsigned int __stdcall TTRM::MultiThread_Wrapper(void *DataReserved)
+unsigned __stdcall TTRM::MultiThread_Wrapper(void *DataReserved)
 {
 	HANDLE MultiThreadWrapper;
 	while (CONTINOUS_RNN_PROC)
@@ -406,11 +41,9 @@ unsigned int __stdcall TTRM::MultiThread_Wrapper(void *DataReserved)
 	return THREAD_OOS;
 }
 
-// This function should be scanning 10 reminders at ones.
-unsigned int __stdcall TTRM::MultiThread_ScanReminders(void *ArgsReserved)
+unsigned __stdcall TTRM::MultiThread_ScanReminders(void *ArgsReserved)
 {
 	auto ObjectScanIter = INIT_BASE_NUM;
-	time_t ObjSlotScanConv = INIT_BASE_NUM;
 	// ! Redeclaration Since This Function is Static, I don't want to take more time to inherit class to static function member.
 	const char *SaveStatePath_WT = "TTRM_SaveState._ttrmdat";
 	const char *FilePointState_WT = "TTRM_SaveStatesTemp._ttrmdat";
@@ -423,14 +56,14 @@ unsigned int __stdcall TTRM::MultiThread_ScanReminders(void *ArgsReserved)
 				WinToast_ReminderPrompt(TaskList.at(ObjectScanIter).TaskName, TaskList.at(ObjectScanIter).TaskInCharge, TaskList.at(ObjectScanIter).ReminderType, TaskList.at(ObjectScanIter).NotifyByTime, TaskList.at(ObjectScanIter).ReminderData);
 				while (THREAD_AWAIT_CMPLT)
 				{
-					if (WinToast_ReturnTrigger == 1)
+					if (WinToast_ReturnTrigger == SNOOZE_REMINDER)
 					{
 						time_t CurrentTime = mktime(&TaskList.at(ObjectScanIter).ReminderData) + ((MAX_TIME_MIN + ADJUST_BY_ONE) * SNOOZE_TIME);
 						tm *TempIncrementer = localtime(&CurrentTime);
 						TaskList.at(ObjectScanIter).ReminderData = *TempIncrementer;
 						break;
 					}
-					else if (WinToast_ReturnTrigger == 2)
+					else if (WinToast_ReturnTrigger == DISCARD_REMINDER)
 					{
 						std::fstream WinToast_StateHandler;
 						std::fstream WinToast_TempStateHandler;
@@ -486,11 +119,445 @@ unsigned int __stdcall TTRM::MultiThread_ScanReminders(void *ArgsReserved)
 	}
 }
 
+void TTRM::WinToast_ReminderPrompt(std::string ReadTaskName, std::string ReadPersonInCharge, unsigned short ReadReminderType, signed ReadNotifyByTime, tm TMToRead) noexcept
+{
+	std::wstring SnoozeTime = std::to_wstring(SNOOZE_TIME);
+
+	// * WString Conversion from std::String. We don't want to change things globally by replacing std::string with std::wstring. Too late to change something that most functions used.
+	std::wstring ConvWStr_TaskN(ReadTaskName.begin(), ReadTaskName.end());
+	std::wstring ConvWStr_RPIC(ReadPersonInCharge.begin(), ReadPersonInCharge.end());
+
+	std::wstringstream ConvWStr_DateTimeData;
+	WinToastTemplate ShowReminder(WinToastTemplate::Text04);
+	if (ReadReminderType == QuickRemind)
+	{
+		ConvWStr_DateTimeData << L"Time Triggered at " << std::setw(2) << std::setfill(L'0') << TMToRead.tm_hour << L":" << std::setw(2) << std::setfill(L'0') << TMToRead.tm_min;
+		ShowReminder.setTextField(L"Quick Reminder Triggered~!", WinToastTemplate::FirstLine);
+		ShowReminder.setTextField(ConvWStr_DateTimeData.str(), WinToastTemplate::ThirdLine);
+	}
+	else
+	{
+		ConvWStr_DateTimeData << L"Date Time Triggered at " << std::setfill(L'0') << std::setw(2) << (TMToRead.tm_mon + 1) << "/" << std::setfill(L'0') << std::setw(2) << TMToRead.tm_mday << "/" << std::setfill(L'0') << std::setw(2) << (TMToRead.tm_year + START_CTIME) << ", " << std::setfill(L'0') << std::setw(2) << TMToRead.tm_hour << ":" << std::setfill(L'0') << std::setw(2) << TMToRead.tm_min << std::endl;
+		ShowReminder.setTextField(L"Date-Based Reminder Triggered~!", WinToastTemplate::FirstLine);
+		ShowReminder.setTextField(ConvWStr_DateTimeData.str(), WinToastTemplate::ThirdLine);
+	}
+	ShowReminder.setTextField(L"Task '" + ConvWStr_TaskN + L"' for " + ConvWStr_RPIC, WinToastTemplate::SecondLine);
+
+	ShowReminder.setAttributionText(PROJECT_NAME);
+	ShowReminder.setDuration(WinToastTemplate::Duration::Long);
+	ShowReminder.addAction(L"Snooze for " + SnoozeTime + L" Minutes");
+	ShowReminder.addAction(L"Dismiss");
+	ShowReminder.setAudioPath(WinToastTemplate::Reminder);
+	WinToast::instance()->showToast(ShowReminder, new TTRM_WinToast);
+}
+
+void TTRM::ParseGivenParam(unsigned short argcount, char *argv[])
+{
+	IterHandler_UnInt = INIT_BASE_NUM;
+	std::cout << "\tQuick Tasks To Remind Me C++ in CLI version. BETA" << std::endl
+			  << std::endl;
+	std::cout << "\t\tCreated by Data Structure Group 5, Group Members {\n \t\t\tHeader Core Developer: 'Janrey Licas',\n \t\t\tAppFlow Director: 'Rejay Mar'\n};" << std::endl
+			  << std::endl;
+	std::cout << "[Perform Parameter Given] |> Counted Parameter: " << argcount << std::endl;
+	while (!strcmp(argv[IterHandler_UnInt], "") && IterHandler_UnInt != LIMIT_ARGC_COUNTER)
+	{
+		// TODO: Create more features here. Use switch for Selection of Data here.
+		std::cout << " Parameter Index " << IterHandler_UnInt << " |> Parameter Value -> " << argv[IterHandler_UnInt] << std::endl;
+	}
+}
+
+// ! Slightly Not Cleaned.
+unsigned short TTRM::Cmpnt_Initializer() noexcept(false)
+{
+	TTRM_TaskData SaveStateContainer;
+	long Console_PosX = INIT_BASE_NUM, Console_PosY = INIT_BASE_NUM;
+	HWND ConsoleWnd = GetConsoleWindow();
+	RECT ConsoleWindow, ClientScrWindow;
+	HMENU Console_BtnClose = GetSystemMenu(ConsoleWnd, FALSE);
+
+	SetConsoleTitle("Tasks To Remind Me C++ CLI, Close Beta Stage | Data Structure Group 5 >> https://github.com/CodexLink/TaskToRemindMe_CPlusPlus");
+
+	std::cout << std::endl << std::endl << "\t";
+	PrintConsoleASCII(219, 1);
+	PrintConsoleASCII(205, 90);
+	PrintConsoleASCII(219, 1);
+	std::cout << std::endl
+			  << std::endl
+			  << "\tConsole Position and Styling |> Working On It." << std::endl;
+
+	GetClientRect(ConsoleWnd, &ConsoleWindow);
+	GetWindowRect(ConsoleWnd, &ClientScrWindow);
+	Console_PosX = GetSystemMetrics(SM_CXSCREEN) / 2 - (ClientScrWindow.right - ClientScrWindow.left) / 2,
+	Console_PosY = GetSystemMetrics(SM_CYSCREEN) / 2 - (ClientScrWindow.bottom - ClientScrWindow.top) / 2,
+	MoveWindow(ConsoleWnd, Console_PosX, Console_PosY, ClientScrWindow.right - ClientScrWindow.left, (ClientScrWindow.bottom - ClientScrWindow.top) * 1.3, TRUE);
+	EnableMenuItem(Console_BtnClose, SC_CLOSE, MF_GRAYED);
+
+	std::cout << "\tConsole Position and Styling |> Done." << std::endl
+			  << std::endl;
+
+	std::cout << "\tComponent Checking Point | Before Program Initialization..." << std::endl
+			  << std::endl
+			  << "\tWinToast Library |> Checking Compatibility...";
+
+	if (WinToast::isCompatible())
+	{
+		std::cout << std::endl
+				  << "\tWinToast Library |> Compatible. Setting Up Parameters..." << std::endl;
+
+		WinToast::instance()->setAppName(PROJECT_NAME);
+		WinToast::instance()->setAppUserModelId(WinToast::configureAUMI(PROJECT_CREATOR, PROJECT_NAME, PROJECT_SHORTCODE, PROJECT_VER));
+		//
+		std::cout << "\tWinToast Library |> Application Name Loaded." << std::endl;
+		std::cout << "\tSave State Load  |> Opening SaveState File..." << std::endl;
+		SaveStateHandler.open(SaveStatePath, std::ios::in);
+
+		if (SaveStateHandler.is_open())
+		{
+			std::cout << "\tSave State Load  |> SaveState File Opened! Iterating and Collecting Saved Reminders";
+			while (std::getline(SaveStateHandler, DataLineHandler))
+			{
+				std::cout << ".";
+				PayloadHandler.clear();
+				std::stringstream RowHandler(DataLineHandler);
+
+				while (std::getline(RowHandler, ConvertedHandler, ','))
+				{
+					PayloadHandler.push_back(ConvertedHandler);
+				}
+				SaveStateContainer.TaskID = PayloadHandler[0];
+				SaveStateContainer.TaskName = PayloadHandler[1];
+				SaveStateContainer.TaskInCharge = PayloadHandler[2];
+				SaveStateContainer.ReminderType = std::stoi(PayloadHandler[3]);
+				EpochHandler = std::stoll(PayloadHandler[4]);
+				SaveStateContainer.TempTM = localtime(&EpochHandler);
+				SaveStateContainer.ReminderData = *SaveStateContainer.TempTM;
+				++IterHandler_UnInt;
+				TaskList.push_back(SaveStateContainer);
+			}
+			SaveStateHandler.close();
+			std::cout << std::endl
+					  << std::endl
+					  << "\tSave State Loaded |> Done. Loaded " << IterHandler_UnInt << " Reminders!" << std::endl;
+		}
+		else
+		{
+			std::cout << "\tSave State Create |> Save File Doesn't Exist. Creating Save File..." << std::endl;
+
+			TempSaveStateHandler.open(FilePointState, std::ios::out);
+
+			if (TempSaveStateHandler.is_open())
+			{
+				std::cout << "\tSave State Create |> SaveState File Created!" << std::endl;
+				TempSaveStateHandler.close();
+				rename(FilePointState, SaveStatePath);
+				std::cout << std::endl
+						  << "\t";
+				PrintConsoleASCII(221, 1);
+				PrintConsoleASCII(205, 3);
+				PrintConsoleASCII(205, 90);
+				PrintConsoleASCII(222, 1);
+				std::cout << std::endl
+						  << std::endl;
+			}
+			else
+			{
+				std::cout << "\tSave State Create |> SaveState File Creation Failure. Fatal Error | Terminating Program" << std::endl
+						  << std::endl;
+				std::cout << "\t";
+				PrintConsoleASCII(219, 1);
+				PrintConsoleASCII(205, 90);
+				PrintConsoleASCII(219, 1);
+				DelayRunTimeBy(SLEEP_ERROR_PROMPT);
+				return TERM_FAILED;
+			}
+		}
+		SaveStateHandler.close();
+
+		if (WinToast::instance()->initialize())
+		{
+			WinToastTemplate TaskCountShow(WinToastTemplate::Text02);
+			std::wstring TaskCount = std::to_wstring(TaskList.size());
+			std::wstring WelcomeFirstPT = L"Hello User! You currently have ";
+			std::wstring WelcomeSecondPT = (TaskList.size() <= CONTAINS_ONE_ELEM) ? L" task" : L" tasks";
+			std::wstring WelcomeThirdPT = L" for today.";
+
+			TaskCountShow.setTextField(PROJECT_NAME, WinToastTemplate::FirstLine);
+			TaskCountShow.setAttributionText(L"Data Struct Group 5");
+			TaskCountShow.setTextField(WelcomeFirstPT + TaskCount + WelcomeSecondPT + WelcomeThirdPT, WinToastTemplate::SecondLine);
+
+			std::cout << "\tWinToast Library |> Library Prepped." << std::endl;
+			if (!WinToast::instance()->showToast(TaskCountShow, new TTRM_WinToast))
+			{
+				std::cerr << "\tWinToast Library |> Error. Could Not Launch Toast Notification!" << std::endl;
+				Sleep(SLEEP_SIGNIFICANT_ERR);
+			}
+
+			std::cout << std::endl
+					  << "\tMulti-Threading | Starting Simultaneous Threading Wrapper..." << std::endl;
+			// * Start Our Threading and Checking of Reminders.
+			_beginthreadex(0, 0, &TTRM::MultiThread_Wrapper, 0, 0, &MTID_Handler);
+			std::cout << "\tMulti-Threading | Simultaneous Wrapper Threading Initialized..." << std::endl
+					  << std::endl;
+			std::cout << "\t";
+			PrintConsoleASCII(219, 1);
+			PrintConsoleASCII(205, 90);
+			PrintConsoleASCII(219, 1);
+			DelayRunTimeBy(SLEEP_OPRT_FINISHED);
+			return TERM_SUCCESS;
+		}
+		else
+		{
+			std::cerr << "\tWinToast Library |> Error. Cannot Initialize WinToast Library, Program Terminated." << std::endl
+					  << std::endl;
+			std::cout << "\t";
+			PrintConsoleASCII(219, 1);
+			PrintConsoleASCII(205, 90);
+			PrintConsoleASCII(219, 1);
+			DelayRunTimeBy(SLEEP_ERROR_PROMPT);
+			return TERM_FAILED;
+		}
+	}
+	else
+	{
+		std::cerr << "\tWinToast Library |> Error. Cannot Initialize WinToast Library, Program Terminated." << std::endl;
+		std::cout << "\t";
+		PrintConsoleASCII(219, 1);
+		PrintConsoleASCII(205, 90);
+		PrintConsoleASCII(219, 1);
+		DelayRunTimeBy(SLEEP_ERROR_PROMPT);
+		return TERM_FAILED;
+	}
+	return FUNC_OOS;
+}
+
+void TTRM::SetConsoleCurPos(unsigned short SP_X, unsigned short SP_Y) noexcept(true)
+{
+	COORD ConsolePosInfo = {SP_X, SP_Y};
+	HANDLE ConsoleHandler = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleCursorPosition(ConsoleHandler, ConsolePosInfo);
+	return;
+}
+
+void TTRM::PrintConsoleASCII(char CharToIter, unsigned short IterValue) noexcept(false)
+{
+	while (IterValue--)
+	{
+		std::cout << ASCII_CharPrint(CharToIter);
+	}
+}
+
+std::string TTRM::SP_DisplayTasksParser(REMINDER_TYPES IntType) noexcept(true)
+{
+	switch (IntType)
+	{
+	case CancelOperation:
+		return "ERROR";
+		break;
+	case QuickRemind:
+		return "Quick Reminder";
+		break;
+	case DateBasedRemind:
+		return "Date Based Reminder";
+		break;
+	default:
+		return "ERROR";
+	}
+}
+
+void TTRM::SP_DisplayTasks(DISPLAY_OPTIONS WindowID_INT) noexcept(false)
+{
+	TaskNumHandler = START_BY_ONE;
+	bool isAtHome = false;
+	if (!TaskList.size())
+	{
+		std::cerr << std::endl
+				  << "\tThere are no tasks in queue! Please add one." << std::endl;
+		return;
+	}
+	else
+	{
+		std::cout << std::endl
+				  << "\tThere" << (TaskList.size() <= CONTAINS_ONE_ELEM ? " is " : " are ") << TaskList.size() << (TaskList.size() <= CONTAINS_ONE_ELEM ? " task" : " tasks");
+		switch (WindowID_INT)
+		{
+		case DeleteTask:
+			std::cout << " available to delete!" << std::endl
+					  << std::endl;
+			break;
+		case EditTask:
+			std::cout << " available to edit!" << std::endl
+					  << std::endl;
+			break;
+		case ViewTask:
+			std::cout << " in total at queue system!" << std::endl
+					  << std::endl;
+			break;
+
+		case RemoveAllTask:
+			std::cout << " removed from the system!" << std::endl;
+			break;
+
+		case AtHome:
+			isAtHome = true;
+			std::cout << " for today~!" << std::endl
+					  << std::endl;
+			break;
+		default:
+			std::cerr << "... ???" << std::endl;
+		}
+		for (auto IterTasks : TaskList)
+		{
+			if (isAtHome && TaskNumHandler > TASK_DISPLAY_LIMIT)
+			{
+				std::cout << std::endl
+						  << "\t... And there are other " << (TaskList.size() + ADJUST_BY_ONE) - TaskNumHandler << (((TaskList.size() + ADJUST_BY_ONE) - TaskNumHandler) == CONTAINS_ONE_ELEM ? " task" : " tasks") << " available!" << std::endl;
+				break;
+			}
+			else
+			{
+				std::cout << "\tTask # " << TaskNumHandler << " | ";
+
+				switch (IterTasks.ReminderType)
+				{
+				case QuickRemind:
+					// ! Done
+					std::cout << SP_DisplayTasksParser((TTRM::REMINDER_TYPES)IterTasks.ReminderType) << " |> " << IterTasks.TaskName << " | In Charge: " << IterTasks.TaskInCharge << ", Trigger Time at " << std::setfill('0') << std::setw(2) << IterTasks.ReminderData.tm_hour << ":" << std::setfill('0') << std::setw(2) << IterTasks.ReminderData.tm_min << std::endl;
+					break;
+
+				case DateBasedRemind:
+					// ! Done
+					std::cout << SP_DisplayTasksParser((TTRM::REMINDER_TYPES)IterTasks.ReminderType) << " |> " << IterTasks.TaskName << " | In Charge |> " << IterTasks.TaskInCharge << ", Date and Time Trigger |> " << std::setfill('0') << std::setw(2) << IterTasks.ReminderData.tm_mon + 1 << "/" << std::setfill('0') << std::setw(2) << IterTasks.ReminderData.tm_mday << "/" << std::setfill('0') << std::setw(2) << IterTasks.ReminderData.tm_year + START_CTIME << ", " << std::setfill('0') << std::setw(2) << IterTasks.ReminderData.tm_hour << ":" << std::setfill('0') << std::setw(2) << IterTasks.ReminderData.tm_min << std::endl;
+					break;
+
+				default:
+					break;
+				}
+				TaskNumHandler++;
+			}
+		}
+		return;
+	}
+}
+
+std::string TTRM::SP_DLT() const noexcept(false)
+{
+	time_t TimeStamp = time(NULL);
+	std::stringstream StrTime;
+	tm *TimeStorage = localtime(&TimeStamp);
+	StrTime << TimeStorage->tm_mon + ADJUST_BY_ONE << "/" << std::setfill('0') << std::setw(2) << TimeStorage->tm_mday << "/" << std::setfill('0') << std::setw(2) << (TimeStorage->tm_year + START_CTIME) << " | " << std::setfill('0') << std::setw(2) << TimeStorage->tm_hour << ":" << std::setfill('0') << std::setw(2) << TimeStorage->tm_min << ":" << std::setfill('0') << std::setw(2) << TimeStorage->tm_sec;
+	return StrTime.str();
+}
+
+// ! Starting Point of Program |> Display Menu, Does Not Throw Any Exceptions
+void TTRM::SP_DisplayMenu() noexcept(false)
+{
+	while (CONTINOUS_RNN_PROC)
+	{
+		ConsoleCall("CLS");
+		std::cout << std::endl
+				  << std::endl
+				  << "\t" << PROJECT_NAME_STRL << " | " << PROJECT_VER_STRL << std::endl
+				  << std::endl;
+		std::cout << "\tLocal System Time Last Frame |> " << SP_DLT() << std::endl;
+		std::cout << std::endl
+				  << "\t";
+		PrintConsoleASCII(221, 1);
+		PrintConsoleASCII(205, 3);
+		std::cout << " Task List, Arranged by Recent Insertion ";
+		PrintConsoleASCII(205, 30);
+		PrintConsoleASCII(222, 1);
+		std::cout << std::endl;
+		SP_DisplayTasks(AtHome);
+		std::cout << std::endl
+				  << "\t";
+		PrintConsoleASCII(221, 1);
+		PrintConsoleASCII(205, 3);
+		std::cout << " System Options ";
+		PrintConsoleASCII(205, 55);
+		PrintConsoleASCII(222, 1);
+		std::cout << std::endl
+				  << std::endl
+				  << "\tChoice #1 |> Add a Task To Remind You" << std::endl
+				  << "\tChoice #2 |> Delete a Task That Reminds You" << std::endl
+				  << "\tChoice #3 |> Edit / Modify an Existing Task for Alterations" << std::endl
+				  << "\tChoice #4 |> View All Tasks Without Limit" << std::endl
+				  << "\tChoice #5 |> Remove All Tasks at Save State and Queue System" << std::endl
+				  << "\tChoice #6 |> Refresh Tasks from Save State" << std::endl
+				  << "\tChoice #7 |> Refresh Menu Display for Current Local Time Update" << std::endl
+				  << std::endl
+				  << "\tChoice #0 |> Terminate / Exit / Close The Program" << std::endl
+				  << std::endl;
+		std::cout << "\t";
+		PrintConsoleASCII(221, 1);
+		PrintConsoleASCII(205, 3);
+		PrintConsoleASCII(205, 71);
+		PrintConsoleASCII(222, 1);
+		std::cout << std::endl
+				  << std::endl;
+
+		std::cout << "\t[USER INPUT] Your Choice and ENTER |> ";
+		std::cin >> InputHandler_Int;
+		BufferClear_STDIN('\n');
+		if (std::cin.fail())
+		{
+			std::cin.clear();
+			BufferClear_STDIN('\n');
+			std::cout << std::endl
+					  << "\t[INPUT ERROR] Input is Detected as Non-Integer.";
+			DelayRunTimeBy(SLEEP_ERROR_PROMPT);
+			continue;
+		}
+		// ! Stack the function.
+		// ! Return to 'this' function so that we can go back to this function easily.
+		switch (InputHandler_Int)
+		{
+		case AddTask:
+			DC_ATask();
+			break;
+
+		case DeleteTask:
+			DC_DTask();
+			break;
+
+		case EditTask:
+			DC_ETask();
+			break;
+
+		case ViewTask:
+			DC_VTask();
+			break;
+
+		case RemoveAllTask:
+			DC_RQT();
+			break;
+
+		case RefreshTaskList:
+			DC_RTLFSS();
+			break;
+
+		case RefreshMenu:
+			std::cout << std::endl
+					  << "\t[TASKLIST REFRESH] Refreshing Task List Display for Value Updates...";
+			DelayRunTimeBy(SLEEP_DISPLAY_WINDOW);
+			continue;
+
+		case Termination:
+			break;
+
+		default:
+			std::cout << std::endl
+					  << "\t[INPUT ERROR] User Picked Choices That is Not-Existing from Choices!";
+			DelayRunTimeBy(SLEEP_ERROR_PROMPT);
+			break;
+		}
+		if (!InputHandler_Int)
+			break;
+	}
+	return;
+}
+
 void TTRM::DC_ATask() noexcept(false)
 {
-	time_t CompareUserDate = INIT_BASE_NUM, CompareStoredDate = INIT_BASE_NUM;
-	short int ObjIterateNum = INIT_BASE_NUM;
-	double diffDateHandler = INIT_BASE_NUM;
 	while (FUNC_AWAIT_CMPLT)
 	{
 		TTRM_TaskData NewTask; // * Create Object To Pass On...
@@ -498,48 +565,108 @@ void TTRM::DC_ATask() noexcept(false)
 		tm *CurrentTContainer = localtime(&CurrentDateTime);
 		ConsoleCall("CLS");
 
-		std::cout << "[Required] Name of the Task, Input --CANCEL to Quit Insertion. |> ", std::getline(std::cin, NewTask.TaskName);
+		std::cout << std::endl
+				  << "\t";
+		PrintConsoleASCII(221, 1);
+		PrintConsoleASCII(205, 3);
+		std::cout << " Task To Remind You Insertion ";
+		PrintConsoleASCII(205, 55);
+		PrintConsoleASCII(222, 1);
+		std::cout << std::endl
+				  << std::endl;
+		std::cout << "\tThings To Know For Reminder Insertion"
+				  << std::endl
+				  << std::endl
+				  << "\t\t1. Reminder Task Name Must Be 2 Characters and Above"
+				  << std::endl
+				  << "\t\t2. Reminder In Charge Name Must Be 2 Characters and Above" << std::endl
+				  << std::endl
+				  << "\tFor Cancelling Insertion Operation, 'TYPE --CANCEL' On Any Of Those TWO Parameters" << std::endl;
+		std::cout << std::endl
+				  << "\t";
+		PrintConsoleASCII(221, 1);
+		PrintConsoleASCII(205, 88);
+		PrintConsoleASCII(222, 1);
+		std::cout << std::endl
+				  << std::endl;
+		std::cout << "\tName of the Task To Remind You |> ", std::getline(std::cin, NewTask.TaskName);
 
 		if (NewTask.TaskName.length() < CHAR_MIN_TASKNAME || std::cin.fail())
 		{
 			std::cin.clear();
-			std::cerr << "[INPUT ERR] |> TaskName Character Is Not Enough. Press Enter Key To Try Again." << std::endl;
+			std::cerr << std::endl
+					  << "\t[INPUT ERROR] |> TaskName Character Is Not Enough. Press Enter Key To Try Again.";
 			BufferClear_STDIN('\n');
 			continue;
 		}
 		else if (NewTask.TaskName == "--CANCEL")
 		{
 			std::cin.clear();
-			std::cerr << "[INPUT ERR] |> New Task Insertion Operation is Cancelled by User..." << std::endl;
+			std::cerr << std::endl
+					  << "\t[OPRT ABORT] |> New Task Insertion Operation is Cancelled by User...";
 			DelayRunTimeBy(SLEEP_OPRT_FINISHED);
 			return;
 		}
 
-		std::cout << "[Required] Name of Person In Charge, Input --CANCEL to Quit Insertion. |> ", std::getline(std::cin, NewTask.TaskInCharge);
+		std::cout << "\tName Of The Person In Charge at The Task |> ", std::getline(std::cin, NewTask.TaskInCharge);
 
 		if (NewTask.TaskInCharge.length() < CHAR_MIN_INCHARGE || std::cin.fail())
 		{
 			std::cin.clear();
-			std::cerr << "[INPUT ERR] |> Task In Charge Character Is Not Enough. Press Enter Key To Try Again." << std::endl;
+			std::cerr << std::endl
+					  << "\t[INPUT ERROR] |> Task In Charge Character Is Not Enough. Press Enter Key To Try Again.";
 			BufferClear_STDIN('\n');
 			continue;
 		}
 		else if (NewTask.TaskInCharge == "--CANCEL")
 		{
 			std::cin.clear();
-			std::cerr << "[INPUT ERR] |> New Task Insertion Operation is Cancelled by User..." << std::endl;
+			std::cerr << std::endl
+					  << "\t[OPRT ABORT] |> New Task Insertion Operation is Cancelled by User...";
 			DelayRunTimeBy(SLEEP_OPRT_FINISHED);
 			return;
 		}
 
-		std::cout << "[Req, 0 = To Cancel, 1 = Quick Remind, 2 = Date-Based]"
-				  << " |> Type of Reminder |> ",
+		std::cout << std::endl
+				  << "\t";
+		PrintConsoleASCII(221, 1);
+		PrintConsoleASCII(205, 3);
+		std::cout << " Task To Remind You Insertion ";
+		PrintConsoleASCII(205, 55);
+		PrintConsoleASCII(222, 1);
+		std::cout << std::endl
+				  << std::endl;
+		std::cout << "\tThings To Know For Reminder Types and What To Choose"
+				  << std::endl
+				  << std::endl
+				  << "\t\t1. Quick Reminder - Reminds You Quickly Based On Minutes Left To Trigger."
+				  << std::endl
+				  << "\t\t|> Requires > Input by Minutes, Minimum = 1 | Maximum = 180"
+				  << std::endl
+				  << std::endl
+				  << "\t\t2. Date Based Reminder - Reminds You Based On Given Date and Time To Trigger."
+				  << std::endl
+				  << "\t\t|> Requires > Date and Time, Let Seperator Be Space, (MM/DD/YYYY, HH:MM)."
+				  << std::endl
+				  << std::endl
+				  << "\tFor Cancelling Insertion Operation, TYPE '0' At This Point." << std::endl;
+		std::cout << std::endl
+				  << "\t";
+		PrintConsoleASCII(221, 1);
+		PrintConsoleASCII(205, 88);
+		PrintConsoleASCII(222, 1);
+
+		std::cout << std::endl
+				  << std::endl
+				  << "\t"
+				  << "Type of Reminder To Trigger, Choice # |> ",
 			std::cin >> NewTask.ReminderType;
 
 		if (NewTask.ReminderType < CancelOperation || NewTask.ReminderType > DateBasedRemind || std::cin.fail())
 		{
 			std::cin.clear();
-			std::cerr << "[INPUT ERR] |> Reminder Type Input is Invalid. Press Any Key To Try Again." << std::endl;
+			std::cerr << std::endl
+					  << "\t[INPUT ERROR] |> Reminder Type Input is Invalid. Press Any Key To Try Again.";
 			BufferClear_STDIN('\n');
 			_getche();
 			continue;
@@ -549,15 +676,17 @@ void TTRM::DC_ATask() noexcept(false)
 			switch (NewTask.ReminderType)
 			{
 			case CancelOperation:
-				std::cerr << "[INPUT ERR] |> New Task Insertion Operation is Cancelled by User..." << std::endl;
+				std::cerr << std::endl
+						  << "\t[OPRT ABORT] |> New Task Insertion Operation is Cancelled by User...";
 				DelayRunTimeBy(SLEEP_OPRT_FINISHED);
 				return;
 
 			case QuickRemind:
-				std::cout << "[Required, Min: 1, Max: 180] Minutes Left To Remind You |> ", std::cin >> NewTask.NotifyByTime;
+				std::cout << "\tMinutes Left To Remind You |> ", std::cin >> NewTask.NotifyByTime;
 				if (NewTask.NotifyByTime <= QUICKR_MIN_TIME || NewTask.NotifyByTime > QUICKR_MAX_TIME)
 				{
-					std::cerr << "[INPUT ERR] |> Time Entered is invalid. Please try again by pressing any key to restart." << std::endl;
+					std::cerr << std::endl
+							  << "\t[INPUT ERROR] |> Time Entered is invalid. Please try again by pressing any key to restart.";
 					BufferClear_STDIN('\n');
 					_getche();
 					continue;
@@ -575,41 +704,43 @@ void TTRM::DC_ATask() noexcept(false)
 				NewTask.TempTM = localtime(&CurrentDateTime);
 				NewTask.ReminderData = *NewTask.TempTM;
 
-				std::cout << "[Req, Seperate by Space | MM DD YYYY] Target Date of Reminding |> ", std::cin >> NewTask.ReminderData.tm_mon >> NewTask.ReminderData.tm_mday >> NewTask.ReminderData.tm_year;
+				std::cout << "\tTarget Date of Reminding, Remember (MM DD YYYY) |> ", std::cin >> NewTask.ReminderData.tm_mon >> NewTask.ReminderData.tm_mday >> NewTask.ReminderData.tm_year;
 
-				if (NewTask.ReminderData.tm_year < CurrentTContainer->tm_year)
+				if (NewTask.ReminderData.tm_mon < MIN_TIME_MONTH || NewTask.ReminderData.tm_mon > MAX_TIME_MONTH || (NewTask.ReminderData.tm_mon - ADJUST_BY_ONE < CurrentTContainer->tm_mon && NewTask.ReminderData.tm_year - START_CTIME < CurrentTContainer->tm_year) || std::cin.fail())
 				{
+					std::cerr << std::endl
+							  << "\t[INPUT ERROR] |> Target Month Parameter is either invalid or less from current date. Press Any Key To Try Again.";
 					std::cin.clear();
-					std::cerr << "[INPUT ERR] |> Target Year Parameter is either invalid or less from current date. Press Any Key To Try Again." << std::endl;
 					BufferClear_STDIN('\n');
 					_getche();
 					continue;
 				}
 				else
 				{
-					if (NewTask.ReminderData.tm_mon < MIN_TIME_MONTH || NewTask.ReminderData.tm_mon > MAX_TIME_MONTH || NewTask.ReminderData.tm_mon < CurrentTContainer->tm_mon || std::cin.fail())
+					if (NewTask.ReminderData.tm_mday < MIN_TIME_DAY || NewTask.ReminderData.tm_mday > MAX_TIME_DAY || (NewTask.ReminderData.tm_mon - ADJUST_BY_ONE == CurrentTContainer->tm_mon && NewTask.ReminderData.tm_mday < CurrentTContainer->tm_mday && NewTask.ReminderData.tm_year - START_CTIME == CurrentTContainer->tm_year) || std::cin.fail())
 					{
 						std::cin.clear();
-						std::cerr << "[INPUT ERR] |> Target Month Parameter is either invalid or less from current date. Press Any Key To Try Again." << std::endl;
+						std::cerr << std::endl
+								  << "\t[INPUT ERROR] |> Target Day Parameter is either invalid or less from current date. Press Any Key To Try Again.";
 						BufferClear_STDIN('\n');
 						_getche();
 						continue;
 					}
 					else
 					{
-						if (NewTask.ReminderData.tm_mday < MIN_TIME_DAY || NewTask.ReminderData.tm_mday > MAX_TIME_DAY || (NewTask.ReminderData.tm_year == CurrentTContainer->tm_year && NewTask.ReminderData.tm_mon == CurrentTContainer->tm_mon && (NewTask.ReminderData.tm_mday < CurrentTContainer->tm_mday)) || std::cin.fail())
+						if (NewTask.ReminderData.tm_year < CurrentTContainer->tm_year)
 						{
-							// ! If same month, check day.
+							std::cerr << std::endl
+									  << "\t[INPUT ERROR] |> Target Year Parameter is either invalid or less from current date. Press Any Key To Try Again.";
 							std::cin.clear();
-							std::cerr << "[INPUT ERR] |> Target Day Parameter is either invalid or less from current date. Press Any Key To TryAgain." << std::endl;
 							BufferClear_STDIN('\n');
 							_getche();
 							continue;
 						}
 					}
-					std::cout << "[Req, Seperate by Space | 00:00 - 23:59] Time To Remind You |> ", std::cin >> NewTask.ReminderData.tm_hour >> NewTask.ReminderData.tm_min;
+					std::cout << "\tTime To Remind You Remember, (HH MM) |> ", std::cin >> NewTask.ReminderData.tm_hour >> NewTask.ReminderData.tm_min;
 
-					// ! Add Some Today To Today Sens Time. Currently WORK ON PROGRESS. Checks if Input is following 24-Hour Standards.
+					// ! Today To Today Sens Time. Currently WORK ON PROGRESS. Checks if Input is following 24-Hour Standards.
 					if ((NewTask.ReminderData.tm_hour > MIN_TIME_HOUR || NewTask.ReminderData.tm_hour <= MAX_TIME_HOUR) || (NewTask.ReminderData.tm_min >= MIN_TIME_MIN || NewTask.ReminderData.tm_min <= MAX_TIME_MIN) || !std::cin.fail())
 					{
 						// ! Prerequisite Condition, we can only get to this point if and only the datetime is exactly the same as the user added. Means 09/24/2019 == 09/24/2019. If we intend to have same date but different year then we go to else statement.
@@ -621,7 +752,8 @@ void TTRM::DC_ATask() noexcept(false)
 							{
 								if (NewTask.ReminderData.tm_min <= CurrentTContainer->tm_min)
 								{
-									std::cerr << "[INPUT ERR] |> Time Minute is Less Than the Expected Day. Please Try Again." << std::endl;
+									std::cerr << std::endl
+											  << "\t[INPUT ERROR] |> Time Minute is Less Than the Expected Day. Please Try Again.";
 									BufferClear_STDIN('\n');
 									_getche();
 									continue;
@@ -637,7 +769,8 @@ void TTRM::DC_ATask() noexcept(false)
 							}
 							else
 							{
-								std::cerr << "[INPUT ERR] |> Time Hour is Lesser Than Expected Hour. Please Try Again." << std::endl;
+								std::cerr << std::endl
+										  << "\t[INPUT ERROR] |> Time Hour is Lesser Than Expected Hour. Please Try Again.";
 								BufferClear_STDIN('\n');
 								_getche();
 								continue;
@@ -652,7 +785,8 @@ void TTRM::DC_ATask() noexcept(false)
 					else
 					{
 						std::cin.clear();
-						std::cerr << "[INPUT ERR] |> Time Input is Invalid. Keep in mind that I need 24 hour format. Press Any Key To Try Again." << std::endl;
+						std::cerr << std::endl
+								  << "\t[INPUT ERROR] |> Time Input is Invalid. Keep in mind that I need 24 hour format. Press Any Key To Try Again.";
 						BufferClear_STDIN('\n');
 						_getche();
 						continue;
@@ -680,7 +814,7 @@ void TTRM::DC_ATask() noexcept(false)
 
 				SaveStateHandler.close();
 				std::cout << std::endl
-						  << "[PROCESS] |> Task '" << NewTask.TaskName << "' has been successfully added to the queue!";
+						  << "\t[INSERTION] |> Task '" << NewTask.TaskName << "' has been Successfully Added to the Queue System!";
 				DelayRunTimeBy(SLEEP_OPRT_FINISHED);
 				break;
 			}
@@ -693,7 +827,7 @@ void TTRM::DC_ATask() noexcept(false)
 			}
 			catch (...)
 			{
-				std::cerr << "[PROCESS] Unknown Error..." << std::endl;
+				std::cerr << "\t[PROCESS] Unknown Error..." << std::endl;
 				DelayRunTimeBy(SLEEP_SIGNIFICANT_ERR);
 				continue;
 			}
@@ -707,38 +841,52 @@ void TTRM::DC_DTask() noexcept(false)
 	{
 		TaskHandlerSize = TaskList.size();
 		ConsoleCall("CLS");
+		std::cout << std::endl
+				  << std::endl
+				  << "\t";
+		PrintConsoleASCII(221, 1);
+		PrintConsoleASCII(205, 3);
+		std::cout << " Currently Available Reminders To Trigger From The Queue System ";
+		PrintConsoleASCII(205, 25);
+		PrintConsoleASCII(222, 1);
+		std::cout << std::endl;
+		SP_DisplayTasks(DeleteTask);
+		std::cout << std::endl
+				  << "\t";
+		PrintConsoleASCII(221, 1);
+		PrintConsoleASCII(205, 3);
+		PrintConsoleASCII(205, 89);
+		PrintConsoleASCII(222, 1);
+		std::cout << std::endl
+				  << std::endl;
 		if (TaskHandlerSize)
 		{
-			std::cout << std::endl
-					  << "=== Task List Available ===============================" << std::endl;
-			SP_DisplayTasks(DeleteTask);
-			std::cout << std::endl
-					  << "Please Select A Task To Delete..." << std::endl;
-			std::cout << "[Input] Task # or '0' To Go Back Menu |> ", std::cin >> InputHandler_Int;
+			std::cout << "\t[INFORM] Please Select A Task To Delete According To Task #." << std::endl;
+			std::cout << "\t[INPUT] Task # or '0' To Go Back To Menu |> ", std::cin >> IterHandler_UnInt;
 			if (std::cin.fail())
 			{
 				std::cin.clear();
 				BufferClear_STDIN('\n');
-				std::cerr << "[Input Error] -> Value Received is Invalid. Please try again." << std::endl;
+				std::cerr << std::endl << "\t[INPUT ERROR] Input is Non-Integer.";
 				DelayRunTimeBy(SLEEP_ERROR_PROMPT);
 				continue;
 			}
 			else
 			{
-				if (InputHandler_Int)
+				if (IterHandler_UnInt)
 				{
-					if (InputHandler_Int <= TaskHandlerSize)
+					if (IterHandler_UnInt <= TaskHandlerSize)
 					{
 						std::cout << std::endl
-								  << "Are you sure you want to delete this task: '" << TaskList.at(InputHandler_Int - ADJUST_BY_ONE).TaskName << "'?" << std::endl
-								  << std::endl
-								  << "[Input, Y or N] |> ",
+								  << "\t[WARNING] |> Are you sure you want to delete this task: '" << TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).TaskName << "'?" << std::endl
+								  << "\t[WARNING] |> This action is irreversible. Continue???" << std::endl
+								  << "\t[INPUT  ] |> ['Y'es or 'N'o] |> ",
 							std::cin >> InputHandler_Char;
 						if (std::cin.fail())
 						{
 							std::cin.clear();
 							BufferClear_STDIN('\n');
-							std::cerr << "[Input Error] -> Value Received is Invalid. Please try again." << std::endl;
+							std::cerr << std::endl << "\t[INPUT ERROR] Input is Non-Integer.";
 						}
 						else
 						{
@@ -758,7 +906,7 @@ void TTRM::DC_DTask() noexcept(false)
 									for (DataLineHandler; std::getline(TempDataHandler, ConvertedHandler, ','); PayloadHandler.push_back(ConvertedHandler))
 										;
 									// ! We delete data by comparing saved epoch time task and system saved epoch time task.
-									if (PayloadHandler[0] != TaskList.at(InputHandler_Int - ADJUST_BY_ONE).TaskID)
+									if (PayloadHandler[0] != TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).TaskID)
 									{
 										if (!SaveStateHandler.eof())
 										{
@@ -775,19 +923,21 @@ void TTRM::DC_DTask() noexcept(false)
 								remove(SaveStatePath);
 								rename(FilePointState, SaveStatePath);
 
-								std::cout << "[Confirmation, Success] |> Task '" << TaskList.at(InputHandler_Int - ADJUST_BY_ONE).TaskName << "' deleted." << std::endl;
-								TaskList.erase(TaskList.begin() + (InputHandler_Int - ADJUST_BY_ONE));
+								std::cout << std::endl << "\t[CONFIRMATION, SUCCESS] |> Task '" << TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).TaskName << "' deleted.";
+								TaskList.erase(TaskList.begin() + (IterHandler_UnInt - ADJUST_BY_ONE));
 								DelayRunTimeBy(SLEEP_OPRT_FINISHED);
 								continue;
 
 							case CONFIRMED_FALSE_LOWER:
 							case CONFIRMED_FALSE_UPPER:
-								std::cout << "[Confirmation, Success] |> Task Modification Cancelled." << std::endl;
+								std::cout << std::endl
+										  << "\t[CONFIRMATION, SUCCESS] |> Reminder Task Deletion Cancelled.";
 								DelayRunTimeBy(SLEEP_OPRT_FINISHED);
 								continue;
 
 							default:
-								std::cout << "[Confirmation, Error] |> User Input Invalid." << std::endl;
+								std::cout << std::endl
+										  << "\t[CONFIRMATION, ERROR] |> User Input is Invalid.";
 								std::cin.clear();
 								BufferClear_STDIN('\n');
 								DelayRunTimeBy(SLEEP_OPRT_FAILED);
@@ -797,7 +947,8 @@ void TTRM::DC_DTask() noexcept(false)
 					}
 					else
 					{
-						std::cerr << "[Input Error] -> User Requested To Delete Tasks Non-Existent or Out of Range..." << std::endl;
+						std::cerr << std::endl
+								  << "\t[OPRT ERROR] User Requested To Delete Tasks Non-Existent or Out of Range of Task List!";
 						DelayRunTimeBy(SLEEP_ERROR_PROMPT);
 						continue;
 					}
@@ -810,13 +961,15 @@ void TTRM::DC_DTask() noexcept(false)
 		}
 		else
 		{
-			std::cerr << "[View Info] > Task Queue is currently empty! Please add some task/s." << std::endl;
+			std::cerr << std::endl
+					  << "\t[VIEW INFO] Task Queue is currently empty! Please add some task/s.";
 			DelayRunTimeBy(SLEEP_OPRT_FINISHED);
 			break;
 		}
 	}
 	return;
 }
+
 void TTRM::DC_ETask() noexcept(false)
 {
 	while (FUNC_AWAIT_CMPLT)
@@ -829,31 +982,38 @@ void TTRM::DC_ETask() noexcept(false)
 		if (TaskHandlerSize)
 		{
 			std::cout << std::endl
-					  << "=== Task Lists ===========================================" << std::endl;
+					  << std::endl
+					  << "\t";
+			PrintConsoleASCII(221, 1);
+			PrintConsoleASCII(205, 3);
+			std::cout << " Currently Available Reminders To Trigger From The Queue System ";
+			PrintConsoleASCII(205, 25);
+			PrintConsoleASCII(222, 1);
+			std::cout << std::endl;
 			SP_DisplayTasks(EditTask);
 			std::cout << std::endl
 					  << "[Input] Please Select A Task # or '0' To Go Back Menu |> ",
-				std::cin >> InputHandler_Int;
+				std::cin >> IterHandler_UnInt;
 			if (std::cin.fail())
 			{
 				std::cin.clear();
 				BufferClear_STDIN('\n');
-				std::cerr << "[Input Error] -> Input Invalid. Please try again." << std::endl;
+				std::cerr << "[INPUT ERROR] Input Invalid. Please try again." << std::endl;
 				DelayRunTimeBy(SLEEP_ERROR_PROMPT);
 				continue;
 			}
 			else
 			{
-				if (InputHandler_Int)
+				if (IterHandler_UnInt)
 				{
-					if (InputHandler_Int <= TaskHandlerSize)
+					if (IterHandler_UnInt <= TaskHandlerSize)
 					{
-						std::cout << "[WARNING] |> Are you sure you want to edit this task: '" << TaskList.at(InputHandler_Int - ADJUST_BY_ONE).TaskName << "'?" << std::endl
-								  << "[INPUT  ] | ['Y'es or 'N'o] |> ",
+						std::cout << std::endl << "\t[WARNING] |> Are you sure you want to edit this task: '" << TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).TaskName << "'?" << std::endl
+								  << "\t[INPUT  ] | ['Y'es or 'N'o] |> ",
 							std::cin >> InputHandler_Char;
 						if (std::cin.fail())
 						{
-							std::cerr << "[Input Error] -> Value Received is Invalid. Please try again." << std::endl;
+							std::cerr << "[INPUT ERROR] -> Value Received is Invalid. Please try again." << std::endl;
 							std::cin.clear();
 							BufferClear_STDIN('\n');
 						}
@@ -864,36 +1024,94 @@ void TTRM::DC_ETask() noexcept(false)
 							case CONFIRMED_TRUE_LOWER:
 							case CONFIRMED_TRUE_UPPER:
 								BufferClear_STDIN('\n');
-								std::cout << "[Required] Name of the Task, Put '0' To Retain Changes |> ", std::getline(std::cin, NewModifiedTask.TaskName);
+								std::cout << std::endl
+										  << "\t";
+								PrintConsoleASCII(221, 1);
+								PrintConsoleASCII(205, 3);
+								std::cout << " Task To Remind You Modification ";
+								PrintConsoleASCII(205, 52);
+								PrintConsoleASCII(222, 1);
+								std::cout << std::endl
+										  << std::endl;
+								std::cout << "\tThings To Know For Reminder Data Modification"
+										  << std::endl
+										  << std::endl
+										  << "\t\t1. Reminder Task Name Must Be 2 Characters and Above"
+										  << std::endl
+										  << "\t\t2. Reminder In Charge Name Must Be 2 Characters and Above" << std::endl
+										  << std::endl
+										  << "\tYou cannot cancel this operation. If you want to ignore, please keep putting 0 to retain data." << std::endl;
+								std::cout << std::endl
+										  << "\t";
+								PrintConsoleASCII(221, 1);
+								PrintConsoleASCII(205, 88);
+								PrintConsoleASCII(222, 1);
+								std::cout << std::endl
+										  << std::endl;
+								std::cout << "\tName of the Task To Remind You, Put '0' To Retain |> ", std::getline(std::cin, NewModifiedTask.TaskName);
 								if (NewModifiedTask.TaskName != "0")
 								{
 									if (NewModifiedTask.TaskName.length() <= CHAR_MIN_TASKNAME || std::cin.fail())
 									{
 										std::cin.clear();
-										std::cerr << "[INPUT ERR] |> TaskName Character Is Not Enough. Press Enter Key To Try Again." << std::endl;
+										std::cerr << std::endl
+												  << "\t[INPUT ERROR] |> TaskName Character Is Not Enough. Press Enter Key To Try Again.";
 										BufferClear_STDIN('\n');
 										continue;
 									}
 								}
-								std::cout << "[Required] Name of Person In Charge, Put '0' To Retain Changes |> ", std::getline(std::cin, NewModifiedTask.TaskInCharge);
+								std::cout << "\tName Of The Person In Charge at The Task, Put '0' To Retain |> ", std::getline(std::cin, NewModifiedTask.TaskInCharge);
 								if (NewModifiedTask.TaskInCharge != "0")
 								{
 									if (NewModifiedTask.TaskInCharge.length() < CHAR_MIN_INCHARGE || std::cin.fail())
 									{
 										std::cin.clear();
-										std::cerr << "[INPUT ERR] |> Task In Charge Character Is Not Enough. Press Enter Key To Try Again." << std::endl;
+										std::cerr << std::endl
+												  << "\t[INPUT ERROR] |> Task In Charge Character Is Not Enough. Press Enter Key To Try Again.";
 										BufferClear_STDIN('\n');
 										continue;
 									}
 								}
-								std::cout << "[Required, 1 = Quick Remind, 2 = Date-Based] Type of Reminder, Put 0 To Retain Changes |> ", std::cin >> NewModifiedTask.ReminderType;
+								std::cout << std::endl
+										  << "\t";
+								PrintConsoleASCII(221, 1);
+								PrintConsoleASCII(205, 3);
+								std::cout << " Task To Remind You Modification ";
+								PrintConsoleASCII(205, 52);
+								PrintConsoleASCII(222, 1);
+								std::cout << std::endl
+										  << std::endl;
+								std::cout << "\tThings To Know For Reminder Types and What To Choose"
+										  << std::endl
+										  << std::endl
+										  << "\t\t1. Quick Reminder - Reminds You Quickly Based On Minutes Left To Trigger."
+										  << std::endl
+										  << "\t\t|> Requires > Input by Minutes, Minimum = 1 | Maximum = 180"
+										  << std::endl
+										  << std::endl
+										  << "\t\t2. Date Based Reminder - Reminds You Based On Given Date and Time To Trigger."
+										  << std::endl
+										  << "\t\t|> Requires > Date and Time, Let Seperator Be Space, (MM/DD/YYYY, HH:MM)."
+										  << std::endl
+										  << std::endl
+										  << "\tWhen Typing '0', You Will Be Prompted To Recently Saved Reminder Type. Keep Typing 0 To Retain Data." << std::endl;
+								std::cout << std::endl
+										  << "\t";
+								PrintConsoleASCII(221, 1);
+								PrintConsoleASCII(205, 88);
+								PrintConsoleASCII(222, 1);
+
+								std::cout << std::endl
+										  << std::endl
+										  << "\tType of Reminder To Trigger, Choice # |> ",
+									std::cin >> NewModifiedTask.ReminderType;
 								if (NewModifiedTask.ReminderType)
 								{
-
 									if (NewModifiedTask.ReminderType < QuickRemind || NewModifiedTask.ReminderType > DateBasedRemind || std::cin.fail())
 									{
 										std::cin.clear();
-										std::cerr << "[INPUT ERR] |> Reminder Type Input is Invalid. Press Any Key To Try Again." << std::endl;
+										std::cerr << std::endl
+												  << "\t[INPUT ERROR] |> Reminder Type Input is Invalid. Press Any Key To Try Again.";
 										BufferClear_STDIN('\n');
 										_getche();
 										continue;
@@ -901,17 +1119,16 @@ void TTRM::DC_ETask() noexcept(false)
 								}
 								else
 								{
-									NewModifiedTask.ReminderType = TaskList.at(InputHandler_Int - ADJUST_BY_ONE).ReminderType;
+									NewModifiedTask.ReminderType = TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).ReminderType;
 								}
 
 								switch (NewModifiedTask.ReminderType)
 								{
 								case QuickRemind:
-									std::cout << "[Required, Min: -45, Max: 180, 0 To Retain] Minutes Left To Remind You |> ", std::cin >> NewModifiedTask.NotifyByTime;
-									// TODO: Convert to time_t by mktime and return back to date time/. Done. Test Left.
+									std::cout << "\tMinutes Left To Remind You |> ", std::cin >> NewModifiedTask.NotifyByTime;
 									if (NewModifiedTask.NotifyByTime < QUICKR_INV_MAX_TIME || NewModifiedTask.NotifyByTime > QUICKR_MAX_TIME)
 									{
-										std::cerr << "[INPUT ERR] |> Time Entered is invalid. Please try again by pressing any key to restart." << std::endl;
+										std::cerr << "\t[INPUT ERROR] |> Time Entered is invalid. Please try again by pressing any key to restart.";
 										BufferClear_STDIN('\n');
 										_getche();
 										continue;
@@ -920,7 +1137,7 @@ void TTRM::DC_ETask() noexcept(false)
 									{
 										if (NewModifiedTask.NotifyByTime)
 										{
-											CurrentDateTime = mktime(&TaskList.at(InputHandler_Int - ADJUST_BY_ONE).ReminderData) + ((MAX_TIME_MIN + ADJUST_BY_ONE) * NewModifiedTask.NotifyByTime);
+											CurrentDateTime = mktime(&TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).ReminderData) + ((MAX_TIME_MIN + ADJUST_BY_ONE) * NewModifiedTask.NotifyByTime);
 											NewModifiedTask.TempTM = localtime(&CurrentDateTime);
 											NewModifiedTask.TempTM->tm_year += START_CTIME, NewModifiedTask.TempTM->tm_mon += ADJUST_BY_ONE;
 											break;
@@ -930,37 +1147,41 @@ void TTRM::DC_ETask() noexcept(false)
 											break;
 										}
 									}
+
 								case DateBasedRemind:
 									CurrentDateTime = time(NULL);
 									CurrentTContainer = localtime(&CurrentDateTime); //, CurrentTContainer->tm_year += START_CTIME, CurrentTContainer->tm_mon += ADJUST_BY_ONE;
 
-									std::cout << "[Req, Seperate by Space | MM DD YYYY] Target Date of Reminding, Type 0 For Each To Retain |> ", std::cin >> NewModifiedTask.ReminderData.tm_mon >> NewModifiedTask.ReminderData.tm_mday >> NewModifiedTask.ReminderData.tm_year;
+									std::cout << "\tTarget Date of Reminding, Remember (MM DD YYYY), Type 0 For Each To Retain |> ", std::cin >> NewModifiedTask.ReminderData.tm_mon >> NewModifiedTask.ReminderData.tm_mday >> NewModifiedTask.ReminderData.tm_year;
 
-									if (NewModifiedTask.ReminderData.tm_year < TaskList.at(InputHandler_Int - ADJUST_BY_ONE).ReminderData.tm_year)
+									if (NewModifiedTask.ReminderData.tm_year < TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).ReminderData.tm_year)
 									{
 										std::cin.clear();
-										std::cerr << "[INPUT ERR] |> Target Year Parameter is either invalid or less from current date. Press Any Key To Try Again." << std::endl;
+										std::cerr << std::endl
+												  << "\t[INPUT ERROR] |> Target Year Parameter is either invalid or less from current date. Press Any Key To Try Again.";
 										BufferClear_STDIN('\n');
 										_getche();
 										continue;
 									}
 									else
 									{
-										if (NewModifiedTask.ReminderData.tm_mon < MIN_TIME_MONTH || NewModifiedTask.ReminderData.tm_mon > MAX_TIME_MONTH || NewModifiedTask.ReminderData.tm_mon < TaskList.at(InputHandler_Int - ADJUST_BY_ONE).ReminderData.tm_mon || std::cin.fail())
+										if (NewModifiedTask.ReminderData.tm_mon < MIN_TIME_MONTH || NewModifiedTask.ReminderData.tm_mon > MAX_TIME_MONTH || NewModifiedTask.ReminderData.tm_mon < TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).ReminderData.tm_mon || std::cin.fail())
 										{
 											std::cin.clear();
-											std::cerr << "[INPUT ERR] |> Target Month Parameter is either invalid or less from current date. Press Any Key To Try Again." << std::endl;
+											std::cerr << std::endl
+													  << "\t[INPUT ERROR] |> Target Month Parameter is either invalid or less from current date. Press Any Key To Try Again.";
 											BufferClear_STDIN('\n');
 											_getche();
 											continue;
 										}
 										else
 										{
-											if (NewModifiedTask.ReminderData.tm_mday < MIN_TIME_DAY || NewModifiedTask.ReminderData.tm_mday > MAX_TIME_DAY || (NewModifiedTask.ReminderData.tm_year == TaskList.at(InputHandler_Int - ADJUST_BY_ONE).ReminderData.tm_year && NewModifiedTask.ReminderData.tm_mon == TaskList.at(InputHandler_Int - ADJUST_BY_ONE).ReminderData.tm_mon && (NewModifiedTask.ReminderData.tm_mday < TaskList.at(InputHandler_Int - ADJUST_BY_ONE).ReminderData.tm_mday)) || std::cin.fail())
+											if (NewModifiedTask.ReminderData.tm_mday < MIN_TIME_DAY || NewModifiedTask.ReminderData.tm_mday > MAX_TIME_DAY || (NewModifiedTask.ReminderData.tm_year == TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).ReminderData.tm_year && NewModifiedTask.ReminderData.tm_mon == TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).ReminderData.tm_mon && (NewModifiedTask.ReminderData.tm_mday < TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).ReminderData.tm_mday)) || std::cin.fail())
 											{
 												// ! If same month, check day
 												std::cin.clear();
-												std::cerr << "[INPUT ERR] |> Target Day Parameter is either invalid or less from current date. Press Any Key To TryAgain." << std::endl;
+												std::cerr << std::endl
+														  << "\t[INPUT ERROR] |> Target Day Parameter is either invalid or less from current date. Press Any Key To Try Again.";
 												BufferClear_STDIN('\n');
 												_getche();
 												continue;
@@ -972,17 +1193,16 @@ void TTRM::DC_ETask() noexcept(false)
 										if ((NewModifiedTask.ReminderData.tm_hour > MIN_TIME_HOUR || NewModifiedTask.ReminderData.tm_hour <= MAX_TIME_HOUR) || (NewModifiedTask.ReminderData.tm_min >= MIN_TIME_MIN || NewModifiedTask.ReminderData.tm_min <= MAX_TIME_MIN) || !std::cin.fail())
 										{
 											// ! Prerequisite Condition, we can only get to this point if and only the datetime is exactly the same as the user added. Means 09/24/2019 == 09/24/2019. If we intend to have same date but different year then we go to else statement.
-											if (NewModifiedTask.ReminderData.tm_mon - ADJUST_BY_ONE == TaskList.at(InputHandler_Int - ADJUST_BY_ONE).ReminderData.tm_mon && NewModifiedTask.ReminderData.tm_mday == TaskList.at(InputHandler_Int - ADJUST_BY_ONE).ReminderData.tm_mday && NewModifiedTask.ReminderData.tm_year - START_CTIME == TaskList.at(InputHandler_Int - ADJUST_BY_ONE).ReminderData.tm_year)
+											if (NewModifiedTask.ReminderData.tm_mon - ADJUST_BY_ONE == TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).ReminderData.tm_mon && NewModifiedTask.ReminderData.tm_mday == TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).ReminderData.tm_mday && NewModifiedTask.ReminderData.tm_year - START_CTIME == TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).ReminderData.tm_year)
 											{
-
 												// ! Prerequisite Condition, if the datetime is exactly the same as the user added. Means 09/24/2019 == 09/24/2019. We check if the latest time is added by the user greater or less than.
 												// * Exactly done conditioning.
-
-												if (NewModifiedTask.ReminderData.tm_hour >= TaskList.at(InputHandler_Int - ADJUST_BY_ONE).ReminderData.tm_hour)
+												if (NewModifiedTask.ReminderData.tm_hour >= TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).ReminderData.tm_hour)
 												{
-													if (NewModifiedTask.ReminderData.tm_min < TaskList.at(InputHandler_Int - ADJUST_BY_ONE).ReminderData.tm_min)
+													if (NewModifiedTask.ReminderData.tm_min < TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).ReminderData.tm_min)
 													{
-														std::cerr << "[INPUT ERR] |> Time Minute is Less Than the Expected Day. Please Try Again." << std::endl;
+														std::cerr << std::endl
+																  << "\t[INPUT ERROR] |> Time Minute is Less Than the Expected Day. Please Try Again.";
 														BufferClear_STDIN('\n');
 														_getche();
 														continue;
@@ -994,7 +1214,8 @@ void TTRM::DC_ETask() noexcept(false)
 												}
 												else
 												{
-													std::cerr << "[INPUT ERR] |> Time Hour is Lesser Than Expected Hour. Please Try Again." << std::endl;
+													std::cerr << std::endl
+															  << "\t[INPUT ERROR] |> Time Hour is Lesser Than Expected Hour. Please Try Again.";
 													BufferClear_STDIN('\n');
 													_getche();
 													continue;
@@ -1009,7 +1230,7 @@ void TTRM::DC_ETask() noexcept(false)
 										else
 										{
 											std::cin.clear();
-											std::cerr << "[INPUT ERR] |> Time Input is Invalid. Keep in mind that I need 24 hour format. Press Any Key To Try Again." << std::endl;
+											std::cerr << std::endl << "\t[INPUT ERROR] |> Time Input is Invalid. Keep in mind that I need 24 hour format. Press Any Key To Try Again.";
 											BufferClear_STDIN('\n');
 											_getche();
 											continue;
@@ -1021,33 +1242,33 @@ void TTRM::DC_ETask() noexcept(false)
 								try
 								{
 
-									NewModifiedTask.TaskID.assign(TaskList.at(InputHandler_Int - ADJUST_BY_ONE).TaskID);
+									NewModifiedTask.TaskID.assign(TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).TaskID);
 
 									if (NewModifiedTask.TaskName != "0")
 									{
-										TaskList.at(InputHandler_Int - ADJUST_BY_ONE).TaskName.assign(NewModifiedTask.TaskName);
+										TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).TaskName.assign(NewModifiedTask.TaskName);
 									}
 									else
 									{
-										NewModifiedTask.TaskName.assign(TaskList.at(InputHandler_Int - ADJUST_BY_ONE).TaskName);
+										NewModifiedTask.TaskName.assign(TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).TaskName);
 									}
 
 									if (NewModifiedTask.TaskInCharge != "0")
 									{
-										TaskList.at(InputHandler_Int - ADJUST_BY_ONE).TaskInCharge.assign(NewModifiedTask.TaskInCharge);
+										TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).TaskInCharge.assign(NewModifiedTask.TaskInCharge);
 									}
 									else
 									{
-										NewModifiedTask.TaskInCharge.assign(TaskList.at(InputHandler_Int - ADJUST_BY_ONE).TaskInCharge);
+										NewModifiedTask.TaskInCharge.assign(TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).TaskInCharge);
 									}
 
-									if (NewModifiedTask.ReminderType != TaskList.at(InputHandler_Int - ADJUST_BY_ONE).ReminderType)
+									if (NewModifiedTask.ReminderType != TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).ReminderType)
 									{
-										TaskList.at(InputHandler_Int - ADJUST_BY_ONE).ReminderType = NewModifiedTask.ReminderType;
+										TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).ReminderType = NewModifiedTask.ReminderType;
 									}
 									else
 									{
-										NewModifiedTask.ReminderType = TaskList.at(InputHandler_Int - ADJUST_BY_ONE).ReminderType;
+										NewModifiedTask.ReminderType = TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).ReminderType;
 									}
 
 									switch (NewModifiedTask.ReminderType)
@@ -1056,11 +1277,11 @@ void TTRM::DC_ETask() noexcept(false)
 									case QuickRemind:
 										if (NewModifiedTask.NotifyByTime != 0)
 										{
-											TaskList.at(InputHandler_Int - ADJUST_BY_ONE).ReminderData = *NewModifiedTask.TempTM;
+											TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).ReminderData = *NewModifiedTask.TempTM;
 										}
 										else
 										{
-											EpochHandler = mktime(&TaskList.at(InputHandler_Int - ADJUST_BY_ONE).ReminderData);
+											EpochHandler = mktime(&TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).ReminderData);
 											NewModifiedTask.TempTM = localtime(&EpochHandler);
 											NewModifiedTask.ReminderData = *NewModifiedTask.TempTM;
 										}
@@ -1069,47 +1290,47 @@ void TTRM::DC_ETask() noexcept(false)
 									case DateBasedRemind:
 										if (NewModifiedTask.ReminderData.tm_year != 0)
 										{
-											TaskList.at(InputHandler_Int - ADJUST_BY_ONE).ReminderData.tm_year = NewModifiedTask.ReminderData.tm_year;
+											TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).ReminderData.tm_year = NewModifiedTask.ReminderData.tm_year;
 										}
 										else
 										{
-											NewModifiedTask.ReminderData.tm_year = TaskList.at(InputHandler_Int - ADJUST_BY_ONE).ReminderData.tm_year;
+											NewModifiedTask.ReminderData.tm_year = TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).ReminderData.tm_year;
 										}
 
 										if (NewModifiedTask.ReminderData.tm_mon != 0)
 										{
-											TaskList.at(InputHandler_Int - ADJUST_BY_ONE).ReminderData.tm_mon = NewModifiedTask.ReminderData.tm_mon;
+											TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).ReminderData.tm_mon = NewModifiedTask.ReminderData.tm_mon;
 										}
 										else
 										{
-											NewModifiedTask.ReminderData.tm_mon = TaskList.at(InputHandler_Int - ADJUST_BY_ONE).ReminderData.tm_mon;
+											NewModifiedTask.ReminderData.tm_mon = TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).ReminderData.tm_mon;
 										}
 
 										if (NewModifiedTask.ReminderData.tm_mday != 0)
 										{
-											TaskList.at(InputHandler_Int - ADJUST_BY_ONE).ReminderData.tm_mday = NewModifiedTask.ReminderData.tm_mday;
+											TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).ReminderData.tm_mday = NewModifiedTask.ReminderData.tm_mday;
 										}
 										else
 										{
-											NewModifiedTask.ReminderData.tm_mday = TaskList.at(InputHandler_Int - ADJUST_BY_ONE).ReminderData.tm_mday;
+											NewModifiedTask.ReminderData.tm_mday = TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).ReminderData.tm_mday;
 										}
 
 										if (NewModifiedTask.ReminderData.tm_hour != 0)
 										{
-											TaskList.at(InputHandler_Int - ADJUST_BY_ONE).ReminderData.tm_hour = NewModifiedTask.ReminderData.tm_hour;
+											TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).ReminderData.tm_hour = NewModifiedTask.ReminderData.tm_hour;
 										}
 										else
 										{
-											NewModifiedTask.ReminderData.tm_hour = TaskList.at(InputHandler_Int - ADJUST_BY_ONE).ReminderData.tm_hour;
+											NewModifiedTask.ReminderData.tm_hour = TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).ReminderData.tm_hour;
 										}
 
 										if (NewModifiedTask.ReminderData.tm_min != 0)
 										{
-											TaskList.at(InputHandler_Int - ADJUST_BY_ONE).ReminderData.tm_min = NewModifiedTask.ReminderData.tm_min;
+											TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).ReminderData.tm_min = NewModifiedTask.ReminderData.tm_min;
 										}
 										else
 										{
-											NewModifiedTask.ReminderData.tm_min = TaskList.at(InputHandler_Int - ADJUST_BY_ONE).ReminderData.tm_min;
+											NewModifiedTask.ReminderData.tm_min = TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).ReminderData.tm_min;
 										}
 										break;
 									}
@@ -1125,7 +1346,7 @@ void TTRM::DC_ETask() noexcept(false)
 										for (DataLineHandler; std::getline(TempDataHandler, ConvertedHandler, ','); PayloadHandler.push_back(ConvertedHandler))
 											;
 
-										if (PayloadHandler[0] != TaskList.at(InputHandler_Int - ADJUST_BY_ONE).TaskID)
+										if (PayloadHandler[0] != TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).TaskID)
 										{
 											if (!SaveStateHandler.eof())
 											{
@@ -1150,26 +1371,26 @@ void TTRM::DC_ETask() noexcept(false)
 									remove(SaveStatePath);
 									rename(FilePointState, SaveStatePath);
 
-									std::cout << "[Confirmation, Success] |> Task Modification @ '" << TaskList.at(InputHandler_Int - ADJUST_BY_ONE).TaskName << "' is now applied~!" << std::endl;
+									std::cout << std::endl << "\t[CONFIRMATION, SUCCESS] |> Task Modification @ '" << TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).TaskName << "' is now applied~!";
 									DelayRunTimeBy(SLEEP_OPRT_FINISHED);
 									continue;
 								}
 								catch (...)
 								{
 									std::cout << std::endl
-											  << "[PROCESS] Unknown error has occured..." << std::endl;
+											  << "\t[PROCESS] Unknown error has occured...";
 									DelayRunTimeBy(SLEEP_SIGNIFICANT_ERR);
 									continue;
 								}
 
 							case CONFIRMED_FALSE_LOWER:
 							case CONFIRMED_FALSE_UPPER:
-								std::cout << "[Confirmation, Success] |> Task Deletion Cancelled." << std::endl;
+								std::cout << std::endl << "\t[CONFIRMATION, SUCCESS] |> Task Deletion Cancelled.";
 								DelayRunTimeBy(SLEEP_OPRT_FINISHED);
 								continue;
 
 							default:
-								std::cout << "[Confirmation, Error] |> User Input Invalid." << std::endl;
+								std::cout << std::endl << "\t[CONFIRMATION, ERROR] |> User Input Invalid.";
 								std::cin.clear();
 								BufferClear_STDIN('\n');
 								DelayRunTimeBy(SLEEP_OPRT_FAILED);
@@ -1179,7 +1400,7 @@ void TTRM::DC_ETask() noexcept(false)
 					}
 					else
 					{
-						std::cerr << "[Input Error] |> User Requested To Delete Tasks Non-Existent or Out of Range..." << std::endl;
+						std::cerr << std::endl << "\t[INPUT ERROR] |> User Requested To Delete Tasks Non-Existent or Out of Range...";
 						DelayRunTimeBy(SLEEP_ERROR_PROMPT);
 						continue;
 					}
@@ -1192,7 +1413,7 @@ void TTRM::DC_ETask() noexcept(false)
 		}
 		else
 		{
-			std::cerr << "[View Info] > Task Queue is currently empty! Please add some task/s." << std::endl;
+			std::cerr << std::endl << "\t[VIEW INFO] > Task Queue is currently empty! Please add some task/s.";
 			DelayRunTimeBy(SLEEP_OPRT_FINISHED);
 			break;
 		}
@@ -1201,28 +1422,39 @@ void TTRM::DC_ETask() noexcept(false)
 }
 void TTRM::DC_VTask() noexcept(false)
 {
-	while (FUNC_AWAIT_CMPLT)
-	{
-		ConsoleCall("CLS");
-		//std::cout << std::endl
-		//		  << "Here are the tasks currently in line with the system..." << std::endl;
-		SP_DisplayTasks(ViewTask);
-		std::cout << "Press any key to go back." << std::endl;
-		_getche();
-		break;
-	}
+	ConsoleCall("CLS");
+	std::cout << std::endl
+			  << std::endl
+			  << "\t";
+	PrintConsoleASCII(221, 1);
+	PrintConsoleASCII(205, 3);
+	std::cout << " Currently Available Reminders To Trigger From The Queue System ";
+	PrintConsoleASCII(205, 25);
+	PrintConsoleASCII(222, 1);
+	std::cout << std::endl;
+	SP_DisplayTasks(ViewTask);
+	std::cout << std::endl
+			  << "\tPress any KEY to go back from System Menu.";
+	_getche();
 	return;
 }
 
 void TTRM::DC_RQT() noexcept(false)
 {
-
 	if (TaskList.size())
 	{
 		std::cout << std::endl
-				  << "[WARNING] |> Are you sure you want delete all tasks in queue system?" << std::endl
-				  << "[WARNING] |> All task can be restored if the database still contains all data you just deleted." << std::endl
-				  << "[INPUT  ] |> ['Y'es or 'N'o] |> ",
+				  << "\t";
+		PrintConsoleASCII(221, 1);
+		PrintConsoleASCII(205, 3);
+		std::cout << " Task Queue and Save State Deletion - Confirmation ";
+		PrintConsoleASCII(205, 20);
+		PrintConsoleASCII(222, 1);
+		std::cout << std::endl
+				  << std::endl
+				  << "\t[WARNING] |> Are you sure you want delete all your tasks reminders from the queue system and save state?" << std::endl
+				  << "\t[WARNING] |> This action is irreversible. Continue???" << std::endl
+				  << "\t[INPUT  ] |> ['Y'es or 'N'o] |> ",
 			std::cin >> InputHandler_Char;
 		switch (InputHandler_Char)
 		{
@@ -1232,18 +1464,21 @@ void TTRM::DC_RQT() noexcept(false)
 			SaveStateHandler.open(SaveStatePath, std::ios::out);
 			SaveStateHandler.close();
 			TaskList.clear();
-			std::cout << "[PROCESS] |> All Task from Queue Removed!" << std::endl;
+			std::cout << std::endl
+					  << "\t[PROCESS] |> All Tasks Reminder Saved from the Queue System and Save States are Wiped!";
 			DelayRunTimeBy(SLEEP_OPRT_FINISHED);
 			break;
 		case CONFIRMED_FALSE_LOWER:
 		case CONFIRMED_FALSE_UPPER:
-			std::cout << "[PROCESS] |> All Task Deletion Operation Cancelled." << std::endl;
+			std::cout << std::endl
+					  << "\t[PROCESS] |> Task Reminder Queue and Save State Wipe Operation Cancelled.";
 			DelayRunTimeBy(SLEEP_OPRT_FINISHED);
 			break;
 		default:
 			std::cin.clear();
 			BufferClear_STDIN('\n');
-			std::cout << "[ERROR  ] |> Invalid Input. All Task Deletion Operation Cancelled." << std::endl;
+			std::cout << std::endl
+					  << "\t[ERROR  ] |> Invalid Input. Task Reminder Queue and Save State Wipe Operation Cancelled.";
 			DelayRunTimeBy(SLEEP_OPRT_FINISHED);
 			break;
 		}
@@ -1252,7 +1487,7 @@ void TTRM::DC_RQT() noexcept(false)
 	else
 	{
 		std::cerr << std::endl
-				  << "[INFORM ] Your Task List is empty! Please add one." << std::endl;
+				  << "\t[INFORM ] Your Task List is currently empty! Please add one.";
 		DelayRunTimeBy(SLEEP_OPRT_FINISHED);
 		return;
 	}
@@ -1264,11 +1499,20 @@ void TTRM::DC_RTLFSS() noexcept(false)
 	IterHandler_UnInt = INIT_BASE_NUM;
 	TaskList.clear();
 
-	std::cout << "Save State Load  |> Refreshing List from Save State File." << std::endl;
+	std::cout << std::endl
+			  << "\t";
+	PrintConsoleASCII(221, 1);
+	PrintConsoleASCII(205, 3);
+	std::cout << " Updating Task List From Save State - Explicit ";
+	PrintConsoleASCII(205, 24);
+	PrintConsoleASCII(222, 1);
+	std::cout << std::endl
+			  << std::endl
+			  << "\tSave State Load  |> Refreshing List from Save State File." << std::endl;
 	SaveStateHandler.open(SaveStatePath, std::ios::in);
 	if (SaveStateHandler.is_open())
 	{
-		std::cout << "Save State Load  |> SaveState File Opened! Collecting Reminders to Queue System.";
+		std::cout << "\tSave State Load  |> SaveState File Opened! Collecting Reminders to Queue System.";
 		while (std::getline(SaveStateHandler, DataLineHandler))
 		{
 			std::cout << ".";
@@ -1292,21 +1536,42 @@ void TTRM::DC_RTLFSS() noexcept(false)
 		SaveStateHandler.close();
 		std::cout << std::endl
 				  << std::endl
-				  << "Save State Loaded |> Done. Loaded " << IterHandler_UnInt << " Reminders!" << std::endl;
+				  << "\tSave State Loaded |> Done. Loaded " << IterHandler_UnInt << " Reminders!" << std::endl;
+		std::cout << std::endl
+				  << "\t";
+		PrintConsoleASCII(221, 1);
+		PrintConsoleASCII(205, 3);
+		PrintConsoleASCII(205, 71);
+		PrintConsoleASCII(222, 1);
 	}
 	else
 	{
-		std::cout << "Save State Create |> Save File Doesn't Exist. Creating Save File..." << std::endl;
+		std::cout << std::endl
+				  << "\tSave State Create |> Save File Doesn't Exist. Creating Save File..." << std::endl;
 		TempSaveStateHandler.open(FilePointState, std::ios::out);
 		if (TempSaveStateHandler.is_open())
 		{
-			std::cout << "Save State Create |> SaveState File Created!" << std::endl;
+			std::cout << "\tSave State Create |> SaveState File Created!" << std::endl;
 			TempSaveStateHandler.close();
 			rename(FilePointState, SaveStatePath);
+			std::cout << std::endl
+					  << "\t";
+			PrintConsoleASCII(221, 1);
+			PrintConsoleASCII(205, 3);
+			PrintConsoleASCII(205, 71);
+			PrintConsoleASCII(222, 1);
 		}
 		else
 		{
-			std::cout << "Save State Create |> SaveState File Creation Failure. Fatal Error | Terminating Program" << std::endl;
+			std::cout << "\tSave State Create |> SaveState File Creation Failure. Fatal Error | Terminating Program" << std::endl;
+			std::cout << std::endl
+					  << "\t";
+			PrintConsoleASCII(221, 1);
+			PrintConsoleASCII(205, 3);
+			PrintConsoleASCII(205, 71);
+			PrintConsoleASCII(222, 1);
+			std::cout << std::endl
+					  << std::endl;
 			TTRM::~TTRM(); // ! Calls Destructors Because This Function is VOID. So we terminate, explicitly.
 		}
 	}
@@ -1326,17 +1591,17 @@ void TTRM::DC_RTLFSS() noexcept(false)
 // ! These Functions Only Does Those...
 void TTRM_WinToast::toastActivated() const
 {
-	WinToast_ReturnTrigger = 2;
+	WinToast_ReturnTrigger = DISCARD_REMINDER;
 }
 void TTRM_WinToast::toastActivated(int actionIndex) const
 {
 	if (!actionIndex)
 	{
-		WinToast_ReturnTrigger = 1;
+		WinToast_ReturnTrigger = SNOOZE_REMINDER;
 	}
 	else
 	{
-		WinToast_ReturnTrigger = 2;
+		WinToast_ReturnTrigger = DISCARD_REMINDER;
 	}
 }
 void TTRM_WinToast::toastDismissed(WinToastDismissalReason state) const
@@ -1346,14 +1611,14 @@ void TTRM_WinToast::toastDismissed(WinToastDismissalReason state) const
 	case UserCanceled:
 	case TimedOut:
 	case ApplicationHidden:
-		WinToast_ReturnTrigger = 0;
+		WinToast_ReturnTrigger = IGNORE_REMINDER;
 	default:
-		WinToast_ReturnTrigger = 0;
+		WinToast_ReturnTrigger = IGNORE_REMINDER;
 	}
 }
 void TTRM_WinToast::toastFailed() const
 {
-	WinToast_ReturnTrigger = 2;
+	WinToast_ReturnTrigger = DISCARD_REMINDER;
 }
 
 // ! WinToast FUNCTION CONTENT DECLARATION - END POINT
