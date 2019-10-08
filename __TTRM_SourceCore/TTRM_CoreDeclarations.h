@@ -2,10 +2,10 @@
 	* Task To Temind Me Core Declarations
     * Side Note: Technical Project Specific Essential Function Header File
     * File Category Type: Core Function Definitions, "CoreDef".
-	* Version: Close BETA Testing Checkpoint
+	* Version: Close BETA Testing Checkpoint, File Point Candidate #1
 	* 
 	* Project Lead, Janrey "CodexLink" Licas
-	* Project Director, Rejay "figureness" Mar
+	* Project Director, Rejay "figureness" Mar Senar
 */
 
 // ! Declarations Start

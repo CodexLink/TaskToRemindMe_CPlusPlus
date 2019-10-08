@@ -53,6 +53,7 @@ unsigned __stdcall TTRM::MultiThread_ScanReminders(void *ArgsReserved)
 		{
 			if (mktime(&TaskList.at(ObjectScanIter).ReminderData) <= time(NULL))
 			{
+				WinToast_ReturnTrigger = INIT_BASE_NUM;
 				WinToast_ReminderPrompt(TaskList.at(ObjectScanIter).TaskName, TaskList.at(ObjectScanIter).TaskInCharge, TaskList.at(ObjectScanIter).ReminderType, TaskList.at(ObjectScanIter).NotifyByTime, TaskList.at(ObjectScanIter).ReminderData);
 				while (THREAD_AWAIT_CMPLT)
 				{
@@ -61,7 +62,7 @@ unsigned __stdcall TTRM::MultiThread_ScanReminders(void *ArgsReserved)
 						time_t CurrentTime = mktime(&TaskList.at(ObjectScanIter).ReminderData) + ((MAX_TIME_MIN + ADJUST_BY_ONE) * SNOOZE_TIME);
 						tm *TempIncrementer = localtime(&CurrentTime);
 						TaskList.at(ObjectScanIter).ReminderData = *TempIncrementer;
-						break;
+						return THREAD_PRC_TERM;
 					}
 					else if (WinToast_ReturnTrigger == DISCARD_REMINDER)
 					{
@@ -97,7 +98,7 @@ unsigned __stdcall TTRM::MultiThread_ScanReminders(void *ArgsReserved)
 						remove(SaveStatePath_WT);
 						rename(FilePointState_WT, SaveStatePath_WT);
 						TaskList.erase(TaskList.begin() + (ObjectScanIter));
-						break;
+						return THREAD_PRC_TERM;
 					}
 					else
 					{
@@ -105,7 +106,7 @@ unsigned __stdcall TTRM::MultiThread_ScanReminders(void *ArgsReserved)
 						continue;
 					}
 				}
-				return THREAD_PRC_TERM;
+				return TaskList.size(); // * THREAD_PRC_TERM;
 			}
 			else
 			{
@@ -760,9 +761,12 @@ void TTRM::DC_ATask() noexcept(false)
 						// ! Checks User Input Dates Were Lesser Than The Expected Date, Means, Anything Below Than Today's DAte Will Be Considered Invalid.
 						if (mktime(&NewTask.ReminderData) < time(NULL))
 						{
+							mktime(&NewTask.ReminderData) < time(NULL);
 							std::cout << "\t[DATE ERROR] User Inputted Date and Time That is Lesser Than Today's Date and Time!";
 							BufferClear_STDIN('\n');
 							DelayRunTimeBy(SLEEP_ERROR_PROMPT);
+							while (1)
+								;
 							continue;
 						}
 						else
@@ -1593,7 +1597,7 @@ void TTRM::DC_RTLFSS() noexcept(false)
 // ! These Functions Only Does Those...
 void TTRM_WinToast::toastActivated() const
 {
-	WinToast_ReturnTrigger = DISCARD_REMINDER;
+	;//WinToast_ReturnTrigger = SNOOZE_REMINDER;
 }
 void TTRM_WinToast::toastActivated(int actionIndex) const
 {
@@ -1611,16 +1615,20 @@ void TTRM_WinToast::toastDismissed(WinToastDismissalReason state) const
 	switch (state)
 	{
 	case UserCanceled:
+		WinToast_ReturnTrigger = DISCARD_REMINDER;
+		break;
 	case TimedOut:
 	case ApplicationHidden:
-		WinToast_ReturnTrigger = IGNORE_REMINDER;
+		WinToast_ReturnTrigger = SNOOZE_REMINDER;
+		break;
 	default:
 		WinToast_ReturnTrigger = IGNORE_REMINDER;
+		break;
 	}
 }
 void TTRM_WinToast::toastFailed() const
 {
-	WinToast_ReturnTrigger = DISCARD_REMINDER;
+	;//WinToast_ReturnTrigger = DISCARD_REMINDER;
 }
 
 // ! WinToast FUNCTION CONTENT DECLARATION - END POINT
