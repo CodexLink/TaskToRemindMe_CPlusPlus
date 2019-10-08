@@ -177,7 +177,9 @@ unsigned short TTRM::Cmpnt_Initializer() noexcept(false)
 
 	SetConsoleTitle("Tasks To Remind Me C++ CLI, Close Beta Stage | Data Structure Group 5 >> https://github.com/CodexLink/TaskToRemindMe_CPlusPlus");
 
-	std::cout << std::endl << std::endl << "\t";
+	std::cout << std::endl
+			  << std::endl
+			  << "\t";
 	PrintConsoleASCII(219, 1);
 	PrintConsoleASCII(205, 90);
 	PrintConsoleASCII(219, 1);
@@ -479,9 +481,9 @@ void TTRM::SP_DisplayMenu() noexcept(false)
 				  << std::endl
 				  << "\tChoice #1 |> Add a Task To Remind You" << std::endl
 				  << "\tChoice #2 |> Delete a Task That Reminds You" << std::endl
-				  << "\tChoice #3 |> Edit / Modify an Existing Task for Alterations" << std::endl
+				  << "\tChoice #3 |> Edit / Modify an Existing Task for Alterations" << std::endl << std::endl
 				  << "\tChoice #4 |> View All Tasks Without Limit" << std::endl
-				  << "\tChoice #5 |> Remove All Tasks at Save State and Queue System" << std::endl
+				  << "\tChoice #5 |> Remove All Tasks at Save State and Queue System" << std::endl << std::endl
 				  << "\tChoice #6 |> Refresh Tasks from Save State" << std::endl
 				  << "\tChoice #7 |> Refresh Menu Display for Current Local Time Update" << std::endl
 				  << std::endl
@@ -705,8 +707,8 @@ void TTRM::DC_ATask() noexcept(false)
 				NewTask.ReminderData = *NewTask.TempTM;
 
 				std::cout << "\tTarget Date of Reminding, Remember (MM DD YYYY) |> ", std::cin >> NewTask.ReminderData.tm_mon >> NewTask.ReminderData.tm_mday >> NewTask.ReminderData.tm_year;
-
-				if (NewTask.ReminderData.tm_mon < MIN_TIME_MONTH || NewTask.ReminderData.tm_mon > MAX_TIME_MONTH || (NewTask.ReminderData.tm_mon - ADJUST_BY_ONE < CurrentTContainer->tm_mon && NewTask.ReminderData.tm_year - START_CTIME < CurrentTContainer->tm_year) || std::cin.fail())
+				// ! If 06/2019 < 04/2019, then invalid.
+				if (NewTask.ReminderData.tm_mon < MIN_TIME_MONTH || NewTask.ReminderData.tm_mon > MAX_TIME_MONTH || (NewTask.ReminderData.tm_mon - ADJUST_BY_ONE < CurrentTContainer->tm_mon && NewTask.ReminderData.tm_year - START_CTIME == CurrentTContainer->tm_year) || std::cin.fail())
 				{
 					std::cerr << std::endl
 							  << "\t[INPUT ERROR] |> Target Month Parameter is either invalid or less from current date. Press Any Key To Try Again.";
@@ -717,6 +719,7 @@ void TTRM::DC_ATask() noexcept(false)
 				}
 				else
 				{
+					// ! Check Day, If 09/01/2019 < 09/02/2019 (Current Day)
 					if (NewTask.ReminderData.tm_mday < MIN_TIME_DAY || NewTask.ReminderData.tm_mday > MAX_TIME_DAY || (NewTask.ReminderData.tm_mon - ADJUST_BY_ONE == CurrentTContainer->tm_mon && NewTask.ReminderData.tm_mday < CurrentTContainer->tm_mday && NewTask.ReminderData.tm_year - START_CTIME == CurrentTContainer->tm_year) || std::cin.fail())
 					{
 						std::cin.clear();
@@ -728,6 +731,7 @@ void TTRM::DC_ATask() noexcept(false)
 					}
 					else
 					{
+						// ! Check Year, If 2018, But 2019
 						if (NewTask.ReminderData.tm_year < CurrentTContainer->tm_year)
 						{
 							std::cerr << std::endl
@@ -867,7 +871,8 @@ void TTRM::DC_DTask() noexcept(false)
 			{
 				std::cin.clear();
 				BufferClear_STDIN('\n');
-				std::cerr << std::endl << "\t[INPUT ERROR] Input is Non-Integer.";
+				std::cerr << std::endl
+						  << "\t[INPUT ERROR] Input is Non-Integer.";
 				DelayRunTimeBy(SLEEP_ERROR_PROMPT);
 				continue;
 			}
@@ -886,7 +891,8 @@ void TTRM::DC_DTask() noexcept(false)
 						{
 							std::cin.clear();
 							BufferClear_STDIN('\n');
-							std::cerr << std::endl << "\t[INPUT ERROR] Input is Non-Integer.";
+							std::cerr << std::endl
+									  << "\t[INPUT ERROR] Input is Non-Integer.";
 						}
 						else
 						{
@@ -923,7 +929,8 @@ void TTRM::DC_DTask() noexcept(false)
 								remove(SaveStatePath);
 								rename(FilePointState, SaveStatePath);
 
-								std::cout << std::endl << "\t[CONFIRMATION, SUCCESS] |> Task '" << TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).TaskName << "' deleted.";
+								std::cout << std::endl
+										  << "\t[CONFIRMATION, SUCCESS] |> Task '" << TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).TaskName << "' deleted.";
 								TaskList.erase(TaskList.begin() + (IterHandler_UnInt - ADJUST_BY_ONE));
 								DelayRunTimeBy(SLEEP_OPRT_FINISHED);
 								continue;
@@ -992,13 +999,20 @@ void TTRM::DC_ETask() noexcept(false)
 			std::cout << std::endl;
 			SP_DisplayTasks(EditTask);
 			std::cout << std::endl
-					  << "[Input] Please Select A Task # or '0' To Go Back Menu |> ",
+					  << "\t";
+			PrintConsoleASCII(221, 1);
+			PrintConsoleASCII(205, 3);
+			PrintConsoleASCII(205, 89);
+			PrintConsoleASCII(222, 1);
+			std::cout << std::endl
+					  << std::endl;
+			std::cout << "\t[INPUT] Please Select A Task # or '0' To Go Back Menu |> ",
 				std::cin >> IterHandler_UnInt;
 			if (std::cin.fail())
 			{
 				std::cin.clear();
 				BufferClear_STDIN('\n');
-				std::cerr << "[INPUT ERROR] Input Invalid. Please try again." << std::endl;
+				std::cerr << "\t[INPUT ERROR] Input Invalid. Please try again." << std::endl;
 				DelayRunTimeBy(SLEEP_ERROR_PROMPT);
 				continue;
 			}
@@ -1008,12 +1022,13 @@ void TTRM::DC_ETask() noexcept(false)
 				{
 					if (IterHandler_UnInt <= TaskHandlerSize)
 					{
-						std::cout << std::endl << "\t[WARNING] |> Are you sure you want to edit this task: '" << TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).TaskName << "'?" << std::endl
+						std::cout << std::endl
+								  << "\t[WARNING] |> Are you sure you want to edit this task: '" << TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).TaskName << "'?" << std::endl
 								  << "\t[INPUT  ] | ['Y'es or 'N'o] |> ",
 							std::cin >> InputHandler_Char;
 						if (std::cin.fail())
 						{
-							std::cerr << "[INPUT ERROR] -> Value Received is Invalid. Please try again." << std::endl;
+							std::cerr << "\t[INPUT ERROR] Value Received is Invalid. Please try again.";
 							std::cin.clear();
 							BufferClear_STDIN('\n');
 						}
@@ -1029,7 +1044,7 @@ void TTRM::DC_ETask() noexcept(false)
 								PrintConsoleASCII(221, 1);
 								PrintConsoleASCII(205, 3);
 								std::cout << " Task To Remind You Modification ";
-								PrintConsoleASCII(205, 52);
+								PrintConsoleASCII(205, 56);
 								PrintConsoleASCII(222, 1);
 								std::cout << std::endl
 										  << std::endl;
@@ -1044,7 +1059,7 @@ void TTRM::DC_ETask() noexcept(false)
 								std::cout << std::endl
 										  << "\t";
 								PrintConsoleASCII(221, 1);
-								PrintConsoleASCII(205, 88);
+								PrintConsoleASCII(205, 92);
 								PrintConsoleASCII(222, 1);
 								std::cout << std::endl
 										  << std::endl;
@@ -1077,7 +1092,7 @@ void TTRM::DC_ETask() noexcept(false)
 								PrintConsoleASCII(221, 1);
 								PrintConsoleASCII(205, 3);
 								std::cout << " Task To Remind You Modification ";
-								PrintConsoleASCII(205, 52);
+								PrintConsoleASCII(205, 56);
 								PrintConsoleASCII(222, 1);
 								std::cout << std::endl
 										  << std::endl;
@@ -1098,7 +1113,7 @@ void TTRM::DC_ETask() noexcept(false)
 								std::cout << std::endl
 										  << "\t";
 								PrintConsoleASCII(221, 1);
-								PrintConsoleASCII(205, 88);
+								PrintConsoleASCII(205, 92);
 								PrintConsoleASCII(222, 1);
 
 								std::cout << std::endl
@@ -1230,7 +1245,8 @@ void TTRM::DC_ETask() noexcept(false)
 										else
 										{
 											std::cin.clear();
-											std::cerr << std::endl << "\t[INPUT ERROR] |> Time Input is Invalid. Keep in mind that I need 24 hour format. Press Any Key To Try Again.";
+											std::cerr << std::endl
+													  << "\t[INPUT ERROR] |> Time Input is Invalid. Keep in mind that I need 24 hour format. Press Any Key To Try Again.";
 											BufferClear_STDIN('\n');
 											_getche();
 											continue;
@@ -1371,7 +1387,8 @@ void TTRM::DC_ETask() noexcept(false)
 									remove(SaveStatePath);
 									rename(FilePointState, SaveStatePath);
 
-									std::cout << std::endl << "\t[CONFIRMATION, SUCCESS] |> Task Modification @ '" << TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).TaskName << "' is now applied~!";
+									std::cout << std::endl
+											  << "\t[CONFIRMATION, SUCCESS] |> Task Modification @ '" << TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).TaskName << "' is now applied~!";
 									DelayRunTimeBy(SLEEP_OPRT_FINISHED);
 									continue;
 								}
@@ -1385,12 +1402,14 @@ void TTRM::DC_ETask() noexcept(false)
 
 							case CONFIRMED_FALSE_LOWER:
 							case CONFIRMED_FALSE_UPPER:
-								std::cout << std::endl << "\t[CONFIRMATION, SUCCESS] |> Task Deletion Cancelled.";
+								std::cout << std::endl
+										  << "\t[CONFIRMATION, SUCCESS] |> Task Deletion Cancelled.";
 								DelayRunTimeBy(SLEEP_OPRT_FINISHED);
 								continue;
 
 							default:
-								std::cout << std::endl << "\t[CONFIRMATION, ERROR] |> User Input Invalid.";
+								std::cout << std::endl
+										  << "\t[CONFIRMATION, ERROR] |> User Input Invalid.";
 								std::cin.clear();
 								BufferClear_STDIN('\n');
 								DelayRunTimeBy(SLEEP_OPRT_FAILED);
@@ -1400,7 +1419,8 @@ void TTRM::DC_ETask() noexcept(false)
 					}
 					else
 					{
-						std::cerr << std::endl << "\t[INPUT ERROR] |> User Requested To Delete Tasks Non-Existent or Out of Range...";
+						std::cerr << std::endl
+								  << "\t[INPUT ERROR] |> User Requested To Delete Tasks Non-Existent or Out of Range...";
 						DelayRunTimeBy(SLEEP_ERROR_PROMPT);
 						continue;
 					}
@@ -1413,7 +1433,8 @@ void TTRM::DC_ETask() noexcept(false)
 		}
 		else
 		{
-			std::cerr << std::endl << "\t[VIEW INFO] > Task Queue is currently empty! Please add some task/s.";
+			std::cerr << std::endl
+					  << "\t[VIEW INFO] > Task Queue is currently empty! Please add some task/s.";
 			DelayRunTimeBy(SLEEP_OPRT_FINISHED);
 			break;
 		}
@@ -1434,7 +1455,14 @@ void TTRM::DC_VTask() noexcept(false)
 	std::cout << std::endl;
 	SP_DisplayTasks(ViewTask);
 	std::cout << std::endl
-			  << "\tPress any KEY to go back from System Menu.";
+			  << "\t";
+	PrintConsoleASCII(221, 1);
+	PrintConsoleASCII(205, 3);
+	PrintConsoleASCII(205, 89);
+	PrintConsoleASCII(222, 1);
+	std::cout << std::endl
+			  << std::endl;
+	std::cout << "\tPress any KEY to go back from System Menu.";
 	_getche();
 	return;
 }
