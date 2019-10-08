@@ -2,7 +2,7 @@
 	* Task To Temind Me Core Declarations
     * Side Note: Technical Project Specific Essential Function Header File
     * File Category Type: Core Function Definitions, "CoreDef".
-	* Version: Close Beta Stage
+	* Version: Close BETA Testing Checkpoint
 	* 
 	* Project Lead, Janrey "CodexLink" Licas
 	* Project Director, Rejay "figureness" Mar
@@ -51,14 +51,14 @@ using namespace WinToastLib;
 // ! String Literal Project Description Defined Macro Declarations
 #define PROJECT_NAME L"Tasks To Remind Me C++ CLI"
 #define PROJECT_SHORTCODE L"TTRM for C++"
-#define PROJECT_VER L"Close Beta Stage"
+#define PROJECT_VER L"Close BETA Testing Checkpoint"
 #define PROJECT_CREATOR L"Data Structure Group 5"
 #define PROJECT_LINK L"https://github.com/CodexLink/TaskToRemindMe_CPlusPlus"
 
 // ! String Literals Version
 #define PROJECT_NAME_STRL "Tasks To Remind Me C++ CLI"
 #define PROJECT_SHORTCODE_STRL "TTRM for C++"
-#define PROJECT_VER_STRL "Close Beta Stage"
+#define PROJECT_VER_STRL "Close BETA Testing Checkpoint"
 #define PROJECT_CREATOR_STRL "Data Structure Group 5"
 #define PROJECT_LINK_STRL "https://github.com/CodexLink/TaskToRemindMe_CPlusPlus"
 
