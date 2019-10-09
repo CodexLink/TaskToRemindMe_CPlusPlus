@@ -2,7 +2,7 @@
 	* Task To Remind Me Core Components
     * Side Note: Technical Project Specific Essential Function Header File
     * File Category Type: Technical and Core Function Body Definition, "CoreFunc".
-	* Version: Close Beta Stage
+	* Version: Version Initial.10092018.1955
 	* 
 	* Project Lead, Janrey "CodexLink" Licas
 	* Project Director, Rejay "figureness" Mar
@@ -176,7 +176,7 @@ unsigned short TTRM::Cmpnt_Initializer() noexcept(false)
 	RECT ConsoleWindow, ClientScrWindow;
 	HMENU Console_BtnClose = GetSystemMenu(ConsoleWnd, FALSE);
 
-	SetConsoleTitle("Tasks To Remind Me C++ CLI, Close Beta Stage | Data Structure Group 5 >> https://github.com/CodexLink/TaskToRemindMe_CPlusPlus");
+	SetConsoleTitle("Tasks To Remind Me C++ CLI, Version Initial.10092018.1955 | Data Structure Group 5 >> https://github.com/CodexLink/TaskToRemindMe_CPlusPlus");
 
 	std::cout << std::endl
 			  << std::endl
@@ -1635,7 +1635,7 @@ void TTRM_WinToast::toastFailed() const
 	* Task To Remind Me Core Components
     * Side Note: Technical Project Specific Essential Function Header File
     * File Category Type: Technical and Core Function Body Definition, "CoreFunc".
-	* Version: Close Beta Stage
+	* Version: Version Initial.10092018.1955
 	* 
 	* Project Lead, Janrey "CodexLink" Licas
 	* Project Director, Rejay "figureness" Mar
