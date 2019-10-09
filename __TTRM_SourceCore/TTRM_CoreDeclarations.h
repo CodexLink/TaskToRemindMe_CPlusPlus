@@ -1,5 +1,5 @@
 /*
-	* Task To Temind Me Core Declarations
+	* Task To Remind Me Core Declarations
     * Side Note: Technical Project Specific Essential Function Header File
     * File Category Type: Core Function Definitions, "CoreDef".
 	* Version: Close BETA Testing Checkpoint, File Point Candidate #1
@@ -321,3 +321,12 @@ public:
 	tm ReminderData = NULL_SET;					 // * Actual Storage of the Reminders.
 };
 #endif
+/*
+	* Task To Remind Me Core Declarations
+    * Side Note: Technical Project Specific Essential Function Header File
+    * File Category Type: Core Function Definitions, "CoreDef".
+	* Version: Close BETA Testing Checkpoint, File Point Candidate #1
+	* 
+	* Project Lead, Janrey "CodexLink" Licas
+	* Project Director, Rejay "figureness" Mar Senar
+*/
