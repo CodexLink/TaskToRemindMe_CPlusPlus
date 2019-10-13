@@ -21,7 +21,7 @@ unsigned short WinToast_ReturnTrigger;
 std::string TTRM::Gen_UniqueRID() noexcept(true)
 {
 	std::string GeneratedID = NULL_STR;
-	srand(time(NULL));
+	srand((unsigned int)time(NULL));
 	for (IterHandler_UnShort = INIT_BASE_NUM; IterHandler_UnShort < RAND_MAXID_LENGTH; IterHandler_UnShort++)
 	{
 		GeneratedID += AlphaNumConst[rand() % RAND_MODULO_VAL];
@@ -106,7 +106,7 @@ unsigned __stdcall TTRM::MultiThread_ScanReminders(void *ArgsReserved)
 						continue;
 					}
 				}
-				return TaskList.size(); // * THREAD_PRC_TERM;
+				return (unsigned)TaskList.size(); // * THREAD_PRC_TERM;
 			}
 			else
 			{
@@ -120,7 +120,7 @@ unsigned __stdcall TTRM::MultiThread_ScanReminders(void *ArgsReserved)
 	}
 }
 
-void TTRM::WinToast_ReminderPrompt(std::string ReadTaskName, std::string ReadPersonInCharge, unsigned short ReadReminderType, signed ReadNotifyByTime, tm TMToRead) noexcept
+void TTRM::WinToast_ReminderPrompt(std::string ReadTaskName, std::string ReadPersonInCharge, unsigned short ReadReminderType, time_t ReadNotifyByTime, tm TMToRead) noexcept
 {
 	std::wstring SnoozeTime = std::to_wstring(SNOOZE_TIME);
 
@@ -192,7 +192,7 @@ unsigned short TTRM::Cmpnt_Initializer() noexcept(false)
 	GetWindowRect(ConsoleWnd, &ClientScrWindow);
 	Console_PosX = GetSystemMetrics(SM_CXSCREEN) / 2 - (ClientScrWindow.right - ClientScrWindow.left) / 2,
 	Console_PosY = GetSystemMetrics(SM_CYSCREEN) / 2 - (ClientScrWindow.bottom - ClientScrWindow.top) / 2,
-	MoveWindow(ConsoleWnd, Console_PosX, Console_PosY, ClientScrWindow.right - ClientScrWindow.left, (ClientScrWindow.bottom - ClientScrWindow.top) * 1.3, TRUE);
+	MoveWindow(ConsoleWnd, Console_PosX, Console_PosY, ClientScrWindow.right - ClientScrWindow.left, (ClientScrWindow.bottom - ClientScrWindow.top) * 2, TRUE);
 	EnableMenuItem(Console_BtnClose, SC_CLOSE, MF_GRAYED);
 
 	std::cout << "\tConsole Position and Styling |> Done." << std::endl
@@ -333,7 +333,7 @@ unsigned short TTRM::Cmpnt_Initializer() noexcept(false)
 	return FUNC_OOS;
 }
 
-void TTRM::SetConsoleCurPos(unsigned short SP_X, unsigned short SP_Y) noexcept(true)
+void TTRM::SetConsoleCurPos(short SP_X, short SP_Y) noexcept(true)
 {
 	COORD ConsolePosInfo = {SP_X, SP_Y};
 	HANDLE ConsoleHandler = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -558,9 +558,8 @@ void TTRM::SP_DisplayMenu() noexcept(false)
 			break;
 		}
 		if (!InputHandler_Int)
-			break;
+			return;
 	}
-	return;
 }
 
 void TTRM::DC_ATask() noexcept(false)
@@ -704,7 +703,7 @@ void TTRM::DC_ATask() noexcept(false)
 				}
 				else
 				{
-					CurrentDateTime = time(NULL) + ((MAX_TIME_MIN + ADJUST_BY_ONE) * NewTask.NotifyByTime);
+					CurrentDateTime = time(NULL) + (((time_t)(MAX_TIME_MIN + ADJUST_BY_ONE)) * NewTask.NotifyByTime);
 					NewTask.TempTM = localtime(&CurrentDateTime);
 					NewTask.ReminderData = *NewTask.TempTM;
 					break;
@@ -1157,7 +1156,7 @@ void TTRM::DC_ETask() noexcept(false)
 									{
 										if (NewModifiedTask.NotifyByTime)
 										{
-											CurrentDateTime = mktime(&TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).ReminderData) + ((MAX_TIME_MIN + ADJUST_BY_ONE) * NewModifiedTask.NotifyByTime);
+											CurrentDateTime = mktime(&TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).ReminderData) + (((time_t)(MAX_TIME_MIN + ADJUST_BY_ONE)) * NewModifiedTask.NotifyByTime);
 											NewModifiedTask.TempTM = localtime(&CurrentDateTime);
 											TaskList.at(IterHandler_UnInt - ADJUST_BY_ONE).ReminderData = *NewModifiedTask.TempTM;
 											NewModifiedTask.ReminderData = *NewModifiedTask.TempTM;

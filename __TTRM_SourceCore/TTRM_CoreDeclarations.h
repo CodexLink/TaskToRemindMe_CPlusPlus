@@ -49,14 +49,14 @@ using namespace WinToastLib;
 #define TTRM_DEFINITIONS
 
 // ! String Literal Project Description Defined Macro Declarations
-#define PROJECT_NAME L"Tasks To Remind Me C++ CLI"
-#define PROJECT_SHORTCODE L"TTRM for C++"
-#define PROJECT_VER L"Version Initial.10092018.1955"
-#define PROJECT_CREATOR L"Data Structure Group 5"
-#define PROJECT_LINK L"https://github.com/CodexLink/TaskToRemindMe_CPlusPlus"
+constexpr auto PROJECT_NAME = L"Tasks To Remind Me C++ CLI";
+constexpr auto PROJECT_SHORTCODE = L"TTRM for C++";
+constexpr auto PROJECT_VER = L"Version Initial.10092018.1955";
+constexpr auto PROJECT_CREATOR = L"Data Structure Group 5";
+constexpr auto PROJECT_LINK = L"https://github.com/CodexLink/TaskToRemindMe_CPlusPlus";
 
 // ! String Literals Version
-#define PROJECT_NAME_STRL "Tasks To Remind Me C++ CLI"
+constexpr auto PROJECT_NAME_STRL = "Tasks To Remind Me C++ CLI";
 #define PROJECT_SHORTCODE_STRL "TTRM for C++"
 #define PROJECT_VER_STRL "Version Initial.10092018.1955"
 #define PROJECT_CREATOR_STRL "Data Structure Group 5"
@@ -118,7 +118,7 @@ using namespace WinToastLib;
 #define MAX_TIME_MIN 59
 #define START_CTIME 1900 // * Year Starting Point. Used To Minus or Plus To Avoid MKTime Returning -1.
 
-// ! WinToast Magic Return Value To Significant Literals Declarations
+// ! WinToast Magical Return Value To Significant Literals Declarations
 #define IGNORE_REMINDER 0
 #define SNOOZE_REMINDER 1
 #define DISCARD_REMINDER 2
@@ -134,6 +134,8 @@ using namespace WinToastLib;
 #define QUICKR_MAX_TIME 180
 #define QUICKR_INV_MAX_TIME -45
 #define TASK_DISPLAY_LIMIT 5
+#define MAX_TASK_PUSHABLE_COUNT 512 // ! Find A Way To Use This One
+#define MAX_VECTOR_TEMP_SIZE 4 // * File Stream, Number of Columns To Parse
 
 // ! Time Threading Constraint Declarations
 #define SNOOZE_TIME 10
@@ -201,18 +203,8 @@ public:
 	// ! Class Destructor Declaration
 	~TTRM(void)
 	{
-		std::cout << std::endl
-				  << "\tProgram Termination |> Closing Multi-Thread Runtime." << std::endl;
+		WinToast::instance()->clear(); // ! Ensure WinToast Will Terminate Upon Program Close.
 		CloseHandle(MultiThreadHandler);
-		std::cout << "\tProgram Termination |> Multi-Thread Function Closed." << std::endl;
-		std::cout << "\tProgram Termination |> Program Terminating...";
-		std::cout << std::endl
-				  << std::endl
-				  << "\tGroup Members at CPE21FB1 Data Structure Group 5\n\t\tProject Lead: 'Janrey Licas',\n\t\tSystem Director: 'Rejay Mar Senar'"
-				  << std::endl;
-		std::cout << std::endl << "\tGoodbye.";
-		DelayRunTimeBy(SLEEP_SYS_TERM);
-		exit(FUNC_OOS);
 	}
 
 	// ! Function Prototype Declarations - START
@@ -221,14 +213,14 @@ public:
 	static unsigned __stdcall MultiThread_Wrapper(void *);
 	static unsigned __stdcall MultiThread_ScanReminders(void *);
 	// ! TTRM_WinToast Relative Functions. Not Declared to TTRM_WinToast due to Function Structure of the whole class.
-	static void WinToast_ReminderPrompt(std::string ReadName, std::string ReadInCharge, unsigned short ReadReminderType, signed ReadNotifyByTime, tm TMToRead) noexcept;
+	static void WinToast_ReminderPrompt(std::string ReadName, std::string ReadInCharge, unsigned short ReadReminderType, time_t ReadNotifyByTime, tm TMToRead) noexcept;
 
 	// ! TTRM's Initializer Function Declarations
 	void ParseGivenParam(unsigned short argcount, char *argcmd[]);
 	unsigned short Cmpnt_Initializer() noexcept(false);
 
 	// ! ASCII and Console Decorators Declarations
-	void SetConsoleCurPos(unsigned short SP_X, unsigned short SP_Y) noexcept(true);
+	void SetConsoleCurPos(short SP_X, short SP_Y) noexcept(true);
 	void PrintConsoleASCII(unsigned char CharToIter, unsigned short IterValue) noexcept(false);
 
 	// ! Task / Menu Displays Function Declarations
@@ -263,8 +255,8 @@ public:
 	// ! Various Important Handler >> Localtime, Multi-Threading and Console Handling
 	time_t EpochHandler = INIT_BASE_NUM;   // ! LocalTime Handler.
 	unsigned MTID_Handler = INIT_BASE_NUM; // ! Multi-Threading ID Handler, Can Possibly Anything.
-	HANDLE MultiThreadHandler;			   // * Special Variable for Checking Status of Thread, Used for WaitForSingleObject
-	HANDLE ConsoleHandler;				   // * Special Variable for Handling Current Console Process To Modify View and Other Such.
+	HANDLE MultiThreadHandler = NULL;	   // * Special Variable for Checking Status of Thread, Used for WaitForSingleObject
+	HANDLE ConsoleHandler = NULL;		   // * Special Variable for Handling Current Console Process To Modify View and Other Such.
 	COORD ConsolePosInfo = {INIT_BASE_NUM, INIT_BASE_NUM};
 	// ! File Stream Implementation
 	/* 
@@ -275,7 +267,7 @@ public:
 		* SaveStateHandler, Handler for Save State File
 		* TempSaveStateHandler, Handler for Temporary File
 	*/
-	std::string TempDataHandler, ConvertedHandler, DataLineHandler;
+	std::string TempDataHandler = NULL_STR, ConvertedHandler = NULL_STR, DataLineHandler = NULL_STR;
 	std::vector<std::string> PayloadHandler;
 	std::fstream SaveStateHandler;
 	std::fstream TempSaveStateHandler;
@@ -322,7 +314,7 @@ public:
 	std::string TaskName = NULL_STR;			 // * Task Name
 	std::string TaskInCharge = NULL_STR;		 // * Name of the Person Incharge.
 	unsigned short ReminderType = INIT_BASE_NUM; // * Used To Distinguish Type of Reminder.
-	signed short NotifyByTime = INIT_BASE_NUM;   // * Used by QuickRemind Type Reminder.
+	time_t NotifyByTime = INIT_BASE_NUM;   // * Used by QuickRemind Type Reminder.
 	tm *TempTM = NULL_SET;						 // * Temporary Use for Localtime and Data Passing to ReminderData.
 	tm ReminderData = NULL_SET;					 // * Actual Storage of the Reminders.
 };
