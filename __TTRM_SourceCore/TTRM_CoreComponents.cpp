@@ -181,9 +181,9 @@ unsigned short TTRM::Cmpnt_Initializer() noexcept(false)
 	std::cout << std::endl
 			  << std::endl
 			  << "\t";
-	PrintConsoleASCII(219, 1);
-	PrintConsoleASCII(205, 90);
-	PrintConsoleASCII(219, 1);
+	PrintConsoleASCII(ASCII_FullBlock, 1);
+	PrintConsoleASCII(ASCII_HDivider, 90);
+	PrintConsoleASCII(ASCII_FullBlock, 1);
 	std::cout << std::endl
 			  << std::endl
 			  << "\tConsole Position and Styling |> Working On It." << std::endl;
@@ -255,10 +255,10 @@ unsigned short TTRM::Cmpnt_Initializer() noexcept(false)
 				rename(FilePointState, SaveStatePath);
 				std::cout << std::endl
 						  << "\t";
-				PrintConsoleASCII(221, 1);
-				PrintConsoleASCII(205, 3);
-				PrintConsoleASCII(205, 90);
-				PrintConsoleASCII(222, 1);
+				PrintConsoleASCII(ASCII_VLDivider, 1);
+				PrintConsoleASCII(ASCII_HDivider, 3);
+				PrintConsoleASCII(ASCII_HDivider, 90);
+				PrintConsoleASCII(ASCII_VRDivider, 1);
 				std::cout << std::endl
 						  << std::endl;
 			}
@@ -267,9 +267,9 @@ unsigned short TTRM::Cmpnt_Initializer() noexcept(false)
 				std::cout << "\tSave State Create |> SaveState File Creation Failure. Fatal Error | Terminating Program" << std::endl
 						  << std::endl;
 				std::cout << "\t";
-				PrintConsoleASCII(219, 1);
-				PrintConsoleASCII(205, 90);
-				PrintConsoleASCII(219, 1);
+				PrintConsoleASCII(ASCII_FullBlock, 1);
+				PrintConsoleASCII(ASCII_HDivider, 90);
+				PrintConsoleASCII(ASCII_FullBlock, 1);
 				DelayRunTimeBy(SLEEP_ERROR_PROMPT);
 				return TERM_FAILED;
 			}
@@ -302,9 +302,9 @@ unsigned short TTRM::Cmpnt_Initializer() noexcept(false)
 			std::cout << "\tMulti-Threading | Simultaneous Wrapper Threading Initialized..." << std::endl
 					  << std::endl;
 			std::cout << "\t";
-			PrintConsoleASCII(219, 1);
-			PrintConsoleASCII(205, 90);
-			PrintConsoleASCII(219, 1);
+			PrintConsoleASCII(ASCII_FullBlock, 1);
+			PrintConsoleASCII(ASCII_HDivider, 90);
+			PrintConsoleASCII(ASCII_FullBlock, 1);
 			DelayRunTimeBy(SLEEP_OPRT_FINISHED);
 			return TERM_SUCCESS;
 		}
@@ -313,9 +313,9 @@ unsigned short TTRM::Cmpnt_Initializer() noexcept(false)
 			std::cerr << "\tWinToast Library |> Error. Cannot Initialize WinToast Library, Program Terminated." << std::endl
 					  << std::endl;
 			std::cout << "\t";
-			PrintConsoleASCII(219, 1);
-			PrintConsoleASCII(205, 90);
-			PrintConsoleASCII(219, 1);
+			PrintConsoleASCII(ASCII_FullBlock, 1);
+			PrintConsoleASCII(ASCII_HDivider, 90);
+			PrintConsoleASCII(ASCII_FullBlock, 1);
 			DelayRunTimeBy(SLEEP_ERROR_PROMPT);
 			return TERM_FAILED;
 		}
@@ -324,9 +324,9 @@ unsigned short TTRM::Cmpnt_Initializer() noexcept(false)
 	{
 		std::cerr << "\tWinToast Library |> Error. Cannot Initialize WinToast Library, Program Terminated." << std::endl;
 		std::cout << "\t";
-		PrintConsoleASCII(219, 1);
-		PrintConsoleASCII(205, 90);
-		PrintConsoleASCII(219, 1);
+		PrintConsoleASCII(ASCII_FullBlock, 1);
+		PrintConsoleASCII(ASCII_HDivider, 90);
+		PrintConsoleASCII(ASCII_FullBlock, 1);
 		DelayRunTimeBy(SLEEP_ERROR_PROMPT);
 		return TERM_FAILED;
 	}
@@ -341,12 +341,13 @@ void TTRM::SetConsoleCurPos(unsigned short SP_X, unsigned short SP_Y) noexcept(t
 	return;
 }
 
-void TTRM::PrintConsoleASCII(char CharToIter, unsigned short IterValue) noexcept(false)
+void TTRM::PrintConsoleASCII(unsigned char CharToIter, unsigned short IterValue) noexcept(false)
 {
 	while (IterValue--)
 	{
 		std::cout << ASCII_CharPrint(CharToIter);
 	}
+	return;
 }
 
 std::string TTRM::SP_DisplayTasksParser(REMINDER_TYPES IntType) noexcept(true)
@@ -407,6 +408,7 @@ void TTRM::SP_DisplayTasks(DISPLAY_OPTIONS WindowID_INT) noexcept(false)
 			break;
 		default:
 			std::cerr << "... ???" << std::endl;
+			break;
 		}
 		for (auto IterTasks : TaskList)
 		{
@@ -438,8 +440,8 @@ void TTRM::SP_DisplayTasks(DISPLAY_OPTIONS WindowID_INT) noexcept(false)
 				TaskNumHandler++;
 			}
 		}
-		return;
 	}
+	return;
 }
 
 std::string TTRM::SP_DLT() const noexcept(false)
@@ -464,20 +466,20 @@ void TTRM::SP_DisplayMenu() noexcept(false)
 		std::cout << "\tLocal System Time Last Frame |> " << SP_DLT() << std::endl;
 		std::cout << std::endl
 				  << "\t";
-		PrintConsoleASCII(221, 1);
-		PrintConsoleASCII(205, 3);
+		PrintConsoleASCII(ASCII_VLDivider, 1);
+		PrintConsoleASCII(ASCII_HDivider, 3);
 		std::cout << " Task List, Arranged by Recent Insertion ";
-		PrintConsoleASCII(205, 30);
-		PrintConsoleASCII(222, 1);
+		PrintConsoleASCII(ASCII_HDivider, 30);
+		PrintConsoleASCII(ASCII_VRDivider, 1);
 		std::cout << std::endl;
 		SP_DisplayTasks(AtHome);
 		std::cout << std::endl
 				  << "\t";
-		PrintConsoleASCII(221, 1);
-		PrintConsoleASCII(205, 3);
+		PrintConsoleASCII(ASCII_VLDivider, 1);
+		PrintConsoleASCII(ASCII_HDivider, 3);
 		std::cout << " System Options ";
-		PrintConsoleASCII(205, 55);
-		PrintConsoleASCII(222, 1);
+		PrintConsoleASCII(ASCII_HDivider, 55);
+		PrintConsoleASCII(ASCII_VRDivider, 1);
 		std::cout << std::endl
 				  << std::endl
 				  << "\tChoice #1 |> Add a Task To Remind You" << std::endl
@@ -493,10 +495,10 @@ void TTRM::SP_DisplayMenu() noexcept(false)
 				  << "\tChoice #0 |> Terminate / Exit / Close The Program" << std::endl
 				  << std::endl;
 		std::cout << "\t";
-		PrintConsoleASCII(221, 1);
-		PrintConsoleASCII(205, 3);
-		PrintConsoleASCII(205, 71);
-		PrintConsoleASCII(222, 1);
+		PrintConsoleASCII(ASCII_VLDivider, 1);
+		PrintConsoleASCII(ASCII_HDivider, 3);
+		PrintConsoleASCII(ASCII_HDivider, 71);
+		PrintConsoleASCII(ASCII_VRDivider, 1);
 		std::cout << std::endl
 				  << std::endl;
 
@@ -573,11 +575,11 @@ void TTRM::DC_ATask() noexcept(false)
 		std::cout << std::endl
 				  << std::endl
 				  << "\t";
-		PrintConsoleASCII(221, 1);
-		PrintConsoleASCII(205, 3);
+		PrintConsoleASCII(ASCII_VLDivider, 1);
+		PrintConsoleASCII(ASCII_HDivider, 3);
 		std::cout << " Task To Remind You Insertion ";
-		PrintConsoleASCII(205, 55);
-		PrintConsoleASCII(222, 1);
+		PrintConsoleASCII(ASCII_HDivider, 55);
+		PrintConsoleASCII(ASCII_VRDivider, 1);
 		std::cout << std::endl
 				  << std::endl;
 		std::cout << "\tThings To Know For Reminder Insertion"
@@ -590,9 +592,9 @@ void TTRM::DC_ATask() noexcept(false)
 				  << "\tFor Cancelling Insertion Operation, 'TYPE --CANCEL' On Any Of Those TWO Parameters" << std::endl;
 		std::cout << std::endl
 				  << "\t";
-		PrintConsoleASCII(221, 1);
-		PrintConsoleASCII(205, 88);
-		PrintConsoleASCII(222, 1);
+		PrintConsoleASCII(ASCII_VLDivider, 1);
+		PrintConsoleASCII(ASCII_HDivider, 88);
+		PrintConsoleASCII(ASCII_VRDivider, 1);
 		std::cout << std::endl
 				  << std::endl;
 		std::cout << "\tName of the Task To Remind You |> ", std::getline(std::cin, NewTask.TaskName);
@@ -635,11 +637,11 @@ void TTRM::DC_ATask() noexcept(false)
 
 		std::cout << std::endl
 				  << "\t";
-		PrintConsoleASCII(221, 1);
-		PrintConsoleASCII(205, 3);
+		PrintConsoleASCII(ASCII_VLDivider, 1);
+		PrintConsoleASCII(ASCII_HDivider, 3);
 		std::cout << " Task To Remind You Insertion ";
-		PrintConsoleASCII(205, 55);
-		PrintConsoleASCII(222, 1);
+		PrintConsoleASCII(ASCII_HDivider, 55);
+		PrintConsoleASCII(ASCII_VRDivider, 1);
 		std::cout << std::endl
 				  << std::endl;
 		std::cout << "\tThings To Know For Reminder Types and What To Choose"
@@ -661,9 +663,9 @@ void TTRM::DC_ATask() noexcept(false)
 				  << "\tFor Cancelling Insertion Operation, TYPE '0' At This Point." << std::endl;
 		std::cout << std::endl
 				  << "\t";
-		PrintConsoleASCII(221, 1);
-		PrintConsoleASCII(205, 88);
-		PrintConsoleASCII(222, 1);
+		PrintConsoleASCII(ASCII_VLDivider, 1);
+		PrintConsoleASCII(ASCII_HDivider, 88);
+		PrintConsoleASCII(ASCII_VRDivider, 1);
 
 		std::cout << std::endl
 				  << std::endl
@@ -847,19 +849,19 @@ void TTRM::DC_DTask() noexcept(false)
 		std::cout << std::endl
 				  << std::endl
 				  << "\t";
-		PrintConsoleASCII(221, 1);
-		PrintConsoleASCII(205, 3);
+		PrintConsoleASCII(ASCII_VLDivider, 1);
+		PrintConsoleASCII(ASCII_HDivider, 3);
 		std::cout << " Currently Available Reminders To Trigger From The Queue System ";
-		PrintConsoleASCII(205, 25);
-		PrintConsoleASCII(222, 1);
+		PrintConsoleASCII(ASCII_HDivider, 25);
+		PrintConsoleASCII(ASCII_VRDivider, 1);
 		std::cout << std::endl;
 		SP_DisplayTasks(DeleteTask);
 		std::cout << std::endl
 				  << "\t";
-		PrintConsoleASCII(221, 1);
-		PrintConsoleASCII(205, 3);
-		PrintConsoleASCII(205, 89);
-		PrintConsoleASCII(222, 1);
+		PrintConsoleASCII(ASCII_VLDivider, 1);
+		PrintConsoleASCII(ASCII_HDivider, 3);
+		PrintConsoleASCII(ASCII_HDivider, 89);
+		PrintConsoleASCII(ASCII_VRDivider, 1);
 		std::cout << std::endl
 				  << std::endl;
 		if (TaskHandlerSize)
@@ -990,19 +992,19 @@ void TTRM::DC_ETask() noexcept(false)
 			std::cout << std::endl
 					  << std::endl
 					  << "\t";
-			PrintConsoleASCII(221, 1);
-			PrintConsoleASCII(205, 3);
+			PrintConsoleASCII(ASCII_VLDivider, 1);
+			PrintConsoleASCII(ASCII_HDivider, 3);
 			std::cout << " Currently Available Reminders To Trigger From The Queue System ";
-			PrintConsoleASCII(205, 25);
-			PrintConsoleASCII(222, 1);
+			PrintConsoleASCII(ASCII_HDivider, 25);
+			PrintConsoleASCII(ASCII_VRDivider, 1);
 			std::cout << std::endl;
 			SP_DisplayTasks(EditTask);
 			std::cout << std::endl
 					  << "\t";
-			PrintConsoleASCII(221, 1);
-			PrintConsoleASCII(205, 3);
-			PrintConsoleASCII(205, 89);
-			PrintConsoleASCII(222, 1);
+			PrintConsoleASCII(ASCII_VLDivider, 1);
+			PrintConsoleASCII(ASCII_HDivider, 3);
+			PrintConsoleASCII(ASCII_HDivider, 89);
+			PrintConsoleASCII(ASCII_VRDivider, 1);
 			std::cout << std::endl
 					  << std::endl;
 			std::cout << "\t[INPUT] Please Select A Task # or '0' To Go Back Menu |> ",
@@ -1040,11 +1042,11 @@ void TTRM::DC_ETask() noexcept(false)
 								BufferClear_STDIN('\n');
 								std::cout << std::endl
 										  << "\t";
-								PrintConsoleASCII(221, 1);
-								PrintConsoleASCII(205, 3);
+								PrintConsoleASCII(ASCII_VLDivider, 1);
+								PrintConsoleASCII(ASCII_HDivider, 3);
 								std::cout << " Task To Remind You Modification ";
-								PrintConsoleASCII(205, 56);
-								PrintConsoleASCII(222, 1);
+								PrintConsoleASCII(ASCII_HDivider, 56);
+								PrintConsoleASCII(ASCII_VRDivider, 1);
 								std::cout << std::endl
 										  << std::endl;
 								std::cout << "\tThings To Know For Reminder Data Modification"
@@ -1057,9 +1059,9 @@ void TTRM::DC_ETask() noexcept(false)
 										  << "\tYou cannot cancel this operation. If you want to ignore, please keep putting 0 to retain data." << std::endl;
 								std::cout << std::endl
 										  << "\t";
-								PrintConsoleASCII(221, 1);
-								PrintConsoleASCII(205, 92);
-								PrintConsoleASCII(222, 1);
+								PrintConsoleASCII(ASCII_VLDivider, 1);
+								PrintConsoleASCII(ASCII_HDivider, 92);
+								PrintConsoleASCII(ASCII_VRDivider, 1);
 								std::cout << std::endl
 										  << std::endl;
 								std::cout << "\tName of the Task To Remind You, Put '0' To Retain |> ", std::getline(std::cin, NewModifiedTask.TaskName);
@@ -1088,11 +1090,11 @@ void TTRM::DC_ETask() noexcept(false)
 								}
 								std::cout << std::endl
 										  << "\t";
-								PrintConsoleASCII(221, 1);
-								PrintConsoleASCII(205, 3);
+								PrintConsoleASCII(ASCII_VLDivider, 1);
+								PrintConsoleASCII(ASCII_HDivider, 3);
 								std::cout << " Task To Remind You Modification ";
-								PrintConsoleASCII(205, 56);
-								PrintConsoleASCII(222, 1);
+								PrintConsoleASCII(ASCII_HDivider, 56);
+								PrintConsoleASCII(ASCII_VRDivider, 1);
 								std::cout << std::endl
 										  << std::endl;
 								std::cout << "\tThings To Know For Reminder Types and What To Choose"
@@ -1114,9 +1116,9 @@ void TTRM::DC_ETask() noexcept(false)
 										  << "\tFor Cancelling Insertion Operation, TYPE '0' At This Point." << std::endl;
 								std::cout << std::endl
 										  << "\t";
-								PrintConsoleASCII(221, 1);
-								PrintConsoleASCII(205, 92);
-								PrintConsoleASCII(222, 1);
+								PrintConsoleASCII(ASCII_VLDivider, 1);
+								PrintConsoleASCII(ASCII_HDivider, 92);
+								PrintConsoleASCII(ASCII_VRDivider, 1);
 
 								std::cout << std::endl
 										  << std::endl
@@ -1142,7 +1144,7 @@ void TTRM::DC_ETask() noexcept(false)
 								switch (NewModifiedTask.ReminderType)
 								{
 								case QuickRemind:
-									
+
 									std::cout << "\tMinutes Left To Remind You |> ", std::cin >> NewModifiedTask.NotifyByTime;
 									if (NewModifiedTask.NotifyByTime < QUICKR_INV_MAX_TIME || NewModifiedTask.NotifyByTime > QUICKR_MAX_TIME)
 									{
@@ -1418,19 +1420,19 @@ void TTRM::DC_VTask() noexcept(false)
 	std::cout << std::endl
 			  << std::endl
 			  << "\t";
-	PrintConsoleASCII(221, 1);
-	PrintConsoleASCII(205, 3);
+	PrintConsoleASCII(ASCII_VLDivider, 1);
+	PrintConsoleASCII(ASCII_HDivider, 3);
 	std::cout << " Currently Available Reminders To Trigger From The Queue System ";
-	PrintConsoleASCII(205, 25);
-	PrintConsoleASCII(222, 1);
+	PrintConsoleASCII(ASCII_HDivider, 25);
+	PrintConsoleASCII(ASCII_VRDivider, 1);
 	std::cout << std::endl;
 	SP_DisplayTasks(ViewTask);
 	std::cout << std::endl
 			  << "\t";
-	PrintConsoleASCII(221, 1);
-	PrintConsoleASCII(205, 3);
-	PrintConsoleASCII(205, 89);
-	PrintConsoleASCII(222, 1);
+	PrintConsoleASCII(ASCII_VLDivider, 1);
+	PrintConsoleASCII(ASCII_HDivider, 3);
+	PrintConsoleASCII(ASCII_HDivider, 89);
+	PrintConsoleASCII(ASCII_VRDivider, 1);
 	std::cout << std::endl
 			  << std::endl;
 	std::cout << "\tPress any KEY to go back from System Menu.";
@@ -1445,11 +1447,11 @@ void TTRM::DC_RQT() noexcept(false)
 		std::cout << std::endl
 				  << std::endl
 				  << "\t";
-		PrintConsoleASCII(221, 1);
-		PrintConsoleASCII(205, 3);
+		PrintConsoleASCII(ASCII_VLDivider, 1);
+		PrintConsoleASCII(ASCII_HDivider, 3);
 		std::cout << " Task Queue and Save State Deletion - Confirmation ";
-		PrintConsoleASCII(205, 20);
-		PrintConsoleASCII(222, 1);
+		PrintConsoleASCII(ASCII_HDivider, 20);
+		PrintConsoleASCII(ASCII_VRDivider, 1);
 		std::cout << std::endl
 				  << std::endl
 				  << "\t[WARNING] |> Are you sure you want delete all your tasks reminders from the queue system and save state?" << std::endl
@@ -1501,11 +1503,11 @@ void TTRM::DC_RTLFSS() noexcept(false)
 
 	std::cout << std::endl
 			  << "\t";
-	PrintConsoleASCII(221, 1);
-	PrintConsoleASCII(205, 3);
+	PrintConsoleASCII(ASCII_VLDivider, 1);
+	PrintConsoleASCII(ASCII_HDivider, 3);
 	std::cout << " Updating Task List From Save State - Explicit ";
-	PrintConsoleASCII(205, 24);
-	PrintConsoleASCII(222, 1);
+	PrintConsoleASCII(ASCII_HDivider, 24);
+	PrintConsoleASCII(ASCII_VRDivider, 1);
 	std::cout << std::endl
 			  << std::endl
 			  << "\tSave State Load  |> Refreshing List from Save State File." << std::endl;
@@ -1539,10 +1541,10 @@ void TTRM::DC_RTLFSS() noexcept(false)
 				  << "\tSave State Loaded |> Done. Loaded " << IterHandler_UnInt << " Reminders!" << std::endl;
 		std::cout << std::endl
 				  << "\t";
-		PrintConsoleASCII(221, 1);
-		PrintConsoleASCII(205, 3);
-		PrintConsoleASCII(205, 71);
-		PrintConsoleASCII(222, 1);
+		PrintConsoleASCII(ASCII_VLDivider, 1);
+		PrintConsoleASCII(ASCII_HDivider, 3);
+		PrintConsoleASCII(ASCII_HDivider, 71);
+		PrintConsoleASCII(ASCII_VRDivider, 1);
 	}
 	else
 	{
@@ -1556,20 +1558,20 @@ void TTRM::DC_RTLFSS() noexcept(false)
 			rename(FilePointState, SaveStatePath);
 			std::cout << std::endl
 					  << "\t";
-			PrintConsoleASCII(221, 1);
-			PrintConsoleASCII(205, 3);
-			PrintConsoleASCII(205, 71);
-			PrintConsoleASCII(222, 1);
+			PrintConsoleASCII(ASCII_VLDivider, 1);
+			PrintConsoleASCII(ASCII_HDivider, 3);
+			PrintConsoleASCII(ASCII_HDivider, 71);
+			PrintConsoleASCII(ASCII_VRDivider, 1);
 		}
 		else
 		{
 			std::cout << "\tSave State Create |> SaveState File Creation Failure. Fatal Error | Terminating Program" << std::endl;
 			std::cout << std::endl
 					  << "\t";
-			PrintConsoleASCII(221, 1);
-			PrintConsoleASCII(205, 3);
-			PrintConsoleASCII(205, 71);
-			PrintConsoleASCII(222, 1);
+			PrintConsoleASCII(ASCII_VLDivider, 1);
+			PrintConsoleASCII(ASCII_HDivider, 3);
+			PrintConsoleASCII(ASCII_HDivider, 71);
+			PrintConsoleASCII(ASCII_VRDivider, 1);
 			std::cout << std::endl
 					  << std::endl;
 			TTRM::~TTRM(); // ! Calls Destructors Because This Function is VOID. So we terminate, explicitly.

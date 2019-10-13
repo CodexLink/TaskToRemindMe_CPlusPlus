@@ -142,6 +142,12 @@ using namespace WinToastLib;
 // ! Randomizer Constraint Declarations
 #define RAND_MAXID_LENGTH 6
 #define RAND_MODULO_VAL 70
+
+// ! ASCII Equivalents Declarations (in HEX Form To Keep C4309 Warning from Visual Studio 2019 	)
+#define ASCII_VLDivider 0xDD // * Vertical Left
+#define ASCII_VRDivider 0xDE // * Vertical Right
+#define	ASCII_HDivider 0xCD // * Horizontal Line Render
+#define	ASCII_FullBlock 0xDB // * Big Block
 #endif
 
 // ! Task To Remind Me Macro Definitions - END
@@ -223,7 +229,7 @@ public:
 
 	// ! ASCII and Console Decorators Declarations
 	void SetConsoleCurPos(unsigned short SP_X, unsigned short SP_Y) noexcept(true);
-	void PrintConsoleASCII(char CharToIter, unsigned short IterValue) noexcept(false);
+	void PrintConsoleASCII(unsigned char CharToIter, unsigned short IterValue) noexcept(false);
 
 	// ! Task / Menu Displays Function Declarations
 	std::string SP_DisplayTasksParser(REMINDER_TYPES IntType) noexcept(true);
