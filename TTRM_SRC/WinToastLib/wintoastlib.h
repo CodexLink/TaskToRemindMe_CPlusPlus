@@ -79,10 +79,10 @@ namespace WinToastLib {
 
         enum AudioSystemFile {
             DefaultSound,
-            IM, 
+            IM,
             Mail,
-            Reminder, 
-            SMS, 
+            Reminder,
+            SMS,
             Alarm,
             Alarm2,
             Alarm3,

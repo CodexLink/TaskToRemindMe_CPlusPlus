@@ -1,28 +1,25 @@
 /*
-	* Task To Remind Me Core Components
-    * Side Note: Technical Project Specific Essential Function Header File
-    * File Category Type: Technical and Core Function Body Definition, "CoreFunc".
-	* Version: Version Initial.10092018.1955
-	* 
-	* Project Lead, Janrey "CodexLink" Licas
-	* Project Director, Rejay "figureness" Mar
+	# Task To Remind Me Core Definitions | TTRM_CoreDef.cpp
+    # File Category Type: Core Function Body Definition
+	# Version: Version Post.06042020.1955
 
-	! Overview	 
-	* Core Functions
-	* Technical Functions
+	# Created by Janrey Licas | http://github.com/CodexLink
+	! Licensed in GPL-3.0 | See LICENSE.md for more information.
 */
 
-#include "TTRM_CoreDeclarations.h"
+#include "TTRM_CoreDecl.h"
 
+// # Might be fixed later about this one.
 // ! Force Requiring Non-Class Variables, These Variables are declared to reduce insanity while working on them.
-std::deque<TTRM_TaskData> TaskList;
+
+volatile std::deque<struct TASK_DATALIST> TaskList;
 unsigned short WinToast_ReturnTrigger;
 
 std::string TTRM::Gen_UniqueRID() noexcept(true)
 {
 	std::string GeneratedID = NULL_STR;
 	srand((unsigned int)time(NULL));
-	for (IterHandler_UnShort = INIT_BASE_NUM; IterHandler_UnShort < RAND_MAXID_LENGTH; IterHandler_UnShort++)
+	for (unsigned short IterHandler_UnShort = INIT_BASE_NUM; IterHandler_UnShort < RAND_MAXID_LENGTH; IterHandler_UnShort++)
 	{
 		GeneratedID += AlphaNumConst[rand() % RAND_MODULO_VAL];
 	}
@@ -31,7 +28,7 @@ std::string TTRM::Gen_UniqueRID() noexcept(true)
 
 unsigned __stdcall TTRM::MultiThread_Wrapper(void *DataReserved)
 {
-	HANDLE MultiThreadWrapper;
+	HANDLE MultiThreadWrapper = NULL;
 	while (CONTINOUS_RNN_PROC)
 	{
 		MultiThreadWrapper = (HANDLE)_beginthreadex(0, 0, &TTRM::MultiThread_ScanReminders, 0, 0, 0);
@@ -154,7 +151,7 @@ void TTRM::WinToast_ReminderPrompt(std::string ReadTaskName, std::string ReadPer
 
 void TTRM::ParseGivenParam(unsigned short argcount, char *argv[])
 {
-	IterHandler_UnInt = INIT_BASE_NUM;
+	unsigned int IterHandler_UnInt = INIT_BASE_NUM;
 	std::cout << "\tQuick Tasks To Remind Me C++ in CLI version. BETA" << std::endl
 			  << std::endl;
 	std::cout << "\t\tCreated by Data Structure Group 5, Group Members {\n \t\t\tHeader Core Developer: 'Janrey Licas',\n \t\t\tAppFlow Director: 'Rejay Mar'\n};" << std::endl
@@ -168,7 +165,7 @@ void TTRM::ParseGivenParam(unsigned short argcount, char *argv[])
 }
 
 // ! Slightly Not Cleaned.
-unsigned short TTRM::Cmpnt_Initializer() noexcept(false)
+unsigned short TTRM::Cmpnt_Initializer()
 {
 	TTRM_TaskData SaveStateContainer;
 	long Console_PosX = INIT_BASE_NUM, Console_PosY = INIT_BASE_NUM;
@@ -231,7 +228,7 @@ unsigned short TTRM::Cmpnt_Initializer() noexcept(false)
 				SaveStateContainer.TaskName = PayloadHandler[1];
 				SaveStateContainer.TaskInCharge = PayloadHandler[2];
 				SaveStateContainer.ReminderType = std::stoi(PayloadHandler[3]);
-				EpochHandler = std::stoll(PayloadHandler[4]);
+				time_t EpochHandler = std::stoll(PayloadHandler[4]);
 				SaveStateContainer.TempTM = localtime(&EpochHandler);
 				SaveStateContainer.ReminderData = *SaveStateContainer.TempTM;
 				++IterHandler_UnInt;
@@ -341,7 +338,7 @@ void TTRM::SetConsoleCurPos(short SP_X, short SP_Y) noexcept(true)
 	return;
 }
 
-void TTRM::PrintConsoleASCII(unsigned char CharToIter, unsigned short IterValue) noexcept(false)
+void TTRM::PrintConsoleASCII(unsigned char CharToIter, unsigned short IterValue)
 {
 	while (IterValue--)
 	{
@@ -368,9 +365,9 @@ std::string TTRM::SP_DisplayTasksParser(REMINDER_TYPES IntType) noexcept(true)
 	}
 }
 
-void TTRM::SP_DisplayTasks(DISPLAY_OPTIONS WindowID_INT) noexcept(false)
+void TTRM::SP_DisplayTasks(DISPLAY_OPTIONS WindowID_INT)
 {
-	TaskNumHandler = START_BY_ONE;
+	unsigned short TaskNumHandler = START_BY_ONE;
 	bool isAtHome = false;
 	if (!TaskList.size())
 	{
@@ -444,7 +441,7 @@ void TTRM::SP_DisplayTasks(DISPLAY_OPTIONS WindowID_INT) noexcept(false)
 	return;
 }
 
-std::string TTRM::SP_DLT() const noexcept(false)
+std::string TTRM::SP_DLT() const
 {
 	time_t TimeStamp = time(NULL);
 	std::stringstream StrTime;
@@ -454,10 +451,11 @@ std::string TTRM::SP_DLT() const noexcept(false)
 }
 
 // ! Starting Point of Program |> Display Menu, Does Not Throw Any Exceptions
-void TTRM::SP_DisplayMenu() noexcept(false)
+void TTRM::SP_DisplayMenu()
 {
 	while (CONTINOUS_RNN_PROC)
 	{
+		signed int InputHandler_Int = INIT_BASE_NUM;
 		ConsoleCall("CLS");
 		std::cout << std::endl
 				  << std::endl
@@ -562,7 +560,7 @@ void TTRM::SP_DisplayMenu() noexcept(false)
 	}
 }
 
-void TTRM::DC_ATask() noexcept(false)
+void TTRM::DC_ATask()
 {
 	while (FUNC_AWAIT_CMPLT)
 	{
@@ -839,11 +837,14 @@ void TTRM::DC_ATask() noexcept(false)
 	}
 	return;
 }
-void TTRM::DC_DTask() noexcept(false)
+void TTRM::DC_DTask()
 {
 	while (FUNC_AWAIT_CMPLT)
 	{
-		TaskHandlerSize = TaskList.size();
+		size_t TaskHandlerSize = TaskList.size();
+		char InputHandler_Char = NULL_CHAR;
+		char InputHandler_Char = NULL_CHAR;
+		unsigned int IterHandler_UnInt = INIT_BASE_NUM;
 		ConsoleCall("CLS");
 		std::cout << std::endl
 				  << std::endl
@@ -916,7 +917,7 @@ void TTRM::DC_DTask() noexcept(false)
 									{
 										if (!SaveStateHandler.eof())
 										{
-											for (IterHandler_UnShort = INIT_BASE_NUM; IterHandler_UnShort < PayloadHandler.size(); IterHandler_UnShort++)
+											for (unsigned short IterHandler_UnShort = INIT_BASE_NUM; IterHandler_UnShort < PayloadHandler.size(); IterHandler_UnShort++)
 											{
 												TempSaveStateHandler << PayloadHandler[IterHandler_UnShort] << (IterHandler_UnShort == (PayloadHandler.size() - ADJUST_BY_ONE) ? "\n" : ",");
 											}
@@ -977,14 +978,15 @@ void TTRM::DC_DTask() noexcept(false)
 	return;
 }
 
-void TTRM::DC_ETask() noexcept(false)
+void TTRM::DC_ETask()
 {
 	while (FUNC_AWAIT_CMPLT)
 	{
 		TTRM_TaskData NewModifiedTask; // * Create Object To Pass On...
 		time_t CurrentDateTime = time(NULL);
 		tm *CurrentTContainer = localtime(&CurrentDateTime);
-		TaskHandlerSize = TaskList.size();
+		size_t TaskHandlerSize = TaskList.size();
+		unsigned int IterHandler_UnInt = INIT_BASE_NUM;
 		ConsoleCall("CLS");
 		if (TaskHandlerSize)
 		{
@@ -1338,7 +1340,7 @@ void TTRM::DC_ETask() noexcept(false)
 										{
 											if (!SaveStateHandler.eof())
 											{
-												for (IterHandler_UnShort = INIT_BASE_NUM; IterHandler_UnShort < PayloadHandler.size(); IterHandler_UnShort++)
+												for (unsigned short IterHandler_UnShort = INIT_BASE_NUM; IterHandler_UnShort < PayloadHandler.size(); IterHandler_UnShort++)
 												{
 													TempSaveStateHandler << PayloadHandler[IterHandler_UnShort] << (IterHandler_UnShort == (PayloadHandler.size() - ADJUST_BY_ONE) ? "\n" : ",");
 												}
@@ -1413,7 +1415,7 @@ void TTRM::DC_ETask() noexcept(false)
 	}
 	return;
 }
-void TTRM::DC_VTask() noexcept(false)
+void TTRM::DC_VTask()
 {
 	ConsoleCall("CLS");
 	std::cout << std::endl
@@ -1439,8 +1441,9 @@ void TTRM::DC_VTask() noexcept(false)
 	return;
 }
 
-void TTRM::DC_RQT() noexcept(false)
+void TTRM::DC_RQT()
 {
+	char InputHandler_Char = NULL_CHAR;
 	if (TaskList.size())
 	{
 		std::cout << std::endl
@@ -1494,10 +1497,10 @@ void TTRM::DC_RQT() noexcept(false)
 	}
 }
 
-void TTRM::DC_RTLFSS() noexcept(false)
+void TTRM::DC_RTLFSS()
 {
 	TTRM_TaskData SaveStateContainer;
-	IterHandler_UnInt = INIT_BASE_NUM;
+	unsigned int IterHandler_UnInt = INIT_BASE_NUM;
 	TaskList.clear();
 
 	std::cout << std::endl
@@ -1528,7 +1531,7 @@ void TTRM::DC_RTLFSS() noexcept(false)
 			SaveStateContainer.TaskName = PayloadHandler[1];
 			SaveStateContainer.TaskInCharge = PayloadHandler[2];
 			SaveStateContainer.ReminderType = std::stoi(PayloadHandler[3]);
-			EpochHandler = std::stoll(PayloadHandler[4]);
+			time_t EpochHandler = std::stoll(PayloadHandler[4]);
 			SaveStateContainer.TempTM = localtime(&EpochHandler);
 			SaveStateContainer.ReminderData = *SaveStateContainer.TempTM;
 			++IterHandler_UnInt;
@@ -1628,20 +1631,11 @@ void TTRM_WinToast::toastFailed() const
 
 // ! WinToast FUNCTION CONTENT DECLARATION - END POINT
 
-// ! TECHNICAL FUNCTION CONTENT DECLARATION - END POINT
-
-// *----------------------------------------------------------------------------
-
 /*
-	* Task To Remind Me Core Components
-    * Side Note: Technical Project Specific Essential Function Header File
-    * File Category Type: Technical and Core Function Body Definition, "CoreFunc".
-	* Version: Version Initial.10092018.1955
-	* 
-	* Project Lead, Janrey "CodexLink" Licas
-	* Project Director, Rejay "figureness" Mar
+	# Task To Remind Me Core Definitions | TTRM_CoreDef.cpp
+    # File Category Type: Core Function Body Definition
+	# Version: Version Post.06042020.1955
 
-	! Overview	 
-	* Core Functions
-	* Technical Functions
+	# Created by Janrey Licas | http://github.com/CodexLink
+	! Licensed in GPL-3.0 | See LICENSE.md for more information.
 */
