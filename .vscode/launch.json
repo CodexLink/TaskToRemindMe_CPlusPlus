@@ -1,0 +1,129 @@
+{
+    "version": "0.2.0",
+    "configurations": [{
+            "name": "(Windows) Attach",
+            "type": "cppvsdbg",
+            "request": "attach",
+            "processId": "${command:pickProcess}"
+        },
+        {
+            "name": "Launch Compiled Active Win32 Console in External Console",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": true,
+            "presentation": {
+                "hidden": false,
+                "group": "main_build",
+                "order": 1
+            }
+        },
+        {
+            "name": "Launch Compiled Active Win32 Console in Integrated Terminal",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "presentation": {
+                "hidden": false,
+                "group": "main_build",
+                "order": 2
+            }
+        },
+        {
+            "name": "Launch Compiled Active G++ CPP in GDB (External Terminal)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": true,
+            "MIMode": "gdb",
+            "miDebuggerPath": "C:\\MinGW\\bin\\gdb.exe",
+            "setupCommands": [{
+                "description": "Enable pretty-printing for gdb",
+                "text": "-enable-pretty-printing",
+                "ignoreFailures": true
+            }],
+            "presentation": {
+                "hidden": false,
+                "group": "general_build",
+                "order": 4
+            }
+        },
+        {
+            "name": "Launch Compiled Active G++ CPP in GDB (Integrated Terminal)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "C:\\MinGW\\bin\\gdb.exe",
+            "setupCommands": [{
+                "description": "Enable pretty-printing for gdb",
+                "text": "-enable-pretty-printing",
+                "ignoreFailures": true
+            }],
+            "presentation": {
+                "hidden": false,
+                "group": "general_build",
+                "order": 3
+            }
+        }
+    ],
+    "compounds": [{
+            "name": "Compile Active and Launch Win32 Console in External Console",
+            "configurations": ["Launch Compiled Active Win32 Console in External Console"],
+            "preLaunchTask": "Compile Active CPP File with CL.exe (MSV Compiler)",
+            "presentation": {
+                "hidden": false,
+                "group": "compile_n_build",
+                "order": 1
+            }
+        },
+        {
+            "name": "Compile Active and Launch Win32 Console in Integrated Terminal",
+            "configurations": ["Launch Compiled Active Win32 Console in Integrated Terminal"],
+            "preLaunchTask": "Compile Active CPP File with CL.exe (MSV Compiler)",
+            "presentation": {
+                "hidden": false,
+                "group": "compile_n_build",
+                "order": 2
+            }
+        },
+        {
+            "name": "Compile Active and Launch G++ Console in External Terminal",
+            "configurations": ["Launch Compiled Active G++ CPP in GDB (External Terminal)"],
+            "preLaunchTask": "Compile Active CPP File in G++.exe (GNU Standard Compiler)",
+            "presentation": {
+                "hidden": false,
+                "group": "compile_n_build",
+                "order": 3
+            }
+        },
+        {
+            "name": "Compile Active and Launch G++ Console in Integrated Terminal",
+            "configurations": ["Launch Compiled Active G++ CPP in GDB (Integrated Terminal)"],
+            "preLaunchTask": "Compile Active CPP File in G++.exe (GNU Standard Compiler)",
+            "presentation": {
+                "hidden": false,
+                "group": "compile_n_build",
+                "order": 4
+            }
+        }
+    ]
+}
