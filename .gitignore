@@ -85,14 +85,7 @@ dkms.conf
 *Release/
 
 # Personal Private Demo Files
-OtherLibraries_Demos/
-Experimentals/
 TaskToRemindMe_CPP_Check-cppcheck-build-dir/
 *.cppcheck
 *.csv
 *._ttrmdat
-
-# Visual Studio Code Workspace Folder
-
-.vscode/
-.vs/
