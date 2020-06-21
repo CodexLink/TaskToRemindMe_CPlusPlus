@@ -1,85 +1,61 @@
 <h1 align="center">Task To Remind Me in C++ CLI</h1>
-<h5 align="center">Task To Remind Me in C++ CLI with WinToast and SQLite Integration, Specialized in C++ OOP</h5>
+<h4 align="center">A Bare Minimum Task Scheduler Implemented in C++11 with Pure Win32API Mix. Think of it as a reminder / clock app but accessible instantly.</h4>
 
-<div align="center" markdown="10">
-  <a href="https://travis-ci.com/CodexLink/TaskToRemindMe_CPlusPlus">
-    <img src="https://badgen.net/travis/CodexLink/TaskToRemindMe_CPlusPlus" alt="Build Status">
-  </a>
-<a href="https://www.codefactor.io/repository/github/codexlink/TaskToRemindMe_CPlusPlus">
-    <img src="https://www.codefactor.io/repository/github/codexlink/TaskToRemindMe_CPlusPlus/badge" alt="CodeFactor" />
-</a>
-<a href="https://www.codacy.com/app/CodexLink/TaskToRemindMe_CPlusPlus?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=CodexLink/TaskToRemindMe_CPlusPlus&amp;utm_campaign=Badge_Grade"><img src="https://api.codacy.com/project/badge/Grade/78fb2db215e1473e9bc4f4c0dfaa896f"/></a>
-  <a href="https://github.com/CodexLink/TaskToRemindMe_CPlusPlus">
-    <img src="https://badgen.net/github/status/CodexLink/TaskToRemindMe_CPlusPlus" alt="Repository Status">
-  </a>
-  <a href="https://github.com/CodexLink/TaskToRemindMe_CPlusPlus">
-    <img src="https://badgen.net/github/open-issues/CodexLink/TaskToRemindMe_CPlusPlus" alt="Current Opened Issues">
-  </a>
-  <a href="https://github.com/CodexLink/TaskToRemindMe_CPlusPlus">
-    <img src="https://badgen.net/github/closed-issues/CodexLink/TaskToRemindMe_CPlusPlus" alt="Closed Issues">
-  </a>
-  <a href="https://github.com/CodexLink/TaskToRemindMe_CPlusPlus">
-    <img src="https://badgen.net/github/last-commit/CodexLink/TaskToRemindMe_CPlusPlus" alt="Repository Last Commit">
-  </a>
-  <a href="https://github.com/CodexLink/TaskToRemindMe_CPlusPlus">
-    <img src="https://badgen.net/github/assets-dl/CodexLink/TaskToRemindMe_CPlusPlus" alt="Repository Downloads">
-  </a>
-  <a href="https://github.com/CodexLink/TaskToRemindMe_CPlusPlus">
-    <img src="https://badgen.net/github/license/CodexLink/TaskToRemindMe_CPlusPlus" alt="Repository License">
-  </a>
+<div align="center">
+
+[![CodeFactor](https://www.codefactor.io/repository/github/codexlink/tasktoremindme/badge)](https://www.codefactor.io/repository/github/codexlink/tasktoremindme)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/6c3ef6df0d4c4ffebdd5099b4b87e3e6)](https://www.codacy.com/manual/CodexLink/TaskToRemindMe?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=CodexLink/TaskToRemindMe&amp;utm_campaign=Badge_Grade)
+[![Repository Downloads](https://badgen.net/github/assets-dl/CodexLink/TaskToRemindMe_CPlusPlus)](https://github.com/CodexLink/TaskToRemindMe_CPlusPlus)
+[![Repository License](https://badgen.net/github/license/CodexLink/TaskToRemindMe_CPlusPlus)](https://github.com/CodexLink/TaskToRemindMe_CPlusPlus)
+
 </div>
 
+# Welcome / Introduction
 
-# Welcome!
 Hello!
 
-## Introduction / What is this?
-
 ## Table of Contents
-> This README will be having Table of Contents due to possibly documenting a lot of components in this repository.
+
+This README may contain multiple subheaders to comply and satisfy people who might be taking interest to look at this project.
+
+* Soon.
 
 ## Getting Started
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. 
+
+Before you get started on this project. Keep in mind that this project was built at C++11. The reason is, some functionalities conforms to what I want. And generally, C++11 is by default the bare minimum C++ version that I could possibly make out of.
 
 ## Prerequisites
-> ...
 
-### IDE Recommended
- > 1. Visual Studio Code (Dependent IDE) - For Coding w/o Compiling - Easy, w/ Compiling + Dependencies
- > 2. Visual Studio 2019 (REQUIRED IDE) - For Compiling...
- 
-### TOOLS / Components Used in Visual Studio Code and Visual Studio 2019 Dependencies
-> 1. Beautify (Optional) for Code Beautification
-> 2. Code Runner - Alternative Compiler for Visual Studio Code
-
-### Collaboration
-> 1. GitKraken, Git GUI and Git Bash, Advanced - Primary Collaboration Tool
-> 2. Github Desktop, Git GUI and Git Bash - Secondary Collaboration Tool
+...
 
 ## Deployment
-Just... I won't explain it at the moment.
 
-## Built With
-* [Visual Studio Code](https://code.visualstudio.com/) - A Scalable IDE with
-Multiple Supported Essential Extension and Components for Easy Development and Integration.
-* [Visual Studio 2019](https://visualstudio.microsoft.com/vs/) - All-In-One IDE Packed with Essential Development Tools (Exclusive-Windows Only Headers Also Included.)
+Soon.
+
+## Built with
+
+* [Visual Studio Code](https://code.visualstudio.com/) - A Scalable IDE with Multiple Supported Essential Extension and Components for Easy Development and Integration.
+* Visual Studio 2016 Build Tools
 
 ## Contributing
+
 This will be written soon.
 
 ## Versioning
+
 I don't use any software versioning yet. But instead I usually do using time and date in 24H format, in short, datestamp. For example:
-```
+
+```text
 When Build is done: at 4:51 PM at 08/21/2018
-Result Versioning is: 1651-082118.BETA
+Result Versioning is: (PostWork|Initial).082118.1651
 ```
 
 ## Authors
-> Here are the list of authors who is taking part of the project.
 
-1. **Janrey Licas** - *Initial Work / Project Lead* - [CodexLink](https://github.com/CodexLink)
+Here are the list of authors who is still taking part of the project.
+
+1. **Janrey Licas** - *Initial Work / Project Lead / Post Work Developer* - [CodexLink](https://github.com/CodexLink)
 
 ## License
-This project is licensed under the GNU v3 License - see the [LICENSE.md](https://github.com/CodexLink/TaskToRemindMe_CPlusPlus
-/blob/master/LICENSE) file for details
 
+This project is licensed under the GNU v3 License - see the [LICENSE.md](https://github.com/CodexLink/TaskToRemindMe_CPlusPlus/blob/master/LICENSE) file for details
