@@ -31,6 +31,9 @@
 
 
 # Welcome!
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/8b4692178f464560b587f7d1d9709be6)](https://app.codacy.com/manual/CodexLink/TaskToRemindMe?utm_source=github.com&utm_medium=referral&utm_content=CodexLink/TaskToRemindMe&utm_campaign=Badge_Grade_Settings)
+
 Hello!
 
 ## Introduction / What is this?
