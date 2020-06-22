@@ -28,7 +28,7 @@
 
 // # Constructor - START POINT
 
-IOHandler::IOHandler(LAUNCH_OPTIONS launchType, EMBRACE_TYPE defaultEmbrace)
+IOHandler::IOHandler(LAUNCH_OPTIONS launchType = LAUNCH_OPTIONS::NONE, EMBRACE_TYPE defaultEmbrace = LAUNCH_OPTIONS::EMBRACE_OUTPUT_LEVEL)
 {
 }
 
@@ -56,13 +56,18 @@ void IOHandler::changeDefEmbrace(const char embBegin, const char embEnd)
 
 // # Output Handler Functions - START POINT
 
+template <typename dtMin>
+void showOutputMin(dtMin literalOutput, STATE_CONFIG storeConfigToUse = STATE_CONFIG::RETAIN_LAST_SET_FLAG)
+{
+}
+
 template <typename dt>
-void IOHandler::showOutput(dt literalOutput, COLOR_DEFINITIONS colorOutput, COLOR_DEFINITIONS colorMsg, OUTPUT_TYPE levelOutput, EMBRACE_TYPE embraceOutputType)
+void IOHandler::showOutput(dt literalOutput, COLOR_DEFINITIONS colorOutput = COLOR_DEFINITIONS::BRIGHT_WHITE, COLOR_DEFINITIONS colorMsg = COLOR_DEFINITIONS::BRIGHT_WHITE, OUTPUT_TYPE levelOutput = OUTPUT_TYPE::OUTPUT_NORMAL, EMBRACE_TYPE embraceOutputType = EMBRACE_TYPE::EMBRACE_OUTPUT_LEVEL)
 {
 }
 
 template <typename dtEX>
-void IOHandler::showOutputEx(dtEX literalOutput, _COLOR_OUTPUT textColorSetOutput = {COLOR_DEFINITIONS::BRIGHT_WHITE, COLOR_DEFINITIONS::BRIGHT_YELLOW}, _COLOR_OUTPUT textColorSetMsg = {COLOR_DEFINITIONS::BRIGHT_WHITE, COLOR_DEFINITIONS::BRIGHT_YELLOW}, bool appendOutputType = true, OUTPUT_TYPE levelOutput = OUTPUT_TYPE::OUTPUT_NORMAL, EMBRACE_TYPE embraceOutputType = EMBRACE_TYPE::EMBRACE_OUTPUT_LEVEL)
+void IOHandler::showOutputEx(dtEX literalOutput, _COLOR_OUTPUT textColorSetOutput, _COLOR_OUTPUT textColorSetMsg, bool appendOutputType = true, OUTPUT_TYPE levelOutput, EMBRACE_TYPE embraceOutputType)
 {
 }
 

@@ -7,7 +7,7 @@
     @descrip: Handles Inputs By Logic [...]. Think of a handler with additional features on it such as actions to do when it returns false or something, it could run referenced function.
 
     ! Copyright
-    
+
     # Copyright (C) 2020  Janrey "CodexLink" Licas
 
     ! This program is free software: you can redistribute it and/or modify
@@ -115,22 +115,6 @@ public:
         BRIGHT_WHITE
     };
 
-    enum LAUNCH_OPTIONS : unsigned
-    {
-        NONE,                              // # Literally None. Use this generally if you dont want to apply unforseen changes.
-        FORCE_IGNORE_STD_COLOR,            // # Apply only if we dont want to get blinded by rainbow everytime we want to debug or for other issues / reasons.
-        FORCE_OVERRIDE_DEFAULT_COLOR_SETS, // # Apply if you want to change colors for problemIndicators. For instance, (Warning, Note, Critical, Reminder, etc...)
-    };
-
-    enum OUTPUT_TYPE : unsigned
-    {
-        OUTPUT_NORMAL,
-        OUTPUT_INFO,
-        OUTPUT_WARNING,
-        OUTPUT_CRITICAL,
-        OUTPUT_ERROR
-    };
-
     enum EMBRACE_TYPE : unsigned
     {
         EMBRACE_NOTHING,
@@ -147,8 +131,35 @@ public:
         RELAUNCH_FUNC
     };
 
-    // # Constructor
-    IOHandler(LAUNCH_OPTIONS launchType, EMBRACE_TYPE defaultEmbrace);
+    enum LAUNCH_OPTIONS : unsigned
+    {
+        NONE,                              // # Literally None. Use this generally if you dont want to apply unforseen changes.
+        FORCE_IGNORE_STD_COLOR,            // # Apply only if we dont want to get blinded by rainbow everytime we want to debug or for other issues / reasons.
+        FORCE_OVERRIDE_DEFAULT_COLOR_SETS, // # Apply if you want to change colors for problemIndicators. For instance, (Warning, Note, Critical, Reminder, etc...)
+    };
+
+    enum OUTPUT_TYPE : unsigned
+    {
+        OUTPUT_NORMAL,
+        OUTPUT_INFO,
+        OUTPUT_WARNING,
+        OUTPUT_CRITICAL,
+        OUTPUT_ERROR
+    };
+
+    enum STATE_CONFIG : unsigned
+    {
+        APPLY_NOTHING,         // # Use Nothing Obviously. Use Default Configuration Set By The Library or By Someone Who Supplies Library Constructor.
+        APPLY_COLOR_CONFIG,    // # Applies Color Config. This includes COLOR_OUTPUT and STD_OUTPUT_COLORS
+        APPLY_MSG_CONFIG,      // # Applies Message Config. This includes OUTPUT_LVL_MESSAGE and OUTPUT_SEP_N_EMBR static structs.
+        USE_ALL_STYLE_CONFIGS, // # Uses All Stored Configurations. Structs mentioned are child structs of _OUT_ATTRIBUTES.
+        RETAIN_LAST_SET_FLAG   // ! Retains Last Called Flags. This doesn't need to be re-called or called when using showOutputMin() function.
+        // RESET_CONFIG?,      // ! Resets Config Obviously. This drains all struct values that is included inside parent struct named as 'static _OUT_ATTRIBUTES OUT_ATTRS'.
+
+    };
+
+    // # Constructor - Think More About The Constructor Arguments Except for LAUNCH_OPTIONS.
+    IOHandler(LAUNCH_OPTIONS launchType = LAUNCH_OPTIONS::NONE, EMBRACE_TYPE defaultEmbrace = EMBRACE_TYPE::EMBRACE_OUTPUT_LEVEL);
 
     // # Technical Overrider Functions
     /*
@@ -157,7 +168,7 @@ public:
         ! 2. OUTPUT_SEP_N_EMBR
         ! 3. COLOR_OUTPUT
         * These are static structs and is under parent struct called (static)(typedef struct outAttr) _OUT_ATTRIBUTES.
-        # Keep in mind that, if we used standard versions of Output Handler or used Extended Version but leaving it empty.
+        # Keep in mind that, if we used standard versions of Output Handler or used Extended Version but leaving some arguments it empty.
         # Anything that is inside of the following structs will be used further. This was the intended functionality to avoid re-calling
         # long @ss output handler functions with confusing arguments on it.
     */
@@ -171,10 +182,19 @@ public:
         ! Involves Templates for Dynamic Acceptance of Value's Respective Data Type.
     */
 
+    template <typename dtMin>
+    void showOutputMin(dtMin literalOutput, STATE_CONFIG storeConfigToUse = STATE_CONFIG::RETAIN_LAST_SET_FLAG);
+    /*
+        ! 1. void shotOutputMin()
+            # Description: Minimal Standard Version of Output Handler. Uses Struct Storages by Default.
+            # Parameters
+            *   1. dtMin(anyDataType by template) literalOutput - Any Value with any datatype given. Keep in mind that this converts dtMin to std::string at any point!
+            *   2. STATE_CONFIG storeConfigToUse(enum), defaults to STATE_CONFIG::RETAIN_LAST_SET_FLAG - Check enum STATE_CONFIG Item Comments for more information.
+    */
     template <typename dt>
     void showOutput(dt literalOutput, COLOR_DEFINITIONS colorOutput, COLOR_DEFINITIONS colorMsg, OUTPUT_TYPE levelOutput, EMBRACE_TYPE embraceOutputType);
     /*
-        ! 1. void showOutput()
+        ! 2. void showOutput()
             # Description: Standard Version of Output Handler. It Handles String and Outputs According To Parameters Given.
             # Parameters
             *   1. dt(anyDataType by template) literalOutput - Any Value That Follows Referenced Variable Data Type. WILL CONVERT TO STD::STRING AS POSSIBLE.
@@ -182,7 +202,7 @@ public:
             *   3. OUTPUT_TYPE(enum) levelOutput - Appends Additional String to indicate the importance of message. Default by NONE. If user indicates other than that, it will automatically append it.
             *   4. EMBRACE_TYPE(enum) embraceOutputType - Add Styling by embracing output or the whole message or both with "[ ]". Secondary embracer is "( )".
             ! @returns > Styled Output.
-
+            # Note: This function overrides any struct values that is associated in the arguments!
             # Examples.
             1. -
             2. -
@@ -190,9 +210,9 @@ public:
     */
 
     template <typename dtEX>
-    void showOutputEx(dtEX literalOutput, _COLOR_OUTPUT textColorSetOutput = {COLOR_DEFINITIONS::BRIGHT_WHITE, COLOR_DEFINITIONS::BRIGHT_YELLOW}, _COLOR_OUTPUT textColorSetMsg = {COLOR_DEFINITIONS::BRIGHT_WHITE, COLOR_DEFINITIONS::BRIGHT_YELLOW}, bool appendOutputType = true, OUTPUT_TYPE levelOutput = OUTPUT_TYPE::OUTPUT_NORMAL, EMBRACE_TYPE embraceOutputType = EMBRACE_TYPE::EMBRACE_OUTPUT_LEVEL); //# Uses fillColor();
+    void showOutputEx(dtEX literalOutput, _COLOR_OUTPUT textColorSetOutput, _COLOR_OUTPUT textColorSetMsg, bool appendOutputType, OUTPUT_TYPE levelOutput, EMBRACE_TYPE embraceOutputType);
 /*
-        ! 2. void showOutputEx()
+        ! 3. void showOutputEx()
             # Description: Extended Version of Output Handler. It has more arguments for further customizations to the output the user wants.
             # Parameters
             *   1. dt (anyDataType by template) literalOutput - Refer to void showOutput() regarding this one.
@@ -204,6 +224,9 @@ public:
             *   7. bool shouldAddSeperator - Checks whether the output should have a seperator in between output level / importnace and message.
             *   8. char seperatorSymbol - Overrides Seperator indicated in the struct _OUTPUT_SEP_N_EMBR.SEPERATOR_MID. If (6) is set to false, (7) argument inputs will be ignored!
             ! @retuns > Even More Styled Output.
+
+            # Note: This function overrides associated struct values such as _COLOR_OUTPUT, OUTPUT_TYPE, EMBRACE_TYPE!
+            #       For best case usage. Run this one time and proceed to use showOutputMin(). You could use showOutput() to further change some values of the following structs.
 
             # Examples.
             1. -
@@ -243,6 +266,7 @@ public:
     };
 
     static _LAYOUT_HEX_CONTAINER HEX_CONTAINER;
+    static _LAYOUT_COLOR_CONTAINER COLOR_CONTAINER;
 
     // # Use case of this should be simple. Intention was to create a structure design without overrides such as a text to place in.
     void printLine(unsigned short w, unsigned short h, COORD curPos, unsigned char hexVal, PRINT_METHODS printDirection);
@@ -263,7 +287,7 @@ public:
 private:
     // ! @todo | Need More Documentation About These Functions.
     // # // # Initializer Functions
-    void initOutColors(); // # Argument To Modify is STD_OUTPUT_COLORS. Though since we're in Class Scope, no need to reference it since it's accessible.
+    void initOutColors();    // # Argument To Modify is STD_OUTPUT_COLORS. Though since we're in Class Scope, no need to reference it since it's accessible.
     void initOutStdColors(); // # Argument To Modify is STD_OUTPUT_COLORS. Though since we're in Class Scope, no need to reference it since it's accessible.
     void initSeperator();
     void initEmbrace();
