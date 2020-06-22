@@ -5,6 +5,23 @@
 
     @descrip: Handles Outputs Elegantly By Requiring Only One Call Function Instead Of Stray ASCII Exposed in Source Code.
     @descrip: Handles Inputs By Logic [...]. Think of a handler with additional features on it such as actions to do when it returns false or something, it could run referenced function.
+
+    ! Copyright
+    
+    # Copyright (C) 2020  Janrey "CodexLink" Licas
+
+    ! This program is free software: you can redistribute it and/or modify
+    ! it under the terms of the GNU General Public License as published by
+    ! the Free Software Foundation, either version 3 of the License, or
+    ! (at your option) any later version.
+
+    ! This program is distributed in the hope that it will be useful,
+    ! but WITHOUT ANY WARRANTY; without even the implied warranty of
+    ! MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    ! GNU General Public License for more details.
+
+    ! You should have received a copy of the GNU General Public License
+    ! along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #pragma once
@@ -19,7 +36,7 @@ class IOHandler
     // # Private Class Scope for Struct and Variables
     // ! This is required to put up so that public and private functions could see any references.
 private:
-    // # Standard Output Colors. These are used for specific level of messages.
+    // # Standard Output Colors. These are used for specific level or plays as important role of messages.
     typedef struct stdOutputColors
     {
         unsigned char OUT_CLR_NORMAL = 0,
@@ -237,25 +254,25 @@ public:
     // # Input Handler Functions
     template <typename dtInRet>
     dtInRet handleInput(dtInRet *varRef = NULL); // # Variable Dynamic. Even though returned dynamically. We should give options to user to change something else.
-    template <typename dtInRetEx>
+
     // # Investigate further if I want to go for std::function of normal pointer function such as void (*caller)(dt), where dt is DataType
-    dtInRetEx handleInputEx(dtInRetEx *varRef = NULL, ); // # Variable Dynamic. Even though returned dynamically. We should give options to user to change something else.
+    template <typename dtInRetEx, typename dtInRetFuncEx>
+    dtInRetEx handleInputEx(dtInRetEx *varRef = NULL, IN_RET_FAIL_ACTIONS overridenRet = IN_RET_FAIL_ACTIONS::DO_NOTHING, dtInRetFuncEx (*triggerFunc)(...) = NULL); // # Variable Dynamic. Even though returned dynamically. We should give options to user to change something else.
 
     // # Private Class Scope Functions
 private:
     // ! @todo | Need More Documentation About These Functions.
-    // # Class Functions
+    // # // # Initializer Functions
     void initOutColors(); // # Argument To Modify is STD_OUTPUT_COLORS. Though since we're in Class Scope, no need to reference it since it's accessible.
     void initOutStdColors(); // # Argument To Modify is STD_OUTPUT_COLORS. Though since we're in Class Scope, no need to reference it since it's accessible.
     void initSeperator();
     void initEmbrace();
 
-    // # Sets Output Type Strings Color. Both Two Functions Modify COLOR_OUTPUT static struct.
+    // # Color Modifier Functions. Sets Output Type Strings Color. Both Two Functions Modify COLOR_OUTPUT static struct. No Default as this functions are modifiers.
     inline void setOutBG(unsigned char bgValue);
     inline void setOutFG(unsigned char fgValue);
 
+    // # General Callable Function. This was a required function to void showOutputEx();
     inline void appendOutputType(const char *dataToAppend); // # Appends String along with output Type for Specified Importance of the Message. Also uses outSeperator.
-
-    // # Callable Function. This was a required function to void showOutputEx();
     void calculateColor(_COLOR_OUTPUT textColorSet);
 };
