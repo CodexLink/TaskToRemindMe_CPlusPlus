@@ -13,15 +13,15 @@
 // ! Force Requiring Non-Class Variables, These Variables are declared to reduce insanity while working on them.
 
 volatile std::deque<struct TASK_DATALIST> TaskList;
-unsigned short WinToast_ReturnTrigger;
 
-std::string TTRM::Gen_UniqueRID() noexcept(true)
+// # args: none. | For Generating Unique ID.
+std::string TTRM::GenerateUID() noexcept(true)
 {
 	std::string GeneratedID = NULL_STR;
 	srand((unsigned int)time(NULL));
-	for (unsigned short IterHandler_UnShort = INIT_BASE_NUM; IterHandler_UnShort < RAND_MAXID_LENGTH; IterHandler_UnShort++)
+	for (unsigned short IterHandler_UnShort = INIT_BASE_NUM; IterHandler_UnShort < RANDOMIZER_CONSTRAINTS::MAXID_LENGTH; IterHandler_UnShort++)
 	{
-		GeneratedID += AlphaNumConst[rand() % RAND_MODULO_VAL];
+		GeneratedID += AlphaNumConst[rand() % RANDOMIZER_CONSTRAINTS::MODULO_VAL];
 	}
 	return GeneratedID;
 }
@@ -29,7 +29,7 @@ std::string TTRM::Gen_UniqueRID() noexcept(true)
 unsigned __stdcall TTRM::MultiThread_Wrapper(void *DataReserved)
 {
 	HANDLE MultiThreadWrapper = NULL;
-	while (CONTINOUS_RNN_PROC)
+	while (ON_LOOP::CONTINOUS_ON_PROC)
 	{
 		MultiThreadWrapper = (HANDLE)_beginthreadex(0, 0, &TTRM::MultiThread_ScanReminders, 0, 0, 0);
 		WaitForSingleObject(MultiThreadWrapper, INFINITE);
@@ -50,18 +50,18 @@ unsigned __stdcall TTRM::MultiThread_ScanReminders(void *ArgsReserved)
 		{
 			if (mktime(&TaskList.at(ObjectScanIter).ReminderData) <= time(NULL))
 			{
-				WinToast_ReturnTrigger = INIT_BASE_NUM;
+				WT_RET_VALUE = INIT_BASE_NUM;
 				WinToast_ReminderPrompt(TaskList.at(ObjectScanIter).TaskName, TaskList.at(ObjectScanIter).TaskInCharge, TaskList.at(ObjectScanIter).ReminderType, TaskList.at(ObjectScanIter).NotifyByTime, TaskList.at(ObjectScanIter).ReminderData);
 				while (THREAD_AWAIT_CMPLT)
 				{
-					if (WinToast_ReturnTrigger == SNOOZE_REMINDER)
+					if (WT_RET_VALUE == SNOOZE_REMINDER)
 					{
 						time_t CurrentTime = mktime(&TaskList.at(ObjectScanIter).ReminderData) + ((MAX_TIME_MIN + ADJUST_BY_ONE) * SNOOZE_TIME);
 						tm *TempIncrementer = localtime(&CurrentTime);
 						TaskList.at(ObjectScanIter).ReminderData = *TempIncrementer;
 						return THREAD_PRC_TERM;
 					}
-					else if (WinToast_ReturnTrigger == DISCARD_REMINDER)
+					else if (WT_RET_VALUE == DISCARD_REMINDER)
 					{
 						std::fstream WinToast_StateHandler;
 						std::fstream WinToast_TempStateHandler;
@@ -149,31 +149,33 @@ void TTRM::WinToast_ReminderPrompt(std::string ReadTaskName, std::string ReadPer
 	WinToast::instance()->showToast(ShowReminder, new TTRM_WinToast);
 }
 
-void TTRM::ParseGivenParam(unsigned short argcount, char *argv[])
+// # Returns bool to check if we have properly processed everything that is passed. If failed, terminate or ignore.
+bool TTRM::ParseGivenParam(unsigned short argcount, char *argv[])
 {
 	unsigned int IterHandler_UnInt = INIT_BASE_NUM;
-	std::cout << "\tQuick Tasks To Remind Me C++ in CLI version. BETA" << std::endl
-			  << std::endl;
-	std::cout << "\t\tCreated by Data Structure Group 5, Group Members {\n \t\t\tHeader Core Developer: 'Janrey Licas',\n \t\t\tAppFlow Director: 'Rejay Mar'\n};" << std::endl
-			  << std::endl;
 	std::cout << "[Perform Parameter Given] |> Counted Parameter: " << argcount << std::endl;
 	while (!strcmp(argv[IterHandler_UnInt], "") && IterHandler_UnInt != LIMIT_ARGC_COUNTER)
 	{
 		// TODO: Create more features here. Use switch for Selection of Data here.
 		std::cout << " Parameter Index " << IterHandler_UnInt << " |> Parameter Value -> " << argv[IterHandler_UnInt] << std::endl;
 	}
+	return true; // ! Return false if something is malformed.
 }
 
 // ! Slightly Not Cleaned.
 unsigned short TTRM::Cmpnt_Initializer()
 {
-	TTRM_TaskData SaveStateContainer;
+	//struct TTRM_TaskData SaveStateContainer;
+
 	long Console_PosX = INIT_BASE_NUM, Console_PosY = INIT_BASE_NUM;
 	HWND ConsoleWnd = GetConsoleWindow();
 	RECT ConsoleWindow, ClientScrWindow;
 	HMENU Console_BtnClose = GetSystemMenu(ConsoleWnd, FALSE);
 
-	SetConsoleTitle("Tasks To Remind Me C++ CLI, Version Initial.10092018.1955 | Data Structure Group 5 >> https://github.com/CodexLink/TaskToRemindMe_CPlusPlus");
+	std::stringstream ConsTitle;
+	ConsTitle << PROJECT_METADATA.LONG_NAME << ", " << PROJECT_METADATA.CURR_VERSION << " | " << PROJECT_METADATA.CREATOR_NAME;
+
+	SetConsoleTitle((LPCSTR)&ConsTitle.str());
 
 	std::cout << std::endl
 			  << std::endl
@@ -187,6 +189,8 @@ unsigned short TTRM::Cmpnt_Initializer()
 
 	GetClientRect(ConsoleWnd, &ConsoleWindow);
 	GetWindowRect(ConsoleWnd, &ClientScrWindow);
+
+	// # Need to work this one better. Create another example regarding this one.
 	Console_PosX = GetSystemMetrics(SM_CXSCREEN) / 2 - (ClientScrWindow.right - ClientScrWindow.left) / 2,
 	Console_PosY = GetSystemMetrics(SM_CYSCREEN) / 2 - (ClientScrWindow.bottom - ClientScrWindow.top) / 2,
 	MoveWindow(ConsoleWnd, Console_PosX, Console_PosY, ClientScrWindow.right - ClientScrWindow.left, (ClientScrWindow.bottom - ClientScrWindow.top) * 2, TRUE);
@@ -338,12 +342,24 @@ void TTRM::SetConsoleCurPos(short SP_X, short SP_Y) noexcept(true)
 	return;
 }
 
-void TTRM::PrintConsoleASCII(unsigned char CharToIter, unsigned short IterValue)
+void TTRM::PrintConsoleASCII(const char *CharToIter, unsigned short IterValue)
 {
 	while (IterValue--)
 	{
-		std::cout << ASCII_CharPrint(CharToIter);
+		std::cout << system(CharToIter);
 	}
+	return;
+}
+
+inline void TTRM::DelayRunTimeBy(unsigned short MillSec)
+{
+	std::this_thread::sleep_for(std::chrono::milliseconds(MillSec));
+	return;
+}
+
+inline void TTRM::BufferClear_STDIN()
+{
+	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 	return;
 }
 
@@ -502,11 +518,11 @@ void TTRM::SP_DisplayMenu()
 
 		std::cout << "\t[USER INPUT] Your Choice and ENTER |> ";
 		std::cin >> InputHandler_Int;
-		BufferClear_STDIN('\n');
+		BufferClear_STDIN();
 		if (std::cin.fail())
 		{
 			std::cin.clear();
-			BufferClear_STDIN('\n');
+			BufferClear_STDIN();
 			std::cout << std::endl
 					  << "\t[INPUT ERROR] Input is Detected as Non-Integer.";
 			DelayRunTimeBy(SLEEP_ERROR_PROMPT);
@@ -543,7 +559,7 @@ void TTRM::SP_DisplayMenu()
 		case RefreshMenu:
 			std::cout << std::endl
 					  << "\t[TASKLIST REFRESH] Refreshing Task List Display for Value Updates...";
-			DelayRunTimeBy(SLEEP_DISPLAY_WINDOW);
+			DelayRunTimeBy(SLEEP_STATE::DISPLAY_WINDOW);
 			continue;
 
 		case Termination:
@@ -552,7 +568,7 @@ void TTRM::SP_DisplayMenu()
 		default:
 			std::cout << std::endl
 					  << "\t[INPUT ERROR] User Picked Choices That is Not-Existing from Choices!";
-			DelayRunTimeBy(SLEEP_ERROR_PROMPT);
+			DelayRunTimeBy(SLEEP_STATE::ERROR_PROMPT);
 			break;
 		}
 		if (!InputHandler_Int)
@@ -601,7 +617,7 @@ void TTRM::DC_ATask()
 			std::cin.clear();
 			std::cerr << std::endl
 					  << "\t[INPUT ERROR] |> TaskName Character Is Not Enough. Press Enter Key To Try Again.";
-			BufferClear_STDIN('\n');
+			BufferClear_STDIN();
 			continue;
 		}
 		else if (NewTask.TaskName == "--CANCEL")
@@ -609,7 +625,7 @@ void TTRM::DC_ATask()
 			std::cin.clear();
 			std::cerr << std::endl
 					  << "\t[OPRT ABORT] |> New Task Insertion Operation is Cancelled by User...";
-			DelayRunTimeBy(SLEEP_OPRT_FINISHED);
+			DelayRunTimeBy(SLEEP_STATE::OPRT_FINISHED);
 			return;
 		}
 
@@ -620,7 +636,7 @@ void TTRM::DC_ATask()
 			std::cin.clear();
 			std::cerr << std::endl
 					  << "\t[INPUT ERROR] |> Task In Charge Character Is Not Enough. Press Enter Key To Try Again.";
-			BufferClear_STDIN('\n');
+			BufferClear_STDIN();
 			continue;
 		}
 		else if (NewTask.TaskInCharge == "--CANCEL")
@@ -628,7 +644,7 @@ void TTRM::DC_ATask()
 			std::cin.clear();
 			std::cerr << std::endl
 					  << "\t[OPRT ABORT] |> New Task Insertion Operation is Cancelled by User...";
-			DelayRunTimeBy(SLEEP_OPRT_FINISHED);
+			DelayRunTimeBy(SLEEP_STATE::OPRT_FINISHED);
 			return;
 		}
 
@@ -675,7 +691,7 @@ void TTRM::DC_ATask()
 			std::cin.clear();
 			std::cerr << std::endl
 					  << "\t[INPUT ERROR] |> Reminder Type Input is Invalid. Press Any Key To Try Again.";
-			BufferClear_STDIN('\n');
+			BufferClear_STDIN();
 			_getche();
 			continue;
 		}
@@ -686,22 +702,22 @@ void TTRM::DC_ATask()
 			case CancelOperation:
 				std::cerr << std::endl
 						  << "\t[OPRT ABORT] |> New Task Insertion Operation is Cancelled by User...";
-				DelayRunTimeBy(SLEEP_OPRT_FINISHED);
+				DelayRunTimeBy(SLEEP_STATE::OPRT_FINISHED);
 				return;
 
 			case QuickRemind:
 				std::cout << "\tMinutes Left To Remind You |> ", std::cin >> NewTask.NotifyByTime;
-				if (NewTask.NotifyByTime <= QUICKR_MIN_TIME || NewTask.NotifyByTime > QUICKR_MAX_TIME)
+				if (NewTask.NotifyByTime <= TASK_CONSTRAINTS::QUICK_MIN_TIME || NewTask.NotifyByTime > TASK_CONSTRAINTS::QUICK_MAX_TIME)
 				{
 					std::cerr << std::endl
 							  << "\t[INPUT ERROR] |> Time Entered is invalid. Please try again by pressing any key to restart.";
-					BufferClear_STDIN('\n');
+					BufferClear_STDIN();
 					_getche();
 					continue;
 				}
 				else
 				{
-					CurrentDateTime = time(NULL) + (((time_t)(MAX_TIME_MIN + ADJUST_BY_ONE)) * NewTask.NotifyByTime);
+					CurrentDateTime = time(NULL) + (((time_t)(TM_STD::MAX_MIN + ADJUST_BY_ONE)) * NewTask.NotifyByTime);
 					NewTask.TempTM = localtime(&CurrentDateTime);
 					NewTask.ReminderData = *NewTask.TempTM;
 					break;
@@ -715,23 +731,23 @@ void TTRM::DC_ATask()
 				std::cout << "\tTarget Date of Reminding, Remember (MM DD YYYY) |> ", std::cin >> NewTask.ReminderData.tm_mon >> NewTask.ReminderData.tm_mday >> NewTask.ReminderData.tm_year;
 				//! Sets Parameters To Comply with MKtime
 				// ! Conditions, If User Input Is Lesser Than Todays Time Will Be Considered as Invalid~!
-				if (NewTask.ReminderData.tm_mon < MIN_TIME_MONTH || NewTask.ReminderData.tm_mon > MAX_TIME_MONTH || std::cin.fail())
+				if (NewTask.ReminderData.tm_mon < TM_STD::MIN_MONTH || NewTask.ReminderData.tm_mon > TM_STD::MAX_MONTH || std::cin.fail())
 				{
 					std::cerr << std::endl
 							  << "\t[INPUT ERROR] |> Target Month Parameter is either invalid or less from current date. Press Any Key To Try Again.";
 					std::cin.clear();
-					BufferClear_STDIN('\n');
+					BufferClear_STDIN();
 					_getche();
 					continue;
 				}
 				else
 				{
-					if (NewTask.ReminderData.tm_mday < MIN_TIME_DAY || NewTask.ReminderData.tm_mday > MAX_TIME_DAY || std::cin.fail())
+					if (NewTask.ReminderData.tm_mday < TM_STD::MIN_DAY || NewTask.ReminderData.tm_mday > TM_STD::MAX_DAY || std::cin.fail())
 					{
 						std::cin.clear();
 						std::cerr << std::endl
 								  << "\t[INPUT ERROR] |> Target Day Parameter is either invalid or less from current date. Press Any Key To Try Again.";
-						BufferClear_STDIN('\n');
+						BufferClear_STDIN();
 						_getche();
 						continue;
 					}
@@ -743,7 +759,7 @@ void TTRM::DC_ATask()
 							std::cerr << std::endl
 									  << "\t[INPUT ERROR] |> Target Year Parameter is either invalid or less from current date. Press Any Key To Try Again.";
 							std::cin.clear();
-							BufferClear_STDIN('\n');
+							BufferClear_STDIN();
 							_getche();
 							continue;
 						}
@@ -774,7 +790,7 @@ void TTRM::DC_ATask()
 							//<< std::endl;
 
 							std::cout << "\t[DATE ERROR] User Inputted Date and Time That is Lesser Than Today's Date and Time!";
-							BufferClear_STDIN('\n');
+							BufferClear_STDIN();
 							DelayRunTimeBy(SLEEP_ERROR_PROMPT);
 							continue;
 						}
@@ -789,7 +805,7 @@ void TTRM::DC_ATask()
 						std::cin.clear();
 						std::cerr << std::endl
 								  << "\t[INPUT ERROR] |> Time Input is Invalid. Keep in mind that I need 24 hour format. Press Any Key To Try Again.";
-						BufferClear_STDIN('\n');
+						BufferClear_STDIN();
 						_getche();
 						continue;
 					}
@@ -804,12 +820,12 @@ void TTRM::DC_ATask()
 				{
 					if (NewTask.ReminderType == QuickRemind)
 					{
-						SaveStateHandler << Gen_UniqueRID() << "," << NewTask.TaskName << "," << NewTask.TaskInCharge << "," << NewTask.ReminderType << "," << mktime(NewTask.TempTM) << std::endl;
+						SaveStateHandler << GenerateUID() << "," << NewTask.TaskName << "," << NewTask.TaskInCharge << "," << NewTask.ReminderType << "," << mktime(NewTask.TempTM) << std::endl;
 					}
 					else
 					{
 						NewTask.ReminderData.tm_sec = INIT_BASE_NUM;
-						SaveStateHandler << Gen_UniqueRID() << "," << NewTask.TaskName << "," << NewTask.TaskInCharge << "," << NewTask.ReminderType << "," << mktime(&NewTask.ReminderData) << std::endl;
+						SaveStateHandler << GenerateUID() << "," << NewTask.TaskName << "," << NewTask.TaskInCharge << "," << NewTask.ReminderType << "," << mktime(&NewTask.ReminderData) << std::endl;
 					}
 					TaskList.push_back(NewTask);
 				}
@@ -871,7 +887,7 @@ void TTRM::DC_DTask()
 			if (std::cin.fail())
 			{
 				std::cin.clear();
-				BufferClear_STDIN('\n');
+				BufferClear_STDIN();
 				std::cerr << std::endl
 						  << "\t[INPUT ERROR] Input is Non-Integer.";
 				DelayRunTimeBy(SLEEP_ERROR_PROMPT);
@@ -891,7 +907,7 @@ void TTRM::DC_DTask()
 						if (std::cin.fail())
 						{
 							std::cin.clear();
-							BufferClear_STDIN('\n');
+							BufferClear_STDIN();
 							std::cerr << std::endl
 									  << "\t[INPUT ERROR] Input is Non-Integer.";
 						}
@@ -947,7 +963,7 @@ void TTRM::DC_DTask()
 								std::cout << std::endl
 										  << "\t[CONFIRMATION, ERROR] |> User Input is Invalid.";
 								std::cin.clear();
-								BufferClear_STDIN('\n');
+								BufferClear_STDIN();
 								DelayRunTimeBy(SLEEP_OPRT_FAILED);
 								continue;
 							}
@@ -1013,7 +1029,7 @@ void TTRM::DC_ETask()
 			if (std::cin.fail())
 			{
 				std::cin.clear();
-				BufferClear_STDIN('\n');
+				BufferClear_STDIN();
 				std::cerr << "\t[INPUT ERROR] Input Invalid. Please try again." << std::endl;
 				DelayRunTimeBy(SLEEP_ERROR_PROMPT);
 				continue;
@@ -1032,7 +1048,7 @@ void TTRM::DC_ETask()
 						{
 							std::cerr << "\t[INPUT ERROR] Value Received is Invalid. Please try again.";
 							std::cin.clear();
-							BufferClear_STDIN('\n');
+							BufferClear_STDIN();
 						}
 						else
 						{
@@ -1040,7 +1056,7 @@ void TTRM::DC_ETask()
 							{
 							case CONFIRMED_TRUE_LOWER:
 							case CONFIRMED_TRUE_UPPER:
-								BufferClear_STDIN('\n');
+								BufferClear_STDIN();
 								std::cout << std::endl
 										  << "\t";
 								PrintConsoleASCII(ASCII_VLDivider, 1);
@@ -1073,7 +1089,7 @@ void TTRM::DC_ETask()
 										std::cin.clear();
 										std::cerr << std::endl
 												  << "\t[INPUT ERROR] |> TaskName Character Is Not Enough. Press Enter Key To Try Again.";
-										BufferClear_STDIN('\n');
+										BufferClear_STDIN();
 										continue;
 									}
 								}
@@ -1085,7 +1101,7 @@ void TTRM::DC_ETask()
 										std::cin.clear();
 										std::cerr << std::endl
 												  << "\t[INPUT ERROR] |> Task In Charge Character Is Not Enough. Press Enter Key To Try Again.";
-										BufferClear_STDIN('\n');
+										BufferClear_STDIN();
 										continue;
 									}
 								}
@@ -1132,7 +1148,7 @@ void TTRM::DC_ETask()
 										std::cin.clear();
 										std::cerr << std::endl
 												  << "\t[INPUT ERROR] |> Reminder Type Input is Invalid. Press Any Key To Try Again.";
-										BufferClear_STDIN('\n');
+										BufferClear_STDIN();
 										_getche();
 										continue;
 									}
@@ -1150,7 +1166,7 @@ void TTRM::DC_ETask()
 									if (NewModifiedTask.NotifyByTime < QUICKR_INV_MAX_TIME || NewModifiedTask.NotifyByTime > QUICKR_MAX_TIME)
 									{
 										std::cerr << "\t[INPUT ERROR] |> Time Entered is invalid. Please try again by pressing any key to restart.";
-										BufferClear_STDIN('\n');
+										BufferClear_STDIN();
 										_getche();
 										continue;
 									}
@@ -1182,7 +1198,7 @@ void TTRM::DC_ETask()
 										std::cin.clear();
 										std::cerr << std::endl
 												  << "\t[INPUT ERROR] |> Target Month Parameter is either invalid or less from current date. Press Any Key To Try Again.";
-										BufferClear_STDIN('\n');
+										BufferClear_STDIN();
 										_getche();
 										continue;
 									}
@@ -1193,7 +1209,7 @@ void TTRM::DC_ETask()
 											std::cin.clear();
 											std::cerr << std::endl
 													  << "\t[INPUT ERROR] |> Target Day Parameter is either invalid or less from current date. Press Any Key To Try Again.";
-											BufferClear_STDIN('\n');
+											BufferClear_STDIN();
 											_getche();
 											continue;
 										}
@@ -1206,7 +1222,7 @@ void TTRM::DC_ETask()
 												std::cin.clear();
 												std::cerr << std::endl
 														  << "\t[INPUT ERROR] |> Target Year Parameter is either invalid or less from current date. Press Any Key To Try Again.";
-												BufferClear_STDIN('\n');
+												BufferClear_STDIN();
 												_getche();
 												continue;
 											}
@@ -1222,7 +1238,7 @@ void TTRM::DC_ETask()
 											if (mktime(&NewModifiedTask.ReminderData) < time(NULL))
 											{
 												std::cout << "\t[DATE ERROR] User Time Minute is Lesser Than Today's Time Minute!";
-												BufferClear_STDIN('\n');
+												BufferClear_STDIN();
 												DelayRunTimeBy(SLEEP_ERROR_PROMPT);
 												continue;
 											}
@@ -1236,7 +1252,7 @@ void TTRM::DC_ETask()
 											std::cin.clear();
 											std::cerr << std::endl
 													  << "\t[INPUT ERROR] |> Time Input is Invalid. Keep in mind that I need 24 hour format. Press Any Key To Try Again.";
-											BufferClear_STDIN('\n');
+											BufferClear_STDIN();
 											_getche();
 											continue;
 										}
@@ -1385,7 +1401,7 @@ void TTRM::DC_ETask()
 								std::cout << std::endl
 										  << "\t[CONFIRMATION, ERROR] |> User Input Invalid.";
 								std::cin.clear();
-								BufferClear_STDIN('\n');
+								BufferClear_STDIN();
 								DelayRunTimeBy(SLEEP_OPRT_FAILED);
 								continue;
 							}
@@ -1480,7 +1496,7 @@ void TTRM::DC_RQT()
 			break;
 		default:
 			std::cin.clear();
-			BufferClear_STDIN('\n');
+			BufferClear_STDIN();
 			std::cout << std::endl
 					  << "\t[ERROR  ] |> Invalid Input. Task Reminder Queue and Save State Wipe Operation Cancelled.";
 			DelayRunTimeBy(SLEEP_OPRT_FINISHED);
