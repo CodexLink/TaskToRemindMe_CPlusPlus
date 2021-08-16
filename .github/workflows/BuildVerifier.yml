@@ -1,0 +1,52 @@
+# # This workflow is built for two-in-one purposes.
+# # Seperation is not required.
+# # This workflow involves at trying to make things work by
+# # Compiling them to see if all of those were ready to use.
+
+name: TTRM Builder and Verifier
+
+on:
+  push:
+    paths:
+      - 'TTRM_Experimentals/**'
+      - 'TTRM_SRC/**'
+      - 'TTRM_CLI.cpp'
+
+  pull_request:
+    paths:
+      - 'TTRM_Experimentals/**'
+      - 'TTRM_SRC/**'
+      - 'TTRM_CLI.cpp'
+
+jobs:
+  Builder:
+    name: Executable Binary Job
+    runs-on: windows-latest
+
+    steps:
+      - step: Step 1 | Checkout Repository
+        uses: action/checkout@latest
+
+      - step: Step 2 | Obtain Experimentals .CPP Files
+        run: |
+          echo "::set-output -name="
+
+      - step: Step 3 | Obtain Main Source .CPP File
+        run:
+
+  Verifier:
+    name: Binary Build Verifier |>
+    runs-on: windows-latest
+    needs: Builder
+    env:
+      MAIN_SOURCE_TARGET: 'TTRM_CLI.cpp'
+
+    strategy:
+      fail-fast: true
+      # # matrix: ${{ fromJson }} output here should contain concatenated array of the experimentals and main source!
+
+    steps:
+      # # Create further instance to check if we need to instantiate CL.exe or not. Which may use g++ for Experimentals or something...
+      - step: Step 4 | Build Binaries Both for Main Source and Experimental-Type .CPP
+        use:
+          # # Create conditionals for when to expect Main Source. INCLUDE MAIN-SOURCE FILE on ENV to further analyze what to use.

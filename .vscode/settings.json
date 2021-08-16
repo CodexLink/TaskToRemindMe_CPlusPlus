@@ -90,7 +90,11 @@
         "typeindex": "cpp",
         "unordered_set": "cpp",
         "valarray": "cpp",
-        "concepts": "cpp"
+        "concepts": "cpp",
+        "charconv": "cpp",
+        "bit": "cpp",
+        "compare": "cpp",
+        "stop_token": "cpp"
     },
     "C_Cpp.intelliSenseEngineFallback": "Disabled"
 }

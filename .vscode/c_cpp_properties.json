@@ -5,8 +5,12 @@
             "includePath": [
                 "C:\\Users\\janja\\AppData\\Local\\Arduino15\\packages\\esp8266\\tools\\**",
                 "C:\\Users\\janja\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\**",
-                "C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.18362.0\\ucrt",
-                "C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.18362.0\\ucrt\\x64"
+                "C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.19041.0\\ucrt",
+                "C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.19041.0\\ucrt\\x64",
+                "C:\\Program Files\\MySQL\\MySQL Connector C++ 1.1\\include",
+                "C:\\Program Files\\MySQL\\MySQL Server 8.0\\include"
+
+
             ],
             "forcedInclude": [],
             "intelliSenseMode": "msvc-x64",
