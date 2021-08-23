@@ -1,9 +1,27 @@
-# Task To Remind Me in C++ CLI
+# `Win32`ConsoleReminder
 
-A Bare-Minimum User Task Scheduler Implementated in C++11 Win32 CLI.
+A Task Reminder App in Console, written in Pure MSVC++ Win32.
 
 ## Notice
 
-You are looking at this branch that contains the old code that I used to present in my project. For the latest branch, please switch to the latest default branch.
+Keep note that the development of this project will be slow since there are other projects that I need to do. Plus, no one might use it.
 
-The code in this repository may not work since the repository directory has been changed. Meaning, some paths declared in VSC++ project settings have their paths untangled with the paths I have in the local disk. **The use of this project at this state must be taken with discretion**.
+Since this is just my personal project, I would just do it either way because why not?
+
+## Development
+
+There will be transparency such as the flow of the program: This [link](https://drive.google.com/file/d/1N99xZ8FM-DcjDjFV-6rL9CSXidMK_1qM/view?usp=sharing) will redirect you to diagrams.net or just a preview of the flow file.
+
+## License
+
+```text
+  Copyright 2021 Janrey "CodexLink" Licas
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+```
+
+You may see the [LICENSE](https://github.com/CodexLink/Win32ConsoleReminder/blob/latest/LICENSE) file for more information.

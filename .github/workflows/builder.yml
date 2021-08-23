@@ -1,0 +1,29 @@
+name: Win32 Build Verifier
+
+on:
+  push:
+    paths:
+      - "lib/**"
+      - "proto/**"
+      - "entrypoint.cpp"
+
+jobs:
+  win_builder:
+    name: ConsoleBuilder
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Step 1 | Repository Checkout
+        uses: actions/checkout@v2
+
+      - name: Step 2 | Compile
+        run: |
+          echo Hello World
+
+      - name: Step 3 | Build and Verify
+        run: |
+          echo Hello World
+
+      - name: Step 4 | Running the Test Cases
+        run: |
+          echo Hello World
